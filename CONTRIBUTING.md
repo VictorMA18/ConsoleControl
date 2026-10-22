@@ -24,3 +24,7 @@ pnpm exec prettier --check .
 ```
 
 Los cuatro comandos deben terminar sin errores.
+
+## Después de fusionar
+
+Borra la rama de la feature (en GitHub se borra sola si está activada la opción "Automatically delete head branches"). Nunca borres `main` ni `develop`. Detalle en [`docs/guides/flujo-git.md`](docs/guides/flujo-git.md).
