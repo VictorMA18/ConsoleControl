@@ -13,7 +13,7 @@ Los tres pasos deben pasar para fusionar. Se marcarán como verificación obliga
 
 ## Estado
 
-El archivo `.github/workflows/ci.yml` todavía no existe. Se crea en T02, cuando haya proyecto Expo; antes, el flujo fallaría en cada pull request.
+El flujo está en `.github/workflows/ci.yml` (creado en T02). Falta marcarlo como verificación obligatoria en la protección de `develop` y `main`.
 
 ## Antes de abrir el pull request
 
