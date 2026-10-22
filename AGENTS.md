@@ -106,6 +106,7 @@ Previstos; se confirman en T02.
 | Si te piden | Lee |
 |---|---|
 | Entender la arquitectura o dónde va un archivo | [`docs/architecture/arquitectura.md`](docs/architecture/arquitectura.md) |
+| Tablas, columnas o relaciones de la base de datos | [`docs/architecture/base-de-datos.md`](docs/architecture/base-de-datos.md) |
 | Saber por qué se eligió una tecnología | [`docs/adr/`](docs/adr/) (un archivo por decisión) |
 | Saber qué toca hacer ahora o qué viene | [`docs/roadmap/README.md`](docs/roadmap/README.md) y la fase vigente |
 | Ramas, commits o pull requests | [`docs/guides/flujo-git.md`](docs/guides/flujo-git.md) y [`CONTRIBUTING.md`](CONTRIBUTING.md) |
