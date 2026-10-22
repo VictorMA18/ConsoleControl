@@ -13,5 +13,11 @@ export type SessionMode = (typeof SESSION_MODES)[number];
 export const SESSION_STATUSES = ['activa', 'finalizada'] as const;
 export type SessionStatus = (typeof SESSION_STATUSES)[number];
 
+export const CONTROLLER_STATUSES = ['operativo', 'averiado'] as const;
+export type ControllerStatus = (typeof CONTROLLER_STATUSES)[number];
+
+export const SYNC_STATUSES = ['pendiente', 'sincronizado'] as const;
+export type SyncStatus = (typeof SYNC_STATUSES)[number];
+
 export const MIN_CONTROLLERS = 1;
 export const MAX_CONTROLLERS = 6;

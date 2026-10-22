@@ -1,5 +1,6 @@
 import { integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
+import { controlColumns } from './controlColumns';
 import { CONSOLE_TYPES, SESSION_MODES } from './enums';
 
 export const rates = sqliteTable(
@@ -12,6 +13,7 @@ export const rates = sqliteTable(
     priceCents: integer('price_cents').notNull(),
     // Recargo por cada mando a partir del segundo (RN-01).
     extraControllerCents: integer('extra_controller_cents').notNull(),
+    ...controlColumns,
   },
   (table) => [uniqueIndex('rates_console_type_mode_idx').on(table.consoleType, table.mode)],
 );

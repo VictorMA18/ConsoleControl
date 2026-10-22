@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import { check, index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 import { consoles } from './consoles';
+import { controlColumns } from './controlColumns';
 import { MAX_CONTROLLERS, MIN_CONTROLLERS, SESSION_MODES, SESSION_STATUSES } from './enums';
 import { rates } from './rates';
 
@@ -26,9 +27,11 @@ export const sessions = sqliteTable(
     status: text('status', { enum: SESSION_STATUSES }).notNull().default('activa'),
     // Estimado al abrir la sesión y definitivo al cerrarla.
     totalCents: integer('total_cents').notNull(),
+    ...controlColumns,
   },
   (table) => [
     index('sessions_console_id_status_idx').on(table.consoleId, table.status),
+    index('sessions_sync_status_idx').on(table.syncStatus),
     check(
       'sessions_controller_count_check',
       sql.raw(`controller_count BETWEEN ${MIN_CONTROLLERS} AND ${MAX_CONTROLLERS}`),
