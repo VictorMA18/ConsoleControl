@@ -11,7 +11,7 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 ## 2. Estado actual
 
 - Fase vigente: Fase 0, Fundación (Sprint 1). Roadmap en [`docs/roadmap/README.md`](docs/roadmap/README.md).
-- El proyecto Expo todavía no está inicializado (tarea T02). Los comandos de la sección 8 existirán cuando lo esté.
+- Proyecto Expo inicializado en T02 (SDK 58, Expo Router). La base de datos se agrega en T03.
 
 ## 3. Equipo y áreas
 
@@ -90,8 +90,6 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 
 ## 8. Comandos
 
-Previstos; se confirman en T02.
-
 | Comando | Para qué |
 |---|---|
 | `pnpm install` | Instalar dependencias |
@@ -99,7 +97,8 @@ Previstos; se confirman en T02.
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm test` | Jest |
-| `pnpm db:generate` | Generar migraciones con drizzle-kit |
+| `pnpm format` | Aplicar Prettier |
+| `pnpm db:generate` | Generar migraciones con drizzle-kit (se agrega en T03) |
 
 ## 9. Dónde buscar
 
