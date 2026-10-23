@@ -7,19 +7,13 @@ import {
   finishActiveSessions,
   getPersistenceSnapshot,
 } from '../../src/services/persistenceCheck';
+import { elapsedMs } from '../../src/services/sessionTimer';
+import { formatDuration } from '../../src/utils/formatDuration';
 
 // Spike de TW-82 (solo desarrollo). Compara dos formas de medir el tiempo de una sesión:
 // A) un contador en memoria que suma 1 cada segundo, y
 // B) la hora de inicio guardada en SQLite restada de la hora actual (ADR 0003).
 // Se usa en el celular para ver qué pasa al minimizar, cerrar y reiniciar.
-
-function formatSeconds(totalSeconds: number): string {
-  const s = Math.max(0, Math.floor(totalSeconds));
-  const hh = String(Math.floor(s / 3600)).padStart(2, '0');
-  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-  const ss = String(s % 60).padStart(2, '0');
-  return `${hh}:${mm}:${ss}`;
-}
 
 function clock(ms: number): string {
   return new Date(ms).toLocaleTimeString();
@@ -89,7 +83,8 @@ export default function TimerSpikeScreen() {
       .catch((e: unknown) => log(`Error al terminar: ${String(e)}`));
   };
 
-  const persisted = startedAt && now ? (now - startedAt) / 1000 : undefined;
+  const persisted =
+    startedAt && now ? elapsedMs({ startedAt, endedAt: null, durationMs: null }, now) : undefined;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -97,13 +92,13 @@ export default function TimerSpikeScreen() {
 
       <View style={styles.card}>
         <Text style={styles.label}>A) Contador en memoria</Text>
-        <Text style={styles.time}>{formatSeconds(memoryCounter)}</Text>
+        <Text style={styles.time}>{formatDuration(memoryCounter * 1000)}</Text>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>B) Ahora − hora de inicio en SQLite</Text>
         <Text style={styles.time}>
-          {persisted === undefined ? '--:--:--' : formatSeconds(persisted)}
+          {persisted === undefined ? '--:--:--' : formatDuration(persisted)}
         </Text>
         {startedAt ? <Text>Inicio guardado: {clock(startedAt)}</Text> : null}
       </View>
