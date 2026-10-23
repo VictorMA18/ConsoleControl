@@ -98,7 +98,7 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm test` | Jest |
 | `pnpm format` | Aplicar Prettier |
-| `pnpm db:generate` | Generar migraciones con drizzle-kit (se agrega en T03) |
+| `pnpm db:generate` | Generar migraciones con drizzle-kit en `src/db/migrations/` |
 
 ## 9. Dónde buscar
 
