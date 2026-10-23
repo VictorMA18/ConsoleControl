@@ -3,6 +3,10 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { useDatabaseSetup } from '../src/db/migrate';
 
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
+
 export default function RootLayout() {
   const { ready, error } = useDatabaseSetup();
 
@@ -22,7 +26,11 @@ export default function RootLayout() {
     );
   }
 
-  return <Stack />;
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ title: 'Muro de consolas' }} />
+    </Stack>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -17,15 +17,16 @@ Expo exige que pnpm instale las dependencias de forma plana. El archivo `.npmrc`
 node-linker=hoisted
 ```
 
-Se crea en T02, junto con el proyecto.
+Ya está incluido en el repositorio; no es necesario crearlo al clonar.
 
 ## Correr el proyecto
 
-Cuando exista el proyecto Expo (T02):
+Desde la raíz del proyecto:
 
 ```bash
 pnpm install
 pnpm start
 ```
 
-Después abre la app con Expo Go o con el emulador. Los comandos se confirman en T02.
+Los pasos de instalación, ejecución en emulador y celular, solución de problemas y
+verificación de los cuatro integrantes están en el [README](../../README.md).
