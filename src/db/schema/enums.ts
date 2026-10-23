@@ -13,7 +13,8 @@ export type SessionMode = (typeof SESSION_MODES)[number];
 export const SESSION_STATUSES = ['activa', 'finalizada'] as const;
 export type SessionStatus = (typeof SESSION_STATUSES)[number];
 
-export const CONTROLLER_STATUSES = ['operativo', 'averiado'] as const;
+// 'en_uso' marca los mandos prestados en una sesión activa; vuelven a 'operativo' al cerrarla.
+export const CONTROLLER_STATUSES = ['operativo', 'en_uso', 'averiado'] as const;
 export type ControllerStatus = (typeof CONTROLLER_STATUSES)[number];
 
 export const SYNC_STATUSES = ['pendiente', 'sincronizado'] as const;

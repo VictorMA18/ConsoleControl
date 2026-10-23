@@ -35,7 +35,7 @@ erDiagram
         text id PK "UUID"
         text console_id FK
         text label "Mando 1"
-        text status "operativo | averiado"
+        text status "operativo | en_uso | averiado"
         integer created_at "ms Unix"
         integer updated_at "ms Unix"
         text sync_status "pendiente | sincronizado"
@@ -92,7 +92,7 @@ Mandos físicos de cada consola. Permiten saber cuántos mandos operativos tiene
 | `id` | TEXT | No | UUID. Clave primaria |
 | `console_id` | TEXT | No | Consola a la que pertenece. Clave foránea a `consoles.id` |
 | `label` | TEXT | No | Nombre visible, por ejemplo «Mando 1» |
-| `status` | TEXT | No | `operativo` o `averiado`. Solo los operativos cuentan como stock |
+| `status` | TEXT | No | `operativo`, `en_uso` o `averiado`. Solo los operativos cuentan como stock. Al abrir una sesión pasan a `en_uso` y al cerrarla vuelven a `operativo` (T09) |
 | `created_at`, `updated_at`, `sync_status` | | | Columnas de control (sección 4) |
 
 ### 3.3. `sessions`
@@ -165,7 +165,7 @@ Las claves foráneas no borran en cascada: una consola o una tarifa con sesiones
 | M2 | Fechas como INTEGER en milisegundos Unix | Regla del proyecto ([AGENTS.md](../../AGENTS.md)); el tiempo se calcula como `ahora − started_at` |
 | M3 | Dinero como INTEGER en centavos | Evita errores de redondeo de los decimales (TW-13) |
 | M4 | No se guarda el tiempo transcurrido ni el estado «Tiempo cumplido» | Se calculan con `started_at` y `duration_ms`; un valor guardado quedaría desactualizado al minimizar o reiniciar ([ADR 0003](../adr/0003-hora-de-inicio-persistida.md)) |
-| M5 | La sesión guarda `controller_count`, no qué mandos concretos usa | Basta para HU-001 a HU-004. Si HU-012 o HU-015 necesitan mandos concretos, se agrega una tabla `session_controllers` con una migración nueva |
+| M5 | La sesión guarda `controller_count`, no qué mandos concretos usa. Los mandos prestados se marcan `en_uso` en `controllers` | Como una consola tiene como máximo una sesión activa, al cerrarla se liberan todos sus mandos `en_uso`. Si HU-012 o HU-015 necesitan saber qué mando usó cada sesión, se agrega una tabla `session_controllers` con una migración nueva |
 | M6 | La sesión guarda `rate_id` y `total_cents` | Si el tarifario cambia (HU-013), las sesiones pasadas conservan el monto que se cobró |
 | M7 | Valores de estado en español y en `snake_case` | Siguen el valor `activa` y `pendiente` que ya usa la arquitectura |
 | M8 | Sin tabla ni columnas de usuario | Observación O1 ([ADR 0009](../adr/0009-sin-login-en-el-mvp.md)) |
