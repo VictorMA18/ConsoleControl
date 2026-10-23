@@ -185,6 +185,19 @@ Los valores son **provisionales** hasta que JS entregue el tarifario y el invent
 
 Para cambiarlos basta con editar `src/db/seedData.ts`. En un celular donde la app ya se abrió, los datos nuevos solo se cargan después de borrar los datos de la app.
 
+## 7.2. Prueba de persistencia (TW-28)
+
+Comprueba el criterio de T03 «Una sesión guardada sobrevive al cierre de la app». Se hace en el celular con Expo Go, desde la pantalla de diagnóstico `app/dev/persistencia.tsx`, que solo existe en desarrollo (enlace «Prueba de persistencia» en la pantalla inicial).
+
+| # | Paso | Resultado esperado |
+|---|---|---|
+| 1 | Abrir la pantalla de diagnóstico | 4 consolas, 16 mandos operativos, 16 tarifas y 0 sesiones activas |
+| 2 | Pulsar «Crear sesión de prueba» | 1 sesión activa con su hora de inicio |
+| 3 | Cerrar la app por completo desde el selector de apps recientes y esperar 2 minutos | |
+| 4 | Reabrir la app y volver a la pantalla de diagnóstico | La misma sesión sigue activa, con la misma hora de inicio y «hace 2 min» o más |
+| 5 | Pulsar «Recargar» de nuevo | Los datos iniciales no se duplicaron: siguen 4 consolas, 16 mandos y 16 tarifas |
+| 6 | Pulsar «Finalizar sesiones activas» | 0 sesiones activas |
+
 ## 8. Preguntas abiertas
 
 | # | Pregunta | A quién |
