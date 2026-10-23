@@ -7,9 +7,12 @@ import {
   finishActiveSessions,
   getPersistenceSnapshot,
   type PersistenceSnapshot,
+  type SessionScenario,
+  trySessionScenario,
 } from '../../src/services/persistenceCheck';
 
-// Pantalla de diagnóstico para la prueba de persistencia de TW-28. Solo existe en desarrollo.
+// Pantalla de diagnóstico para la prueba de persistencia de TW-28 y los escenarios de inicio de
+// sesión de T09. Solo existe en desarrollo.
 // Usa estado local en lugar de TanStack Query porque no forma parte del producto.
 export default function PersistenceScreen() {
   const [snapshot, setSnapshot] = useState<PersistenceSnapshot>();
@@ -38,6 +41,22 @@ export default function PersistenceScreen() {
       .finally(reload);
   };
 
+  const onScenario = (scenario: SessionScenario) => {
+    trySessionScenario(scenario)
+      .then((result) => {
+        if (result.ok) {
+          setMessage(`Sesión iniciada: ${result.session.id.slice(0, 8)}`);
+        } else if (result.reason === 'mandos_insuficientes') {
+          const names = result.alternatives.map((c) => c.name).join(', ') || 'ninguna';
+          setMessage(`${result.message}. Alternativas: ${names}`);
+        } else {
+          setMessage(result.message);
+        }
+      })
+      .catch((e: unknown) => setMessage(`Error: ${String(e)}`))
+      .finally(reload);
+  };
+
   const onFinish = () => {
     finishActiveSessions()
       .then((total) => setMessage(`Sesiones finalizadas: ${total}`))
@@ -51,6 +70,7 @@ export default function PersistenceScreen() {
 
       <Text style={styles.heading}>Datos guardados</Text>
       <Text>Consolas: {snapshot?.consoles ?? '…'}</Text>
+      <Text>Consolas en juego: {snapshot?.consolesInPlay ?? '…'}</Text>
       <Text>Mandos operativos: {snapshot?.operationalControllers ?? '…'}</Text>
       <Text>Tarifas: {snapshot?.rates ?? '…'}</Text>
 
@@ -64,6 +84,16 @@ export default function PersistenceScreen() {
 
       <View style={styles.buttons}>
         <Button title="Crear sesión de prueba" onPress={onCreate} />
+        <Text style={styles.heading}>Inicio de sesión (T09)</Text>
+        <Button title="1. Iniciar sesión con 2 mandos" onPress={() => onScenario('exito')} />
+        <Button
+          title="2. Pedir 6 mandos (insuficientes)"
+          onPress={() => onScenario('mandos_insuficientes')}
+        />
+        <Button
+          title="3. Iniciar en consola ocupada"
+          onPress={() => onScenario('consola_ocupada')}
+        />
         <Button title="Finalizar sesiones activas" onPress={onFinish} />
         <Button title="Recargar" onPress={reload} />
       </View>

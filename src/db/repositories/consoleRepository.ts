@@ -20,3 +20,24 @@ export async function countOperationalControllers(consoleId: string): Promise<nu
     .get();
   return row?.total ?? 0;
 }
+
+export type ConsoleWithStock = Console & { operationalControllers: number };
+
+// Consolas disponibles con su stock de mandos, para sugerir alternativas (HU-001, escenario 2).
+export async function getAvailableConsolesWithStock(): Promise<ConsoleWithStock[]> {
+  const rows = db
+    .select({ console: consoles, operationalControllers: count(controllers.id) })
+    .from(consoles)
+    .leftJoin(
+      controllers,
+      and(eq(controllers.consoleId, consoles.id), eq(controllers.status, 'operativo')),
+    )
+    .where(eq(consoles.status, 'disponible'))
+    .groupBy(consoles.id)
+    .orderBy(asc(consoles.name))
+    .all();
+  return rows.map((row) => ({
+    ...row.console,
+    operationalControllers: row.operationalControllers,
+  }));
+}
