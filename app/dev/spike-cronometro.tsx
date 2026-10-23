@@ -2,6 +2,7 @@ import { Redirect, Stack } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useNow } from '../../src/hooks/useNow';
 import {
   createTestSession,
   finishActiveSessions,
@@ -22,7 +23,8 @@ function clock(ms: number): string {
 export default function TimerSpikeScreen() {
   const [memoryCounter, setMemoryCounter] = useState(0);
   const [startedAt, setStartedAt] = useState<number>();
-  const [now, setNow] = useState(0);
+  // B usa el mismo reloj compartido que usará el muro de consolas (TW-84).
+  const now = useNow();
   const [events, setEvents] = useState<string[]>([]);
   const lastTick = useRef(0);
 
@@ -50,7 +52,6 @@ export default function TimerSpikeScreen() {
       }
       lastTick.current = current;
       setMemoryCounter((n) => n + 1);
-      setNow(current);
     }, 1000);
     const subscription = AppState.addEventListener('change', (state) => log(`AppState: ${state}`));
     return () => {
@@ -83,8 +84,9 @@ export default function TimerSpikeScreen() {
       .catch((e: unknown) => log(`Error al terminar: ${String(e)}`));
   };
 
-  const persisted =
-    startedAt && now ? elapsedMs({ startedAt, endedAt: null, durationMs: null }, now) : undefined;
+  const persisted = startedAt
+    ? elapsedMs({ startedAt, endedAt: null, durationMs: null }, now)
+    : undefined;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
