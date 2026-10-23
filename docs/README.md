@@ -23,5 +23,6 @@ Decisiones técnicas registradas:
 | [0007](adr/0007-zod-react-hook-form.md) | Zod con React Hook Form |
 | [0008](adr/0008-supabase-respaldo-unidireccional.md) | Respaldo unidireccional con Supabase |
 | [0009](adr/0009-sin-login-en-el-mvp.md) | Sin login en el MVP |
+| [0010](adr/0010-expo-crypto-uuid.md) | expo-crypto para generar UUID |
 
 Regla: una decisión por ADR, una fase por archivo de roadmap, una historia de usuario por archivo de `specs/`.
