@@ -170,6 +170,21 @@ Las claves foráneas no borran en cascada: una consola o una tarifa con sesiones
 | M7 | Valores de estado en español y en `snake_case` | Siguen el valor `activa` y `pendiente` que ya usa la arquitectura |
 | M8 | Sin tabla ni columnas de usuario | Observación O1 ([ADR 0009](../adr/0009-sin-login-en-el-mvp.md)) |
 
+## 7.1. Datos iniciales (provisionales)
+
+Al abrir la app se aplican las migraciones y, si la base está vacía, se cargan los datos de `src/db/seedData.ts` (TW-26). Si ya hay consolas, no se carga nada, para no duplicar ni pisar cambios del administrador.
+
+Los valores son **provisionales** hasta que JS entregue el tarifario y el inventario reales (preguntas P1 a P3): una consola por tipo con 4 mandos cada una, y estas tarifas en soles, con un recargo de S/. 1.00 por mando extra.
+
+| Tipo | 30 min | 1 h | 2 h | Tiempo libre (por hora) |
+|---|---|---|---|---|
+| PS4 | 2.00 | 3.50 | 6.50 | 3.50 |
+| PS5 | 3.00 | 5.00 | 9.00 | 5.00 |
+| Xbox | 2.50 | 4.00 | 7.50 | 4.00 |
+| Switch | 2.00 | 3.50 | 6.50 | 3.50 |
+
+Para cambiarlos basta con editar `src/db/seedData.ts`. En un celular donde la app ya se abrió, los datos nuevos solo se cargan después de borrar los datos de la app.
+
 ## 8. Preguntas abiertas
 
 | # | Pregunta | A quién |

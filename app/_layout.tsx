@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { useDatabaseMigrations } from '../src/db/migrate';
+import { useDatabaseSetup } from '../src/db/migrate';
 
 export default function RootLayout() {
-  const { success, error } = useDatabaseMigrations();
+  const { ready, error } = useDatabaseSetup();
 
   if (error) {
     return (
@@ -14,7 +14,7 @@ export default function RootLayout() {
     );
   }
 
-  if (!success) {
+  if (!ready) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
