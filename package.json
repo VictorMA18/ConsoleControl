@@ -12,13 +12,17 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.4",
     "expo": "~58.0.17",
     "expo-constants": "~58.0.13",
+    "expo-crypto": "~58.0.7",
     "expo-linking": "~58.0.14",
     "expo-router": "~58.0.25",
+    "expo-sqlite": "~58.0.13",
     "expo-status-bar": "~58.0.4",
     "react": "19.3.0",
     "react-native": "0.88.0",
@@ -28,6 +32,8 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
+    "babel-plugin-inline-import": "^3.0.0",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^8.57.1",
     "eslint-config-expo": "^58.0.4",
     "eslint-config-prettier": "^10.1.8",
