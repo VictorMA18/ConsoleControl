@@ -57,3 +57,18 @@ Observaciones:
 **El enfoque del [ADR 0003](../adr/0003-hora-de-inicio-persistida.md) queda confirmado.** El cronómetro B, que calcula `ahora − started_at` con la hora guardada en SQLite, mostró el tiempo real en los cuatro casos. El contador en memoria se perdió en tres de cuatro casos, así que no sirve para cobrar.
 
 No hace falta activar el plan B de T10. Se sigue con TW-85 (recalcular al volver del segundo plano) y TW-86 (restaurar las sesiones al arrancar).
+
+## 6. Pruebas finales de HU-002 (TW-87)
+
+Repiten los casos con la implementación definitiva: sesiones restauradas con `useActiveSessions` (TW-86), cronómetro de cada sesión con `useSessionTimer` y reloj compartido que se actualiza cada segundo (TW-84) y al volver del segundo plano (TW-85). Se usa la sección «Sesiones restauradas al abrir la app» de la pantalla del spike, con una misma sesión de 30 minutos para los tres casos.
+
+Fecha: 28/10/2026 · Celular Android con Expo Go (_modelo y versión de Android por completar_)
+
+| # | Caso | Resultado esperado | Resultado |
+|---|---|---|---|
+| P0 | App abierta | El tiempo avanza cada segundo y «faltan» baja | ✅ Cumple |
+| P1 | Minimizar 5 minutos | Al volver, el tiempo salta de inmediato al valor real | ✅ Cumple |
+| P2 | Cerrar y abrir la app | La sesión reaparece sola con el tiempo acumulado real | ✅ Cumple |
+| P3 | Apagar y encender el celular | La sesión reaparece con el tiempo real, incluido el tiempo apagado | ✅ Cumple |
+
+**Resultado:** se cumplen los dos escenarios de HU-002. Escenario 1: al minimizar o cerrar y reabrir, el tiempo es exacto. Escenario 2: tras apagar y encender el teléfono, las sesiones se restauran con el tiempo real.
