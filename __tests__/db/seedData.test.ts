@@ -1,4 +1,4 @@
-import { CONSOLE_TYPES, SESSION_MODES } from '../../src/db/schema/enums';
+import { CONSOLE_TYPES, RATE_BLOCK_MINUTES } from '../../src/db/schema/enums';
 import {
   CONTROLLERS_PER_CONSOLE,
   seedConsoles,
@@ -32,14 +32,16 @@ describe('datos iniciales', () => {
     });
   });
 
-  it('tiene una tarifa por cada tipo de consola y modalidad', () => {
+  it('tiene una tarifa por cada tipo de consola y bloque de tiempo', () => {
     CONSOLE_TYPES.forEach((type) =>
-      SESSION_MODES.forEach((mode) => {
-        const matches = seedRates.filter((r) => r.consoleType === type && r.mode === mode);
+      RATE_BLOCK_MINUTES.forEach((minutes) => {
+        const matches = seedRates.filter(
+          (r) => r.consoleType === type && r.blockMinutes === minutes,
+        );
         expect(matches).toHaveLength(1);
       }),
     );
-    expect(seedRates).toHaveLength(CONSOLE_TYPES.length * SESSION_MODES.length);
+    expect(seedRates).toHaveLength(CONSOLE_TYPES.length * RATE_BLOCK_MINUTES.length);
   });
 
   it('guarda los montos como centavos enteros positivos', () => {

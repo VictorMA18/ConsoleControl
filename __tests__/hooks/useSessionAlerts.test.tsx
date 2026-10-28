@@ -17,7 +17,7 @@ const session: ActiveSession = {
   consoleId: '9be9a615-3d18-4f92-a2fe-bfef68268278',
   consoleName: 'PS4 #1',
   consoleType: 'ps4',
-  rateId: '0eb49c9b-ee8f-452f-bdae-fcd06227ae57',
+  rateSnapshot: [{ blockMinutes: 30, priceCents: 350, extraControllerCents: 150 }],
   controllerCount: 1,
   mode: 'fijo_30',
   durationMs: 30 * MINUTE,

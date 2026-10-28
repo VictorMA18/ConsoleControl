@@ -16,7 +16,7 @@ const restored: ActiveSession = {
   consoleId: '551f976b-9f52-4e32-9db4-a2c938431f4f',
   consoleName: 'PS5 #1',
   consoleType: 'ps5',
-  rateId: '0eb49c9b-ee8f-452f-bdae-fcd06227ae57',
+  rateSnapshot: [{ blockMinutes: 60, priceCents: 1000, extraControllerCents: 450 }],
   controllerCount: 2,
   mode: 'fijo_60',
   durationMs: 60 * 60 * 1000,

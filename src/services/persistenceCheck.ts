@@ -1,6 +1,6 @@
 import type { Session } from '../db/schema';
 import { countOperationalControllers, getConsoles } from '../db/repositories/consoleRepository';
-import { getRate, getRates } from '../db/repositories/rateRepository';
+import { getRateBlocks, getRates } from '../db/repositories/rateRepository';
 import {
   createSession,
   finishSession,
@@ -47,14 +47,15 @@ export async function createTestSession(
   if (!firstConsole) {
     throw new Error('No hay consolas registradas');
   }
-  const rate = await getRate(firstConsole.consoleType, 'fijo_30');
+  const rates = await getRateBlocks(firstConsole.consoleType);
+  const rate = rates.find((r) => r.blockMinutes === 30);
   if (!rate) {
     throw new Error(`No hay tarifa de 30 min para ${firstConsole.name}`);
   }
   return createSession(
     {
       consoleId: firstConsole.id,
-      rateId: rate.id,
+      rateSnapshot: rates,
       controllerCount: 1,
       mode: 'fijo_30',
       durationMs,
