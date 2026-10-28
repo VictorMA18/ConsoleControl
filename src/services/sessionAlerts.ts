@@ -39,3 +39,65 @@ export function getSessionAlertState(
   }
   return remaining <= ALERT_BEFORE_MS ? 'proxima_a_vencer' : 'en_curso';
 }
+
+// Aviso que recibe la interfaz cuando una sesión entra en un estado de alerta (TW-110).
+export type SessionAlert = {
+  type: 'proxima_a_vencer' | 'tiempo_cumplido';
+  sessionId: string;
+  consoleId: string;
+  consoleName: string;
+  remainingMs: number;
+};
+
+export type TrackedSession = AlertableSession &
+  Pick<Session, 'id' | 'consoleId'> & { consoleName: string };
+
+// Recuerda qué avisos ya se dieron por sesión para no repetirlos (TW-111). Vive en memoria
+// mientras la app está abierta: al reabrirla, una sesión que sigue en alerta avisa una vez más,
+// porque el administrador pudo no ver el primer aviso.
+export function createAlertTracker() {
+  const sent = new Map<string, Set<SessionAlert['type']>>();
+
+  return {
+    // Devuelve los avisos nuevos de este instante. Si una sesión pasa de «en curso» directo a
+    // «tiempo cumplido» (la app estuvo en segundo plano), solo avisa del tiempo cumplido.
+    check(sessions: readonly TrackedSession[], now: number = Date.now()): SessionAlert[] {
+      const alerts: SessionAlert[] = [];
+      const activeIds = new Set<string>();
+
+      for (const session of sessions) {
+        activeIds.add(session.id);
+        const state = getSessionAlertState(session, now);
+        if (state !== 'proxima_a_vencer' && state !== 'tiempo_cumplido') {
+          // Si volvió a «en curso» (por ejemplo, al extender el tiempo en HU-009), podrá
+          // avisar de nuevo cuando le falten 5 minutos otra vez.
+          sent.delete(session.id);
+          continue;
+        }
+        const sentForSession = sent.get(session.id) ?? new Set();
+        if (sentForSession.has(state)) {
+          continue;
+        }
+        sentForSession.add(state);
+        sent.set(session.id, sentForSession);
+        alerts.push({
+          type: state,
+          sessionId: session.id,
+          consoleId: session.consoleId,
+          consoleName: session.consoleName,
+          remainingMs: remainingMs(session, now) ?? 0,
+        });
+      }
+
+      // Olvida las sesiones que ya no están activas.
+      for (const id of sent.keys()) {
+        if (!activeIds.has(id)) {
+          sent.delete(id);
+        }
+      }
+      return alerts;
+    },
+  };
+}
+
+export type AlertTracker = ReturnType<typeof createAlertTracker>;

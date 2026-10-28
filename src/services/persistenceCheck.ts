@@ -38,7 +38,11 @@ export async function getPersistenceSnapshot(): Promise<PersistenceSnapshot> {
 }
 
 // Crea una sesión directamente en el repositorio, sin ocupar la consola (prueba de TW-28).
-export async function createTestSession(now: number = Date.now()): Promise<Session> {
+// durationMs permite sesiones cortas para ver las alertas de T15 sin esperar 25 minutos.
+export async function createTestSession(
+  now: number = Date.now(),
+  durationMs: number = TEST_DURATION_MS,
+): Promise<Session> {
   const [firstConsole] = await getConsoles();
   if (!firstConsole) {
     throw new Error('No hay consolas registradas');
@@ -53,7 +57,7 @@ export async function createTestSession(now: number = Date.now()): Promise<Sessi
       rateId: rate.id,
       controllerCount: 1,
       mode: 'fijo_30',
-      durationMs: TEST_DURATION_MS,
+      durationMs,
       totalCents: rate.priceCents,
     },
     now,

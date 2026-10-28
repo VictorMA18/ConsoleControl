@@ -5,6 +5,7 @@ import { AppState, Button, ScrollView, StyleSheet, Text, View } from 'react-nati
 
 import { activeSessionsQueryKey, useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useNow } from '../../src/hooks/useNow';
+import { useSessionAlerts, useSessionAlertState } from '../../src/hooks/useSessionAlerts';
 import { useSessionTimer } from '../../src/hooks/useSessionTimer';
 import {
   createTestSession,
@@ -27,12 +28,15 @@ function clock(ms: number): string {
 // Una fila por sesión restaurada desde SQLite con el hook real del muro (TW-86).
 function RestoredSessionRow({ session }: { session: ActiveSession }) {
   const timer = useSessionTimer(session);
+  // Estado de alerta de T15, con el que RF pintará la tarjeta en T16.
+  const alertState = useSessionAlertState(session);
   return (
     <Text>
       {session.consoleName} · {formatDuration(timer.elapsedMs)}
       {timer.remainingMs === null
         ? ' · tiempo libre'
-        : ` · faltan ${formatDuration(timer.remainingMs)}`}
+        : ` · faltan ${formatDuration(timer.remainingMs)}`}{' '}
+      · {alertState}
     </Text>
   );
 }
@@ -79,13 +83,19 @@ export default function TimerSpikeScreen() {
     };
   }, [loadSession, log]);
 
+  // Avisos de T15 (TW-110). En T16, RF los usa para el ámbar titilante y la vibración.
+  useSessionAlerts((alert) => {
+    log(`🔔 ${alert.type}: ${alert.consoleName} (faltan ${formatDuration(alert.remainingMs)})`);
+  });
+
   if (!__DEV__) {
     return <Redirect href="/" />;
   }
 
-  const onStart = () => {
+  // Sesión de 6 minutos: el aviso de 5 minutos llega al minuto 1 y el tiempo cumplido al 6.
+  const onStart = (durationMs?: number) => {
     finishActiveSessions()
-      .then(() => createTestSession())
+      .then(() => createTestSession(Date.now(), durationMs))
       .then((session) => {
         setStartedAt(session.startedAt);
         setMemoryCounter(0);
@@ -137,7 +147,11 @@ export default function TimerSpikeScreen() {
       </View>
 
       <View style={styles.buttons}>
-        <Button title="Iniciar prueba" onPress={onStart} />
+        <Button title="Iniciar prueba" onPress={() => onStart()} />
+        <Button
+          title="Iniciar prueba de 6 min (alertas T15)"
+          onPress={() => onStart(6 * 60 * 1000)}
+        />
         <Button title="Terminar prueba" onPress={onStop} />
       </View>
 
