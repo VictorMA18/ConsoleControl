@@ -8,9 +8,14 @@ export default function HomeScreen() {
       <Stack.Screen options={{ title: 'Muro de consolas' }} />
       <Text style={styles.title}>ConsoleControl Mobile</Text>
       {__DEV__ ? (
-        <Link href="/dev/persistencia" style={styles.devLink}>
-          Prueba de persistencia (solo desarrollo)
-        </Link>
+        <>
+          <Link href="/dev/persistencia" style={styles.devLink}>
+            Prueba de persistencia (solo desarrollo)
+          </Link>
+          <Link href="/dev/spike-cronometro" style={styles.devLink}>
+            Spike del cronómetro (solo desarrollo)
+          </Link>
+        </>
       ) : null}
     </View>
   );

@@ -146,7 +146,7 @@ export async function startSession(input: NewSession): Promise<Session> {
 | Reinicio del celular con sesión activa | La sesión sigue `activa` con el tiempo correcto |
 | Sesión sin internet | Se crea y cierra con `sync_status = 'pendiente'` |
 
-**Limitación conocida.** Si alguien cambia la hora del celular, el cálculo cambia. Se acepta en el MVP y se revisa al hacer la sincronización.
+**Limitación conocida.** Si alguien cambia la hora del celular, el cálculo cambia. Se acepta en el MVP y se revisa al hacer la sincronización. Las demás limitaciones del cronómetro, probadas en un celular real, están en [spike-cronometro.md](spike-cronometro.md), sección 7.
 
 ## 5. Aprobación
 
