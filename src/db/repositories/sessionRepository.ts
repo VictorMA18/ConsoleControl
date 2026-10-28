@@ -25,11 +25,13 @@ export class InsufficientControllersError extends Error {
   }
 }
 
-// El repositorio asigna id, hora de inicio, estado y columnas de control.
+// El repositorio asigna id, hora de inicio, estado y columnas de control. La copia de las
+// tarifas es obligatoria aunque la columna tenga valor por defecto (RN-08).
 export type CreateSessionInput = Pick<
   NewSession,
-  'consoleId' | 'rateId' | 'controllerCount' | 'mode' | 'durationMs' | 'totalCents'
->;
+  'consoleId' | 'controllerCount' | 'mode' | 'durationMs' | 'totalCents'
+> &
+  Required<Pick<NewSession, 'rateSnapshot'>>;
 
 export type SessionChanges = Partial<
   Pick<NewSession, 'controllerCount' | 'durationMs' | 'endedAt' | 'status' | 'totalCents'>

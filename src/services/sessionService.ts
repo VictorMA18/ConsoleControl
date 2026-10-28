@@ -4,7 +4,7 @@ import {
   getAvailableConsolesWithStock,
   getConsoleById,
 } from '../db/repositories/consoleRepository';
-import { getRate } from '../db/repositories/rateRepository';
+import { getRateBlocks } from '../db/repositories/rateRepository';
 import {
   type ActiveSession,
   ConsoleNotAvailableError,
@@ -12,9 +12,10 @@ import {
   InsufficientControllersError,
   openSession,
 } from '../db/repositories/sessionRepository';
-import type { ConsoleStatus, SessionMode } from '../db/schema/enums';
-import type { Rate, Session } from '../db/schema';
+import type { ConsoleStatus, ConsoleType, SessionMode } from '../db/schema/enums';
+import type { RateBlock, Session } from '../db/schema';
 import { startSessionSchema } from '../schemas/session';
+import { calculateRate } from './tariff';
 
 export const MODE_DURATION_MS: Record<SessionMode, number | null> = {
   fijo_30: 30 * 60 * 1000,
@@ -42,13 +43,25 @@ const STATUS_LABELS: Record<ConsoleStatus, string> = {
   mantenimiento: 'en mantenimiento',
 };
 
-// Monto estimado al abrir la sesión (RN-01: recargo por cada mando a partir del segundo).
-// En tiempo libre el monto se calcula al cerrar. Provisional hasta el motor de tarifas de T13.
-function estimateTotalCents(rate: Rate, mode: SessionMode, controllerCount: number): number {
-  if (mode === 'libre') {
+// Monto estimado al abrir la sesión con el motor de tarifas (HU-003): en tiempo fijo, el precio
+// del tiempo contratado con sus mandos. En tiempo libre se calcula al cerrar.
+function estimateTotalCents(
+  consoleType: ConsoleType,
+  mode: SessionMode,
+  controllerCount: number,
+  rates: RateBlock[],
+): number {
+  const durationMs = MODE_DURATION_MS[mode];
+  if (durationMs === null) {
     return 0;
   }
-  return rate.priceCents + (controllerCount - 1) * rate.extraControllerCents;
+  return calculateRate({
+    consoleType,
+    controllerCount,
+    playedMinutes: 0,
+    contractedMinutes: durationMs / 60_000,
+    rates,
+  }).totalCents;
 }
 
 // Alternativas con mandos operativos suficientes; primero las del mismo tipo (HU-001, escenario 2).
@@ -106,9 +119,9 @@ export async function startSession(
     };
   }
 
-  const rate = await getRate(console.consoleType, mode);
-  if (!rate) {
-    throw new Error(`No hay tarifa para ${console.consoleType} en modalidad ${mode}`);
+  const rates = await getRateBlocks(console.consoleType);
+  if (rates.length === 0) {
+    throw new Error(`No hay tarifas para ${console.consoleType}`);
   }
 
   // Escenario 1: sesión creada, consola en juego y mandos descontados.
@@ -116,11 +129,11 @@ export async function startSession(
     const session = await openSession(
       {
         consoleId,
-        rateId: rate.id,
+        rateSnapshot: rates,
         controllerCount,
         mode,
         durationMs: MODE_DURATION_MS[mode],
-        totalCents: estimateTotalCents(rate, mode, controllerCount),
+        totalCents: estimateTotalCents(console.consoleType, mode, controllerCount, rates),
       },
       now,
     );

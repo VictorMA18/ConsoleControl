@@ -1,20 +1,22 @@
-import { and, eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 
 import { db } from '../client';
-import { type ConsoleType, type Rate, rates, type SessionMode } from '../schema';
+import { type ConsoleType, type Rate, type RateBlock, rates } from '../schema';
 
 export async function getRates(): Promise<Rate[]> {
   return db.select().from(rates).all();
 }
 
-// Tarifa vigente para abrir una sesión (HU-003).
-export async function getRate(
-  consoleType: ConsoleType,
-  mode: SessionMode,
-): Promise<Rate | undefined> {
+// Tarifario vigente de un tipo de consola, un precio por bloque de tiempo (HU-003).
+export async function getRateBlocks(consoleType: ConsoleType): Promise<RateBlock[]> {
   return db
-    .select()
+    .select({
+      blockMinutes: rates.blockMinutes,
+      priceCents: rates.priceCents,
+      extraControllerCents: rates.extraControllerCents,
+    })
     .from(rates)
-    .where(and(eq(rates.consoleType, consoleType), eq(rates.mode, mode)))
-    .get();
+    .where(eq(rates.consoleType, consoleType))
+    .orderBy(asc(rates.blockMinutes))
+    .all();
 }

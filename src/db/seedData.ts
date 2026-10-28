@@ -1,12 +1,15 @@
-// Datos iniciales PROVISIONALES (TW-26). Se reemplazan por los reales del local cuando
-// JS entregue el tarifario (T12) y el inventario. Los montos están en centavos: 350 = S/. 3.50.
-// Los id son UUID fijos para que el mismo registro tenga el mismo id en todos los dispositivos.
+// Datos iniciales PROVISIONALES. Las tarifas vienen del CSV del documento de T12 «Tarifas base
+// y regla de recargo por mando adicional», pendientes de confirmar con JS: el documento trae otros
+// precios en sus tablas. Las consolas y mandos son de ejemplo hasta tener el inventario real.
+// Montos en céntimos: 350 = S/ 3.50. Los id son UUID fijos para que el mismo registro tenga el
+// mismo id en todos los dispositivos.
 
 import type { NewConsole, NewController, NewRate } from './schema';
 
 export const CONTROLLERS_PER_CONSOLE = 4;
 
 export const seedConsoles: NewConsole[] = [
+  { id: '2c26a7b0-b208-44c7-b905-8de14c44db65', name: 'PS3 #1', consoleType: 'ps3' },
   { id: '9be9a615-3d18-4f92-a2fe-bfef68268278', name: 'PS4 #1', consoleType: 'ps4' },
   { id: '551f976b-9f52-4e32-9db4-a2c938431f4f', name: 'PS5 #1', consoleType: 'ps5' },
   { id: '95bce93b-3e0a-401d-b7a6-65ae769ece61', name: 'Xbox #1', consoleType: 'xbox' },
@@ -14,6 +17,26 @@ export const seedConsoles: NewConsole[] = [
 ];
 
 export const seedControllers: NewController[] = [
+  {
+    id: 'f94cc95a-4a4b-48a6-b88d-edfbcf8ddd67',
+    consoleId: '2c26a7b0-b208-44c7-b905-8de14c44db65',
+    label: 'Mando 1',
+  },
+  {
+    id: '437ce38b-138f-4c95-a643-b50d17cd7654',
+    consoleId: '2c26a7b0-b208-44c7-b905-8de14c44db65',
+    label: 'Mando 2',
+  },
+  {
+    id: '15a1f523-3809-4d11-bb31-72b5f717888a',
+    consoleId: '2c26a7b0-b208-44c7-b905-8de14c44db65',
+    label: 'Mando 3',
+  },
+  {
+    id: '5d454108-6993-4c8c-b811-e705402905ee',
+    consoleId: '2c26a7b0-b208-44c7-b905-8de14c44db65',
+    label: 'Mando 4',
+  },
   {
     id: '2c2bd3c7-3c13-4112-80f0-ff97e1743649',
     consoleId: '9be9a615-3d18-4f92-a2fe-bfef68268278',
@@ -96,119 +119,182 @@ export const seedControllers: NewController[] = [
   },
 ];
 
-// priceCents: precio con un mando. En tiempo libre, precio por hora.
-// extraControllerCents: recargo por cada mando a partir del segundo (RN-01).
+// priceCents: precio del bloque con un mando.
+// extraControllerCents: recargo del bloque por cada mando desde el segundo (RN-01).
 export const seedRates: NewRate[] = [
   {
-    id: 'dcdab2e2-77df-4bce-8440-44a5b39e0789',
-    consoleType: 'ps4',
-    mode: 'fijo_30',
-    priceCents: 200,
-    extraControllerCents: 100,
+    id: '9c30d8b8-ca6a-489e-b4e9-7afa2ba72753',
+    consoleType: 'ps3',
+    blockMinutes: 15,
+    priceCents: 150,
+    extraControllerCents: 50,
   },
   {
-    id: '68ca06b9-df02-4811-8145-ad9826613fbd',
-    consoleType: 'ps4',
-    mode: 'fijo_60',
-    priceCents: 350,
-    extraControllerCents: 100,
-  },
-  {
-    id: '9227bebe-24b3-4d96-bd13-69607b31aa89',
-    consoleType: 'ps4',
-    mode: 'fijo_120',
-    priceCents: 650,
-    extraControllerCents: 100,
-  },
-  {
-    id: '1fa16866-a62a-4c99-a8b4-a108e680acd4',
-    consoleType: 'ps4',
-    mode: 'libre',
-    priceCents: 350,
-    extraControllerCents: 100,
-  },
-  {
-    id: 'e5b0e615-6075-4503-8ec4-a20c4c8070fd',
-    consoleType: 'ps5',
-    mode: 'fijo_30',
-    priceCents: 300,
-    extraControllerCents: 100,
-  },
-  {
-    id: '641d252e-9443-4c5d-8afe-4a285ce3bf56',
-    consoleType: 'ps5',
-    mode: 'fijo_60',
-    priceCents: 500,
-    extraControllerCents: 100,
-  },
-  {
-    id: '1aa9efd6-d697-4430-96a6-7b637687bcdf',
-    consoleType: 'ps5',
-    mode: 'fijo_120',
-    priceCents: 900,
-    extraControllerCents: 100,
-  },
-  {
-    id: 'edfb7559-5c1e-4396-9699-97dcf8ae6a31',
-    consoleType: 'ps5',
-    mode: 'libre',
-    priceCents: 500,
-    extraControllerCents: 100,
-  },
-  {
-    id: '98539446-a880-4c52-84db-1c1cce33fd9d',
-    consoleType: 'xbox',
-    mode: 'fijo_30',
+    id: '171caaef-a326-4a6e-ab26-b105faf628e4',
+    consoleType: 'ps3',
+    blockMinutes: 30,
     priceCents: 250,
     extraControllerCents: 100,
   },
   {
-    id: 'aede72ee-953c-43a4-8f44-8c64d046cbf5',
-    consoleType: 'xbox',
-    mode: 'fijo_60',
+    id: 'fd830f25-dba1-4c6d-98af-2ecd7dad7473',
+    consoleType: 'ps3',
+    blockMinutes: 45,
     priceCents: 400,
-    extraControllerCents: 100,
+    extraControllerCents: 150,
   },
   {
-    id: 'e270f2bb-9ca7-4d7d-b089-23af6fd4b474',
-    consoleType: 'xbox',
-    mode: 'fijo_120',
-    priceCents: 750,
-    extraControllerCents: 100,
+    id: '5a189855-5dbf-43ab-b954-f992d22f36e7',
+    consoleType: 'ps3',
+    blockMinutes: 60,
+    priceCents: 500,
+    extraControllerCents: 200,
   },
   {
-    id: 'fa23f605-499a-4e0a-b33d-3051230d9a56',
-    consoleType: 'xbox',
-    mode: 'libre',
-    priceCents: 400,
-    extraControllerCents: 100,
+    id: '8e6fe1d7-3ce7-4bec-8f10-17891b0b7595',
+    consoleType: 'ps3',
+    blockMinutes: 120,
+    priceCents: 900,
+    extraControllerCents: 350,
   },
   {
-    id: '9cebc6ad-9b03-4276-9c0b-537415282876',
-    consoleType: 'switch',
-    mode: 'fijo_30',
+    id: '5c0cbc0c-9a65-46a5-9777-da01eed84eb7',
+    consoleType: 'ps4',
+    blockMinutes: 15,
     priceCents: 200,
     extraControllerCents: 100,
   },
   {
-    id: '5a3448e4-12d4-460a-aed0-df0a0f82809b',
-    consoleType: 'switch',
-    mode: 'fijo_60',
+    id: '5c537156-13fd-4a47-8884-705430fe4fc1',
+    consoleType: 'ps4',
+    blockMinutes: 30,
     priceCents: 350,
+    extraControllerCents: 150,
+  },
+  {
+    id: 'f39b69f8-8b35-4431-a451-cf098bd7a684',
+    consoleType: 'ps4',
+    blockMinutes: 45,
+    priceCents: 550,
+    extraControllerCents: 250,
+  },
+  {
+    id: 'ccef4997-bf61-4057-9ec8-1f054373438c',
+    consoleType: 'ps4',
+    blockMinutes: 60,
+    priceCents: 700,
+    extraControllerCents: 300,
+  },
+  {
+    id: '05a48985-652c-47d8-95b4-375f7ed8b42f',
+    consoleType: 'ps4',
+    blockMinutes: 120,
+    priceCents: 1300,
+    extraControllerCents: 550,
+  },
+  {
+    id: '96dc38a6-cc6f-44b0-bb80-0620ee3eebfd',
+    consoleType: 'switch',
+    blockMinutes: 15,
+    priceCents: 200,
     extraControllerCents: 100,
   },
   {
-    id: '18a2dd72-a1a8-4213-9cb6-e38cb8e1ffd9',
+    id: 'cd822fba-0993-4f97-bd99-7db5efc3c5d5',
     consoleType: 'switch',
-    mode: 'fijo_120',
-    priceCents: 650,
-    extraControllerCents: 100,
+    blockMinutes: 30,
+    priceCents: 400,
+    extraControllerCents: 200,
   },
   {
-    id: '782ecdb3-fbc1-4686-8fd1-770641b798c5',
+    id: '9bf1fb38-76be-4b76-bfea-7c62f171e461',
     consoleType: 'switch',
-    mode: 'libre',
-    priceCents: 350,
-    extraControllerCents: 100,
+    blockMinutes: 45,
+    priceCents: 600,
+    extraControllerCents: 300,
+  },
+  {
+    id: '8e425332-7680-46d8-8a0b-313d243a93e6',
+    consoleType: 'switch',
+    blockMinutes: 60,
+    priceCents: 800,
+    extraControllerCents: 350,
+  },
+  {
+    id: '9503b6e0-10b1-4191-8e17-eada28ee6500',
+    consoleType: 'switch',
+    blockMinutes: 120,
+    priceCents: 1500,
+    extraControllerCents: 650,
+  },
+  {
+    id: '42865978-79b1-4925-9321-1ea52a31bc5d',
+    consoleType: 'ps5',
+    blockMinutes: 15,
+    priceCents: 250,
+    extraControllerCents: 150,
+  },
+  {
+    id: '80572c0d-0e46-4057-924d-a234b4aa6011',
+    consoleType: 'ps5',
+    blockMinutes: 30,
+    priceCents: 500,
+    extraControllerCents: 250,
+  },
+  {
+    id: '2143695e-6ce9-4928-a5a6-3aa4fdfdbf25',
+    consoleType: 'ps5',
+    blockMinutes: 45,
+    priceCents: 750,
+    extraControllerCents: 350,
+  },
+  {
+    id: '2e27c300-67ec-4910-b5e8-f536c3c16333',
+    consoleType: 'ps5',
+    blockMinutes: 60,
+    priceCents: 1000,
+    extraControllerCents: 450,
+  },
+  {
+    id: 'b98a8875-353d-4572-bebe-bb047af12d59',
+    consoleType: 'ps5',
+    blockMinutes: 120,
+    priceCents: 1900,
+    extraControllerCents: 850,
+  },
+  {
+    id: '268c85d8-b07b-4c83-98da-1ce48bc9b94a',
+    consoleType: 'xbox',
+    blockMinutes: 15,
+    priceCents: 250,
+    extraControllerCents: 150,
+  },
+  {
+    id: '9fdcb3a3-9785-4887-8e48-c958b1c5a695',
+    consoleType: 'xbox',
+    blockMinutes: 30,
+    priceCents: 500,
+    extraControllerCents: 250,
+  },
+  {
+    id: 'aa5aad3d-af03-494d-bc8d-e39e3743748f',
+    consoleType: 'xbox',
+    blockMinutes: 45,
+    priceCents: 750,
+    extraControllerCents: 350,
+  },
+  {
+    id: '58f11c9d-314b-401a-bb60-e8a687e0c81a',
+    consoleType: 'xbox',
+    blockMinutes: 60,
+    priceCents: 1000,
+    extraControllerCents: 450,
+  },
+  {
+    id: 'da0b939a-891e-4650-a3c2-6529463e3e28',
+    consoleType: 'xbox',
+    blockMinutes: 120,
+    priceCents: 1900,
+    extraControllerCents: 850,
   },
 ];
