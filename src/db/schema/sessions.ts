@@ -4,7 +4,7 @@ import { check, index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-cor
 import { consoles } from './consoles';
 import { controlColumns } from './controlColumns';
 import { MAX_CONTROLLERS, MIN_CONTROLLERS, SESSION_MODES, SESSION_STATUSES } from './enums';
-import { rates } from './rates';
+import type { RateBlock } from './rates';
 
 // El tiempo transcurrido no se guarda: se calcula como ahora − started_at (ADR 0003).
 export const sessions = sqliteTable(
@@ -14,9 +14,12 @@ export const sessions = sqliteTable(
     consoleId: text('console_id')
       .notNull()
       .references(() => consoles.id),
-    rateId: text('rate_id')
+    // Copia del tarifario de su tipo de consola al abrir la sesión: un cambio de tarifas no
+    // afecta a las sesiones en curso (RN-08).
+    rateSnapshot: text('rate_snapshot', { mode: 'json' })
+      .$type<RateBlock[]>()
       .notNull()
-      .references(() => rates.id),
+      .default(sql`'[]'`),
     controllerCount: integer('controller_count').notNull(),
     mode: text('mode', { enum: SESSION_MODES }).notNull(),
     // Nulo en tiempo libre.

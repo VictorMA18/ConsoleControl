@@ -3,9 +3,9 @@ import {
   getAvailableConsolesWithStock,
   getConsoleById,
 } from '../../src/db/repositories/consoleRepository';
-import { getRate } from '../../src/db/repositories/rateRepository';
+import { getRateBlocks } from '../../src/db/repositories/rateRepository';
 import { ConsoleNotAvailableError, openSession } from '../../src/db/repositories/sessionRepository';
-import type { Console, Rate } from '../../src/db/schema';
+import type { Console, RateBlock } from '../../src/db/schema';
 import { startSession } from '../../src/services/sessionService';
 
 jest.mock('../../src/db/repositories/consoleRepository', () => ({
@@ -13,7 +13,7 @@ jest.mock('../../src/db/repositories/consoleRepository', () => ({
   getAvailableConsolesWithStock: jest.fn(),
   getConsoleById: jest.fn(),
 }));
-jest.mock('../../src/db/repositories/rateRepository', () => ({ getRate: jest.fn() }));
+jest.mock('../../src/db/repositories/rateRepository', () => ({ getRateBlocks: jest.fn() }));
 jest.mock('../../src/db/repositories/sessionRepository', () => {
   class ConsoleNotAvailableError extends Error {}
   class InsufficientControllersError extends Error {}
@@ -23,7 +23,7 @@ jest.mock('../../src/db/repositories/sessionRepository', () => {
 const mockGetConsoleById = jest.mocked(getConsoleById);
 const mockCountControllers = jest.mocked(countOperationalControllers);
 const mockGetAvailable = jest.mocked(getAvailableConsolesWithStock);
-const mockGetRate = jest.mocked(getRate);
+const mockGetRateBlocks = jest.mocked(getRateBlocks);
 const mockOpenSession = jest.mocked(openSession);
 
 const NOW = 1_760_000_000_000;
@@ -38,16 +38,14 @@ const ps5: Console = {
   syncStatus: 'pendiente',
 };
 
-const rate: Rate = {
-  id: '0eb49c9b-ee8f-452f-bdae-fcd06227ae57',
-  consoleType: 'ps5',
-  mode: 'fijo_60',
-  priceCents: 500,
-  extraControllerCents: 100,
-  createdAt: NOW,
-  updatedAt: NOW,
-  syncStatus: 'pendiente',
-};
+// Tarifario de PS5 del CSV de T12.
+const ps5Rates: RateBlock[] = [
+  { blockMinutes: 15, priceCents: 250, extraControllerCents: 150 },
+  { blockMinutes: 30, priceCents: 500, extraControllerCents: 250 },
+  { blockMinutes: 45, priceCents: 750, extraControllerCents: 350 },
+  { blockMinutes: 60, priceCents: 1000, extraControllerCents: 450 },
+  { blockMinutes: 120, priceCents: 1900, extraControllerCents: 850 },
+];
 
 const input = { consoleId: ps5.id, controllerCount: 2, mode: 'fijo_60' };
 
@@ -55,7 +53,7 @@ beforeEach(() => {
   jest.resetAllMocks();
   mockGetConsoleById.mockResolvedValue(ps5);
   mockCountControllers.mockResolvedValue(4);
-  mockGetRate.mockResolvedValue(rate);
+  mockGetRateBlocks.mockResolvedValue(ps5Rates);
   mockOpenSession.mockImplementation(async (data, now = NOW) => ({
     ...data,
     id: 'b9037d51-e9c9-4dc5-862d-8757f82edf33',
@@ -77,12 +75,12 @@ describe('startSession · escenario 1: inicio exitoso', () => {
     expect(mockOpenSession).toHaveBeenCalledWith(
       {
         consoleId: ps5.id,
-        rateId: rate.id,
+        rateSnapshot: ps5Rates,
         controllerCount: 2,
         mode: 'fijo_60',
         durationMs: 60 * 60 * 1000,
-        // 5.00 de la tarifa + 1.00 por el segundo mando (RN-01).
-        totalCents: 600,
+        // 10.00 por 1 hora de PS5 + 4.50 por el segundo mando (RN-01).
+        totalCents: 1450,
       },
       NOW,
     );
