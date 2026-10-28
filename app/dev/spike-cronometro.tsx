@@ -1,13 +1,17 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Redirect, Stack } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { activeSessionsQueryKey, useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useNow } from '../../src/hooks/useNow';
+import { useSessionTimer } from '../../src/hooks/useSessionTimer';
 import {
   createTestSession,
   finishActiveSessions,
   getPersistenceSnapshot,
 } from '../../src/services/persistenceCheck';
+import type { ActiveSession } from '../../src/services/sessionService';
 import { elapsedMs } from '../../src/services/sessionTimer';
 import { formatDuration } from '../../src/utils/formatDuration';
 
@@ -20,7 +24,22 @@ function clock(ms: number): string {
   return new Date(ms).toLocaleTimeString();
 }
 
+// Una fila por sesión restaurada desde SQLite con el hook real del muro (TW-86).
+function RestoredSessionRow({ session }: { session: ActiveSession }) {
+  const timer = useSessionTimer(session);
+  return (
+    <Text>
+      {session.consoleName} · {formatDuration(timer.elapsedMs)}
+      {timer.remainingMs === null
+        ? ' · tiempo libre'
+        : ` · faltan ${formatDuration(timer.remainingMs)}`}
+    </Text>
+  );
+}
+
 export default function TimerSpikeScreen() {
+  const queryClient = useQueryClient();
+  const restored = useActiveSessions();
   const [memoryCounter, setMemoryCounter] = useState(0);
   const [startedAt, setStartedAt] = useState<number>();
   // B usa el mismo reloj compartido que usará el muro de consolas (TW-84).
@@ -70,6 +89,7 @@ export default function TimerSpikeScreen() {
       .then((session) => {
         setStartedAt(session.startedAt);
         setMemoryCounter(0);
+        void queryClient.invalidateQueries({ queryKey: activeSessionsQueryKey });
         log(`Prueba iniciada (inicio ${clock(session.startedAt)})`);
       })
       .catch((e: unknown) => log(`Error al iniciar: ${String(e)}`));
@@ -79,6 +99,7 @@ export default function TimerSpikeScreen() {
     finishActiveSessions()
       .then(() => {
         setStartedAt(undefined);
+        void queryClient.invalidateQueries({ queryKey: activeSessionsQueryKey });
         log('Prueba terminada');
       })
       .catch((e: unknown) => log(`Error al terminar: ${String(e)}`));
@@ -103,6 +124,16 @@ export default function TimerSpikeScreen() {
           {persisted === undefined ? '--:--:--' : formatDuration(persisted)}
         </Text>
         {startedAt ? <Text>Inicio guardado: {clock(startedAt)}</Text> : null}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>Sesiones restauradas al abrir la app (TW-86)</Text>
+        {restored.isPending ? <Text>Cargando…</Text> : null}
+        {restored.error ? <Text>Error: {restored.error.message}</Text> : null}
+        {restored.data?.length === 0 ? <Text>Ninguna sesión activa</Text> : null}
+        {restored.data?.map((session) => (
+          <RestoredSessionRow key={session.id} session={session} />
+        ))}
       </View>
 
       <View style={styles.buttons}>

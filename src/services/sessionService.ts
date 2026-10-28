@@ -6,7 +6,9 @@ import {
 } from '../db/repositories/consoleRepository';
 import { getRate } from '../db/repositories/rateRepository';
 import {
+  type ActiveSession,
   ConsoleNotAvailableError,
+  getActiveSessionsWithConsole,
   InsufficientControllersError,
   openSession,
 } from '../db/repositories/sessionRepository';
@@ -130,4 +132,13 @@ export async function startSession(
     }
     throw e;
   }
+}
+
+export type { ActiveSession };
+
+// Sesiones activas guardadas en SQLite (HU-002, TW-86). Se leen al abrir la app, así después de
+// cerrarla o reiniciar el celular cada consola vuelve a mostrar su sesión con el tiempo real,
+// que se calcula desde started_at.
+export async function listActiveSessions(): Promise<ActiveSession[]> {
+  return getActiveSessionsWithConsole();
 }

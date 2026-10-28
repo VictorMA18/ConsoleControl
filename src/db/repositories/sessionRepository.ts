@@ -2,7 +2,14 @@ import { and, asc, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'expo-crypto';
 
 import { db } from '../client';
-import { consoles, controllers, type NewSession, type Session, sessions } from '../schema';
+import {
+  type Console,
+  consoles,
+  controllers,
+  type NewSession,
+  type Session,
+  sessions,
+} from '../schema';
 
 export class ConsoleNotAvailableError extends Error {
   constructor() {
@@ -125,6 +132,24 @@ export async function getActiveSessions(): Promise<Session[]> {
     .where(eq(sessions.status, 'activa'))
     .orderBy(asc(sessions.startedAt))
     .all();
+}
+
+export type ActiveSession = Session & Pick<Console, 'consoleType'> & { consoleName: string };
+
+// Sesiones activas con el nombre y tipo de su consola, para mostrarlas en el muro (HU-002).
+export async function getActiveSessionsWithConsole(): Promise<ActiveSession[]> {
+  const rows = db
+    .select({ session: sessions, consoleName: consoles.name, consoleType: consoles.consoleType })
+    .from(sessions)
+    .innerJoin(consoles, eq(sessions.consoleId, consoles.id))
+    .where(eq(sessions.status, 'activa'))
+    .orderBy(asc(sessions.startedAt))
+    .all();
+  return rows.map((row) => ({
+    ...row.session,
+    consoleName: row.consoleName,
+    consoleType: row.consoleType,
+  }));
 }
 
 // updated_at y sync_status se actualizan solos (controlColumns.ts).
