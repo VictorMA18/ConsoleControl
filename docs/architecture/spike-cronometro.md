@@ -72,3 +72,21 @@ Fecha: 28/10/2026 · Celular Android con Expo Go (_modelo y versión de Android 
 | P3 | Apagar y encender el celular | La sesión reaparece con el tiempo real, incluido el tiempo apagado | ✅ Cumple |
 
 **Resultado:** se cumplen los dos escenarios de HU-002. Escenario 1: al minimizar o cerrar y reabrir, el tiempo es exacto. Escenario 2: tras apagar y encender el teléfono, las sesiones se restauran con el tiempo real.
+
+## 7. Limitaciones conocidas (TW-88)
+
+El tiempo de una sesión **nunca se pierde**, porque se calcula desde `started_at` guardado en SQLite. Las limitaciones afectan a lo que la app puede **hacer o mostrar** mientras no está en primer plano.
+
+| # | Limitación | Causa | Impacto | Mitigación |
+|---|---|---|---|---|
+| L1 | Android pausa o cierra la app en segundo plano | Ahorro de batería (modo Doze) y gestores de batería de cada fabricante, más agresivos en Xiaomi, Huawei, Oppo y Samsung | El cronómetro deja de refrescarse y la app puede cerrarse, como en el caso C4 del spike. El tiempo sigue siendo exacto al volver | Ya resuelto: el reloj compartido se detiene en segundo plano y se actualiza al volver (TW-85), y las sesiones se restauran al abrir la app (TW-86) |
+| L2 | **Sin alertas con la app cerrada o en segundo plano** | Mientras Android pausa la app no se ejecuta código, así que nada puede avisar a los 5 minutos ni hacer vibrar el celular | **Afecta a HU-004 (T15 y T16):** si el administrador minimiza la app, la alerta llegaría tarde, recién al volver a abrirla | Programar una **notificación local** con `expo-notifications` al iniciar cada sesión de tiempo fijo, para `started_at + duración − 5 min`. Android la muestra aunque la app esté cerrada. Requiere un ADR nuevo y se decide en T15 |
+| L3 | Cambio manual de la hora del celular | El cálculo usa la hora del sistema ([ADR 0003](../adr/0003-hora-de-inicio-persistida.md)) | Si se adelanta o atrasa la hora, el tiempo y el cobro cambian. Si queda antes de `started_at`, se muestra 0 y no un negativo | Dejar activa la **hora automática** en el celular del ciber. Se revisa al hacer la sincronización (HU-008) |
+| L4 | Tras reiniciar el celular la app no se abre sola | Android no reabre las apps al encender | Las sesiones no se ven hasta abrir la app; al abrirla aparecen con el tiempo real | Aceptado para el MVP: no hay pérdida de datos |
+| L5 | Pruebas hechas solo en Expo Go y en un celular | Es el entorno de desarrollo del Sprint 1 | El APK final y otros modelos pueden gestionar el segundo plano de otra forma | Repetir P1 a P3 con el APK de T19 y, si es posible, en el celular real del ciber |
+| L6 | El cronómetro se refresca cada segundo, no en tiempo continuo | Se refresca al cambiar el segundo del reloj (TW-84) | Diferencia máxima de 1 segundo en pantalla | Aceptado: el cobro se calcula desde `started_at` y no desde lo mostrado |
+
+### Recomendaciones
+
+- **Para el celular del ciber:** activar la hora automática y excluir la app del ahorro de batería (Ajustes → Batería → la app → «Sin restricciones»). Así las notificaciones de HU-004 llegan a tiempo.
+- **Para T15 y T16 (HU-004):** decidir con el equipo si se agregan notificaciones locales (L2). Sin ellas, la alerta de 5 minutos solo funciona con la app abierta en pantalla.
