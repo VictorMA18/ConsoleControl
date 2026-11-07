@@ -1,0 +1,9 @@
+# Documentación de QA
+
+Entregables de calidad del Sprint 1. Las reglas generales están en [`../guides/pruebas.md`](../guides/pruebas.md).
+
+| Archivo                                            | Qué contiene                             | Tarea |
+| -------------------------------------------------- | ---------------------------------------- | ----- |
+| [`casos-de-prueba.md`](casos-de-prueba.md)         | 13 casos de prueba                       | T17   |
+| [`datos-de-prueba.md`](datos-de-prueba.md)         | Consolas, tarifas y resultados esperados | T17   |
+| [`registro-resultados.md`](registro-resultados.md) | Plantilla de resultados                  | T17   |
