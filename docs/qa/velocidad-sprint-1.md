@@ -46,5 +46,3 @@ Es una estimación del agente, no un compromiso.
 | Sprints para las 92 h pendientes a ese ritmo    | 92 / 22          | Unos 4 sprints  |
 
 22 h es un mínimo prudente: no cuenta las 72 h de tareas en curso o en revisión, que ya tienen avance. Una cifra más precisa exige saber cuánto falta de esas tareas: Por confirmar.
-
-Al ritmo observado, lo pendiente del Sprint 1 no entra con holgura antes del MVP, sin contar el resto del backlog. Conviene revisarlo en la Planning.
