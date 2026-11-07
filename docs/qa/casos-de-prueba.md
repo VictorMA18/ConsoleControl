@@ -12,15 +12,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-001 · Inicio exitoso
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-001                                    |
-| Escenario         | Inicio exitoso                            |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática + manual                       |
-| Tarea técnica     | T07, T08, T09                             |
-| Datos de entrada  | D-01 (PS5 #1), 2 mandos, `fijo_60`        |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                                     |
+| ----------------- | --------------------------------------------------------- |
+| Historia          | HU-001                                                    |
+| Escenario         | Inicio exitoso                                            |
+| Prioridad         | Alta                                                      |
+| Tipo              | Automática + manual                                       |
+| Tarea técnica     | T07, T08, T09                                             |
+| Datos de entrada  | D-01 (PS5 #1), 2 mandos, `fijo_60`                        |
+| Prueba automática | `__tests__/services/sessionService.test.ts` (escenario 1) |
 
 **Precondiciones**
 
@@ -44,15 +44,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-002 · Mandos insuficientes
 
-| Campo             | Valor                                                 |
-| ----------------- | ----------------------------------------------------- |
-| Historia          | HU-001                                                |
-| Escenario         | Mandos insuficientes                                  |
-| Prioridad         | Alta                                                  |
-| Tipo              | Automática                                            |
-| Tarea técnica     | T08, T09                                              |
-| Datos de entrada  | D-01 (PS5 #1), 5 mandos (el seed tiene 4 por consola) |
-| Prueba automática | Se indica en el PR de pruebas automáticas             |
+| Campo             | Valor                                                     |
+| ----------------- | --------------------------------------------------------- |
+| Historia          | HU-001                                                    |
+| Escenario         | Mandos insuficientes                                      |
+| Prioridad         | Alta                                                      |
+| Tipo              | Automática                                                |
+| Tarea técnica     | T08, T09                                                  |
+| Datos de entrada  | D-01 (PS5 #1), 5 mandos (el seed tiene 4 por consola)     |
+| Prueba automática | `__tests__/services/sessionService.test.ts` (escenario 2) |
 
 **Precondiciones**
 
@@ -75,15 +75,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-003 · Consola ocupada
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-001                                    |
-| Escenario         | Consola ocupada                           |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática                                |
-| Tarea técnica     | T08, T09                                  |
-| Datos de entrada  | D-01 (PS5 #1) con una sesión activa       |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                                     |
+| ----------------- | --------------------------------------------------------- |
+| Historia          | HU-001                                                    |
+| Escenario         | Consola ocupada                                           |
+| Prioridad         | Alta                                                      |
+| Tipo              | Automática                                                |
+| Tarea técnica     | T08, T09                                                  |
+| Datos de entrada  | D-01 (PS5 #1) con una sesión activa                       |
+| Prueba automática | `__tests__/services/sessionService.test.ts` (escenario 3) |
 
 **Precondiciones**
 
@@ -112,7 +112,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 | Tipo              | Automática                                |
 | Tarea técnica     | T10                                       |
 | Datos de entrada  | D-02 (sesión de referencia)               |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Prueba automática | `__tests__/services/sessionTimer.test.ts` |
 
 **Precondiciones**
 
@@ -134,15 +134,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-005 · Reinicio del teléfono
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-002                                    |
-| Escenario         | Reinicio del teléfono                     |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática + manual                       |
-| Tarea técnica     | T10                                       |
-| Datos de entrada  | D-02, con dos consolas                    |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| Historia          | HU-002                                                                                  |
+| Escenario         | Reinicio del teléfono                                                                   |
+| Prioridad         | Alta                                                                                    |
+| Tipo              | Automática + manual                                                                     |
+| Tarea técnica     | T10                                                                                     |
+| Datos de entrada  | D-02, con dos consolas                                                                  |
+| Prueba automática | `__tests__/qa/hu-002-cronometro.test.ts` y `__tests__/hooks/useActiveSessions.test.tsx` |
 
 **Precondiciones**
 
@@ -165,15 +165,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-006 · Código cromático
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-002                                    |
-| Escenario         | Código cromático                          |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática + manual                       |
-| Tarea técnica     | T11                                       |
-| Datos de entrada  | D-01 con sesión `fijo_30`                 |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                                                   |
+| ----------------- | ----------------------------------------------------------------------- |
+| Historia          | HU-002                                                                  |
+| Escenario         | Código cromático                                                        |
+| Prioridad         | Alta                                                                    |
+| Tipo              | Automática + manual                                                     |
+| Tarea técnica     | T11                                                                     |
+| Datos de entrada  | D-01 con sesión `fijo_30`                                               |
+| Prueba automática | `__tests__/qa/hu-002-cronometro.test.ts` (`it.todo`, bloqueado por T11) |
 
 **Precondiciones**
 
@@ -195,15 +195,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-007 · Recargo por mando adicional
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-003                                    |
-| Escenario         | Recargo por mando adicional               |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática                                |
-| Tarea técnica     | T12, T13                                  |
-| Datos de entrada  | D-03 (montos de CP-007)                   |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                 |
+| ----------------- | ------------------------------------- |
+| Historia          | HU-003                                |
+| Escenario         | Recargo por mando adicional           |
+| Prioridad         | Alta                                  |
+| Tipo              | Automática                            |
+| Tarea técnica     | T12, T13                              |
+| Datos de entrada  | D-03 (montos de CP-007)               |
+| Prueba automática | `__tests__/qa/hu-003-tarifas.test.ts` |
 
 **Precondiciones**
 
@@ -225,15 +225,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-008 · Tiempo fijo
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-003                                    |
-| Escenario         | Tiempo fijo                               |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática                                |
-| Tarea técnica     | T12, T13, T14                             |
-| Datos de entrada  | D-04 (tarifario por consola y modalidad)  |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                    |
+| ----------------- | ---------------------------------------- |
+| Historia          | HU-003                                   |
+| Escenario         | Tiempo fijo                              |
+| Prioridad         | Alta                                     |
+| Tipo              | Automática                               |
+| Tarea técnica     | T12, T13, T14                            |
+| Datos de entrada  | D-04 (tarifario por consola y modalidad) |
+| Prueba automática | `__tests__/qa/hu-003-tarifas.test.ts`    |
 
 **Precondiciones**
 
@@ -254,15 +254,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-009 · Aviso previo (5 minutos antes)
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-004                                    |
-| Escenario         | Aviso previo (5 minutos antes)            |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática + manual                       |
-| Tarea técnica     | T15, T16                                  |
-| Datos de entrada  | D-01 con `fijo_30`                        |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Historia          | HU-004                                                                                                            |
+| Escenario         | Aviso previo (5 minutos antes)                                                                                    |
+| Prioridad         | Alta                                                                                                              |
+| Tipo              | Automática + manual                                                                                               |
+| Tarea técnica     | T15, T16                                                                                                          |
+| Datos de entrada  | D-01 con `fijo_30`                                                                                                |
+| Prueba automática | `__tests__/services/sessionAlerts.test.ts` y `__tests__/qa/hu-004-alertas.test.ts` (`it.todo`, bloqueado por T16) |
 
 **Precondiciones**
 
@@ -285,15 +285,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-010 · Tiempo cumplido
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | HU-004                                    |
-| Escenario         | Tiempo cumplido                           |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática                                |
-| Tarea técnica     | T15                                       |
-| Datos de entrada  | D-01 con `fijo_30`                        |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                      |
+| ----------------- | ------------------------------------------ |
+| Historia          | HU-004                                     |
+| Escenario         | Tiempo cumplido                            |
+| Prioridad         | Alta                                       |
+| Tipo              | Automática                                 |
+| Tarea técnica     | T15                                        |
+| Datos de entrada  | D-01 con `fijo_30`                         |
+| Prueba automática | `__tests__/services/sessionAlerts.test.ts` |
 
 **Precondiciones**
 
@@ -316,15 +316,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-011 · Sesión con 6 mandos (el máximo)
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | Caso de borde (TW-121)                    |
-| Escenario         | Sesión con 6 mandos (el máximo)           |
-| Prioridad         | Alta                                      |
-| Tipo              | Automática                                |
-| Tarea técnica     | T09, T13                                  |
-| Datos de entrada  | D-05 (6 mandos)                           |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                                       |
+| ----------------- | ------------------------------------------- |
+| Historia          | Caso de borde (TW-121)                      |
+| Escenario         | Sesión con 6 mandos (el máximo)             |
+| Prioridad         | Alta                                        |
+| Tipo              | Automática                                  |
+| Tarea técnica     | T09, T13                                    |
+| Datos de entrada  | D-05 (6 mandos)                             |
+| Prueba automática | `__tests__/qa/hu-001-inicio-sesion.test.ts` |
 
 **Precondiciones**
 
@@ -348,7 +348,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 | Tipo              | Manual en dispositivo                           |
 | Tarea técnica     | T10                                             |
 | Datos de entrada  | D-02                                            |
-| Prueba automática | Se indica en el PR de pruebas automáticas       |
+| Prueba automática | No aplica                                       |
 
 **Precondiciones**
 
@@ -365,15 +365,15 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## CP-013 · 4 consolas con sesiones simultáneas
 
-| Campo             | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| Historia          | Caso de borde (TW-121)                    |
-| Escenario         | 4 consolas con sesiones simultáneas       |
-| Prioridad         | Alta                                      |
-| Tipo              | Manual en dispositivo                     |
-| Tarea técnica     | T07, T10, T11                             |
-| Datos de entrada  | D-06 (cuatro consolas)                    |
-| Prueba automática | Se indica en el PR de pruebas automáticas |
+| Campo             | Valor                               |
+| ----------------- | ----------------------------------- |
+| Historia          | Caso de borde (TW-121)              |
+| Escenario         | 4 consolas con sesiones simultáneas |
+| Prioridad         | Alta                                |
+| Tipo              | Manual en dispositivo               |
+| Tarea técnica     | T07, T10, T11                       |
+| Datos de entrada  | D-06 (cuatro consolas)              |
+| Prueba automática | No aplica                           |
 
 **Precondiciones**
 
@@ -387,3 +387,25 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 3. Anotar si la app se traba o se cierra.
 
 **Resultado esperado:** Los 4 cronómetros avanzan a la vez, cada uno con su tiempo, sin bloqueos ni cierres.
+
+## Cobertura automática
+
+Resultado de `pnpm test` el 06/11/2026 en `feature/T17-pruebas-automaticas`: 13 suites, 127 pruebas pasan, 0 fallan, 6 `todo`. Las pruebas de `__tests__/qa/` son 14 nuevas; el resto ya existía y no se duplicó.
+
+| Caso   | Archivo                                                                                | Estado                                                                     |
+| ------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| CP-001 | `__tests__/services/sessionService.test.ts`                                            | Pasa la lógica. `todo`: consola y mandos en la transacción, y los 2 toques |
+| CP-002 | `__tests__/services/sessionService.test.ts`                                            | Pasa                                                                       |
+| CP-003 | `__tests__/services/sessionService.test.ts`                                            | Pasa                                                                       |
+| CP-004 | `__tests__/services/sessionTimer.test.ts`                                              | Pasa                                                                       |
+| CP-005 | `__tests__/qa/hu-002-cronometro.test.ts`, `__tests__/hooks/useActiveSessions.test.tsx` | Pasa. `todo`: reinicio real (T18)                                          |
+| CP-006 | `__tests__/qa/hu-002-cronometro.test.ts`                                               | `todo`: bloqueado por T11                                                  |
+| CP-007 | `__tests__/qa/hu-003-tarifas.test.ts`                                                  | Pasa                                                                       |
+| CP-008 | `__tests__/qa/hu-003-tarifas.test.ts`                                                  | Pasa                                                                       |
+| CP-009 | `__tests__/services/sessionAlerts.test.ts`, `__tests__/qa/hu-004-alertas.test.ts`      | Pasa la lógica. `todo`: ámbar y vibración, bloqueado por T16               |
+| CP-010 | `__tests__/services/sessionAlerts.test.ts`                                             | Pasa                                                                       |
+| CP-011 | `__tests__/qa/hu-001-inicio-sesion.test.ts`                                            | Pasa                                                                       |
+| CP-012 | No aplica                                                                              | Manual en dispositivo                                                      |
+| CP-013 | No aplica                                                                              | Manual en dispositivo                                                      |
+
+Pasar en Jest no equivale a `Aprobó` en [`registro-resultados.md`](registro-resultados.md): ese registro es de la ejecución en el celular.
