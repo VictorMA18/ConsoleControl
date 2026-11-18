@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
+import { Vibration } from 'react-native';
 
 import ConsoleWallScreen from '../../app/index';
 import { type ConsoleWithStock, listConsoles } from '../../src/services/consoleService';
@@ -132,5 +133,60 @@ describe('muro con varias sesiones (T11, TW-93)', () => {
       expect(await screen.findByTestId(`cronometro-${id}`)).toBeTruthy();
     }
     expect(screen.getAllByText('En juego')).toHaveLength(4);
+  });
+});
+
+describe('alerta de vencimiento en el muro (T16)', () => {
+  const MINUTE = 60_000;
+
+  beforeEach(() => jest.useFakeTimers({ now: NOW }));
+  afterEach(() => jest.useRealTimers());
+
+  it('CP-009 vibra una vez y muestra el aviso cuando faltan 5 minutos', async () => {
+    const vibrate = jest.spyOn(Vibration, 'vibrate').mockImplementation(() => {});
+    const ps5 = { ...inventory[1], status: 'en_juego' as const };
+    jest.mocked(listConsoles).mockResolvedValue([inventory[0], ps5]);
+    jest.mocked(listActiveSessions).mockResolvedValue([
+      {
+        id: 'sesion-ps5',
+        consoleId: ps5.id,
+        consoleName: 'PS5 #1',
+        consoleType: 'ps5',
+        rateSnapshot: [],
+        controllerCount: 1,
+        mode: 'fijo_30',
+        durationMs: 30 * MINUTE,
+        startedAt: NOW - 24 * MINUTE,
+        endedAt: null,
+        status: 'activa',
+        totalCents: 500,
+        createdAt: NOW,
+        updatedAt: NOW,
+        syncStatus: 'pendiente',
+      },
+    ]);
+    await render(
+      <QueryClientProvider client={client}>
+        <ConsoleWallScreen />
+      </QueryClientProvider>,
+    );
+    await screen.findByText('PS5 #1');
+    expect(vibrate).not.toHaveBeenCalled();
+
+    await act(async () => {
+      jest.advanceTimersByTime(MINUTE + 1_000);
+    });
+
+    expect(screen.getByText('PS5 #1: faltan 5 minutos o menos')).toBeTruthy();
+    expect(screen.getByText('Por terminar')).toBeTruthy();
+    expect(vibrate).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      jest.advanceTimersByTime(30_000);
+    });
+    expect(vibrate).toHaveBeenCalledTimes(1);
+
+    await fireEvent.press(screen.getByTestId('aviso-alerta'));
+    expect(screen.queryByTestId('aviso-alerta')).toBeNull();
   });
 });
