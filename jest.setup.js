@@ -1,3 +1,4 @@
+/* eslint-env jest */
 // Reanimated 4 no corre en Jest (su mock oficial falla con este preset). La app solo usa
 // Animated.View y useReducedMotion, así que basta con este reemplazo mínimo.
 jest.mock('react-native-reanimated', () => {
