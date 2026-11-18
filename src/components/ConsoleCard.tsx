@@ -8,6 +8,7 @@ import { CARD_STATE_STYLES, cardState, type CardState } from '../utils/cardState
 import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
 import { formatDuration } from '../utils/formatDuration';
 import { SESSION_MODE_LABELS } from '../utils/sessionLabels';
+import { StatusBand } from './StatusBand';
 
 type Props = {
   console: ConsoleWithStock;
@@ -72,9 +73,7 @@ function CardShell({ console, state, onPress, children }: ShellProps) {
       onPress={() => onPress(console)}
       className="flex-1 overflow-hidden rounded-2xl border border-line bg-surface active:opacity-80"
     >
-      <View testID={`estado-${console.id}`} className={`px-4 py-2 ${style.band}`}>
-        <Text className={`text-base font-bold ${style.text}`}>{style.label}</Text>
-      </View>
+      <StatusBand testID={`estado-${console.id}`} state={state} />
       <View className="gap-1 px-4 py-4">
         <Text className="text-2xl font-bold text-ink">{console.name}</Text>
         {children}
