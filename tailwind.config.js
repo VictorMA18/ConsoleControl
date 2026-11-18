@@ -14,7 +14,7 @@ module.exports = {
         primary: { DEFAULT: '#0369A1', pressed: '#075985' },
         available: { DEFAULT: '#15803D', soft: '#DCFCE7' },
         playing: { DEFAULT: '#B91C1C', soft: '#FEE2E2' },
-        warning: { DEFAULT: '#F59E0B', ink: '#78350F', soft: '#FEF3C7' },
+        warning: { DEFAULT: '#F59E0B', ink: '#451A03', soft: '#FEF3C7' },
       },
     },
   },
