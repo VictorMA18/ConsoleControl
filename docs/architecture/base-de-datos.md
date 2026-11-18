@@ -167,11 +167,11 @@ Las claves foráneas no borran en cascada: una consola con sesiones registradas 
 | M7 | Valores de estado en español y en `snake_case` | Siguen el valor `activa` y `pendiente` que ya usa la arquitectura |
 | M8 | Sin tabla ni columnas de usuario | Observación O1 ([ADR 0009](../adr/0009-sin-login-en-el-mvp.md)) |
 
-## 7.1. Datos iniciales (provisionales)
+## 7.1. Datos iniciales
 
 Al abrir la app se aplican las migraciones y se cargan los datos de `src/db/seedData.ts` en las tablas vacías (TW-26). Las consolas y mandos solo se cargan si no hay consolas, y las tarifas, si no hay tarifas. Así no se duplica ni se pisa lo que cambie el administrador, y la migración 0001 de T13 puede vaciar el tarifario anterior.
 
-Los datos son **provisionales**: una consola por tipo con 4 mandos cada una, y las tarifas del CSV del documento de T12 «Tarifas base y regla de recargo por mando adicional», pendientes de confirmar con JS (pregunta P1). Precios en soles, con un mando; entre paréntesis, el recargo por mando extra:
+Una consola por tipo: PS5 y Switch con 6 mandos y las demás con 4. Las tarifas son las aprobadas en [`tarifario.md`](tarifario.md) (T12). Precios en soles, con un mando; entre paréntesis, el recargo por mando extra:
 
 | Tipo | 15 min | 30 min | 45 min | 1 h | 2 h |
 |---|---|---|---|---|---|
@@ -189,7 +189,7 @@ Comprueba el criterio de T03 «Una sesión guardada sobrevive al cierre de la ap
 
 | # | Paso | Resultado esperado |
 |---|---|---|
-| 1 | Abrir la pantalla de diagnóstico | 5 consolas, 20 mandos operativos, 25 tarifas y 0 sesiones activas (en una instalación nueva; antes de T13 eran 4, 16 y 16) |
+| 1 | Abrir la pantalla de diagnóstico | 5 consolas, 24 mandos operativos, 25 tarifas y 0 sesiones activas (en una instalación nueva; antes de T12 eran 20 mandos y antes de T13, 4, 16 y 16) |
 | 2 | Pulsar «Crear sesión de prueba» | 1 sesión activa con su hora de inicio |
 | 3 | Cerrar la app por completo desde el selector de apps recientes y esperar 2 minutos | |
 | 4 | Reabrir la app y volver a la pantalla de diagnóstico | La misma sesión sigue activa, con la misma hora de inicio y «hace 2 min» o más |
@@ -200,7 +200,7 @@ Comprueba el criterio de T03 «Una sesión guardada sobrevive al cierre de la ap
 
 | # | Pregunta | A quién |
 |---|---|---|
-| P1 | El documento de T12 trae dos juegos de precios que no coinciden: sus tablas (por ejemplo, PS4 1 h = S/ 5.00) y su CSV (PS4 1 h = S/ 7.00). Sus casos C4 y C8 también dan montos distintos en la tabla y en los «ejemplos de lectura». Se usa el CSV, que coincide con los ejemplos de lectura. ¿Cuál es el correcto? | JS (T12) |
+| P1 | El documento de T12 trae dos juegos de precios que no coinciden: sus tablas (por ejemplo, PS4 1 h = S/ 5.00) y su CSV (PS4 1 h = S/ 7.00). Sus casos C4 y C8 también dan montos distintos en la tabla y en los «ejemplos de lectura». Se usa el CSV, que coincide con los ejemplos de lectura. **Resuelta:** vale el CSV, aprobado en [`tarifario.md`](tarifario.md) | JS (T12) |
 | P2 | ~~En tiempo libre, ¿se cobra por hora completa, por fracción o por minuto?~~ Resuelta por T12: bloques de 15 min con 3 min de gracia | — |
 | P3 | Consolas y mandos reales del local. T12 menciona PS3, PS4, Switch y PS5 en un lugar, y además Xbox en su CSV. Se dejan los cinco tipos | JS |
 | P5 | Máximo de mandos por sesión: T12 dice 8 en un lugar y 6 en `reglas.csv`. HU-001 y la app usan 6 | JS |
