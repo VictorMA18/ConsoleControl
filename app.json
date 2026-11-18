@@ -17,12 +17,24 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.VIBRATE"]
+      "permissions": ["android.permission.VIBRATE"],
+      "package": "pe.thewolfs.consolecontrol"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": ["expo-router", "expo-sqlite"],
-    "scheme": "consolecontrol"
+    "scheme": "consolecontrol",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "ab3f854d-2989-42a7-8fc3-fbd24c732785"
+      }
+    },
+    "owner": "victornma"
   }
 }
