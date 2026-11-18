@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import SessionDialogScreen from '../../app/sesion/[consoleId]';
 import type { Session } from '../../src/db/schema';
 import { type ConsoleWithStock, listConsoles } from '../../src/services/consoleService';
-import { startSession } from '../../src/services/sessionService';
+import { listRateBlocks, startSession } from '../../src/services/sessionService';
 
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
@@ -18,6 +18,7 @@ jest.mock('expo-router', () => ({
 jest.mock('../../src/services/consoleService', () => ({ listConsoles: jest.fn() }));
 jest.mock('../../src/services/sessionService', () => ({
   listActiveSessions: jest.fn(),
+  listRateBlocks: jest.fn(),
   startSession: jest.fn(),
 }));
 
@@ -44,6 +45,15 @@ const ps4 = consoleRow({
   operationalControllers: 4,
 });
 
+// Tarifario de PS5 de docs/architecture/tarifario.md.
+const ps5Rates = [
+  { blockMinutes: 15, priceCents: 250, extraControllerCents: 150 },
+  { blockMinutes: 30, priceCents: 500, extraControllerCents: 250 },
+  { blockMinutes: 45, priceCents: 750, extraControllerCents: 350 },
+  { blockMinutes: 60, priceCents: 1000, extraControllerCents: 450 },
+  { blockMinutes: 120, priceCents: 1900, extraControllerCents: 850 },
+];
+
 let client: QueryClient;
 
 beforeEach(() => {
@@ -51,6 +61,7 @@ beforeEach(() => {
   mockConsoleId = '551f976b-9f52-4e32-9db4-a2c938431f4f';
   jest.mocked(listConsoles).mockResolvedValue([consoleRow({}), ps4]);
   jest.mocked(startSession).mockReset();
+  jest.mocked(listRateBlocks).mockResolvedValue(ps5Rates);
   mockBack.mockClear();
   mockReplace.mockClear();
 });
@@ -124,5 +135,29 @@ describe('diálogo de sesión (T08)', () => {
 
     expect(await screen.findByText('PS5 #1 está en juego')).toBeTruthy();
     expect(screen.queryByTestId('iniciar-sesion')).toBeNull();
+  });
+});
+
+describe('total estimado (T14)', () => {
+  it('muestra el total del tarifario y lo actualiza al cambiar mandos y modalidad', async () => {
+    await renderDialog();
+
+    expect(await screen.findByText('S/ 10.00')).toBeTruthy();
+
+    await fireEvent.press(screen.getByTestId('mandos-6'));
+    expect(screen.getByTestId('total-estimado')).toHaveTextContent('S/ 28.30');
+
+    await fireEvent.press(screen.getByTestId('modalidad-fijo_120'));
+    // 19.00 + 8.50 × 2 + 5.90 × 3 (30 % menos desde el 4.º mando en PS5).
+    expect(screen.getByTestId('total-estimado')).toHaveTextContent('S/ 53.70');
+  });
+
+  it('en tiempo libre indica que el monto se calcula al cerrar', async () => {
+    await renderDialog();
+
+    await fireEvent.press(await screen.findByTestId('modalidad-libre'));
+
+    expect(screen.getByText('Se calcula al cerrar')).toBeTruthy();
+    expect(screen.queryByTestId('total-estimado')).toBeNull();
   });
 });
