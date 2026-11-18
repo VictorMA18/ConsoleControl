@@ -18,3 +18,4 @@ Entregables de calidad del Sprint 1. Las reglas generales están en [`../guides/
 | [`velocidad-sprint-1.md`](velocidad-sprint-1.md)               | Velocidad real y capacidad               | T21      |
 | [`ajustes-backlog.md`](ajustes-backlog.md)                     | Cambios y tareas que pasan               | T21      |
 | [`planning-siguiente-sprint.md`](planning-siguiente-sprint.md) | Preparación de la Planning               | T21      |
+| [`validacion-prototipo.md`](validacion-prototipo.md)           | Validación del prototipo                 | T05      |
