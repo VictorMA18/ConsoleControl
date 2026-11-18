@@ -1,12 +1,19 @@
-// Datos iniciales PROVISIONALES. Las tarifas vienen del CSV del documento de T12 «Tarifas base
-// y regla de recargo por mando adicional», pendientes de confirmar con JS: el documento trae otros
-// precios en sus tablas. Las consolas y mandos son de ejemplo hasta tener el inventario real.
-// Montos en céntimos: 350 = S/ 3.50. Los id son UUID fijos para que el mismo registro tenga el
-// mismo id en todos los dispositivos.
+// Datos iniciales. Las tarifas son las de docs/architecture/tarifario.md (T12). Montos en
+// céntimos: 350 = S/ 3.50. Los id son UUID fijos para que el mismo registro tenga el mismo id
+// en todos los dispositivos.
 
 import type { NewConsole, NewController, NewRate } from './schema';
+import type { ConsoleType } from './schema/enums';
 
-export const CONTROLLERS_PER_CONSOLE = 4;
+// Mandos de cada consola. PS5 y Switch tienen 6 porque se alquilan a grupos grandes, que es
+// donde aplica el descuento desde el 4.º mando (T12).
+export const CONTROLLERS_BY_CONSOLE_TYPE: Record<ConsoleType, number> = {
+  ps3: 4,
+  ps4: 4,
+  ps5: 6,
+  xbox: 4,
+  switch: 6,
+};
 
 export const seedConsoles: NewConsole[] = [
   { id: '2c26a7b0-b208-44c7-b905-8de14c44db65', name: 'PS3 #1', consoleType: 'ps3' },
@@ -78,6 +85,16 @@ export const seedControllers: NewController[] = [
     label: 'Mando 4',
   },
   {
+    id: 'd38c7046-aeab-4159-814d-fe3aa0e951ac',
+    consoleId: '551f976b-9f52-4e32-9db4-a2c938431f4f',
+    label: 'Mando 5',
+  },
+  {
+    id: 'f31160fd-d525-4245-98bc-95f17eac34dd',
+    consoleId: '551f976b-9f52-4e32-9db4-a2c938431f4f',
+    label: 'Mando 6',
+  },
+  {
     id: 'f118a786-e2d1-4c94-ba4d-15308fbfffb0',
     consoleId: '95bce93b-3e0a-401d-b7a6-65ae769ece61',
     label: 'Mando 1',
@@ -116,6 +133,16 @@ export const seedControllers: NewController[] = [
     id: '1e9633f8-9ed8-4106-9385-4dc61a81174b',
     consoleId: 'fb64a232-3044-4929-99c9-8a0c7203cdac',
     label: 'Mando 4',
+  },
+  {
+    id: 'f065090d-b1e5-4645-86b7-38d2894b58c2',
+    consoleId: 'fb64a232-3044-4929-99c9-8a0c7203cdac',
+    label: 'Mando 5',
+  },
+  {
+    id: '7eacf674-d229-4ade-a606-09469292711b',
+    consoleId: 'fb64a232-3044-4929-99c9-8a0c7203cdac',
+    label: 'Mando 6',
   },
 ];
 
