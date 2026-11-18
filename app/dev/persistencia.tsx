@@ -2,12 +2,14 @@ import { Redirect, Stack } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { queryClient } from '../../src/hooks/queryClient';
 import {
   createTestSession,
   finishActiveSessions,
   getPersistenceSnapshot,
   type PersistenceSnapshot,
   type SessionScenario,
+  startNearlyDueSession,
   trySessionScenario,
 } from '../../src/services/persistenceCheck';
 
@@ -20,6 +22,8 @@ export default function PersistenceScreen() {
   const [message, setMessage] = useState('');
 
   const reload = useCallback(() => {
+    // El muro vuelve a leer consolas y sesiones al regresar a él.
+    void queryClient.invalidateQueries();
     getPersistenceSnapshot()
       .then((result) => {
         setSnapshot(result);
@@ -53,6 +57,15 @@ export default function PersistenceScreen() {
           setMessage(result.message);
         }
       })
+      .catch((e: unknown) => setMessage(`Error: ${String(e)}`))
+      .finally(reload);
+  };
+
+  const onNearlyDue = () => {
+    startNearlyDueSession()
+      .then((result) =>
+        setMessage(result.ok ? 'Sesión iniciada: entra en alerta en 10 segundos' : result.message),
+      )
       .catch((e: unknown) => setMessage(`Error: ${String(e)}`))
       .finally(reload);
   };
@@ -94,6 +107,7 @@ export default function PersistenceScreen() {
           title="3. Iniciar en consola ocupada"
           onPress={() => onScenario('consola_ocupada')}
         />
+        <Button title="4. Sesión que vence en 5 min (alertas)" onPress={onNearlyDue} />
         <Button title="Finalizar sesiones activas" onPress={onFinish} />
         <Button title="Recargar" onPress={reload} />
       </View>

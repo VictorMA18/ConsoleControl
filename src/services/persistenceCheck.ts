@@ -65,6 +65,20 @@ export async function createTestSession(
   );
 }
 
+// Inicia con el servicio real una sesión de 30 min en la primera consola disponible, como si hubiera
+// empezado hace 24 min 50 s: entra en "Por terminar" a los 10 s y vence 5 min después. Sirve para
+// probar en el celular las alertas de T15 y T16 sin esperar media hora (T18).
+export async function startNearlyDueSession(now: number = Date.now()): Promise<StartSessionResult> {
+  const target = (await getConsoles()).find((c) => c.status === 'disponible');
+  if (!target) {
+    throw new Error('No hay consolas disponibles');
+  }
+  return startSession(
+    { consoleId: target.id, controllerCount: 1, mode: 'fijo_30' },
+    now - (24 * 60 + 50) * 1000,
+  );
+}
+
 // Ejecuta un escenario de HU-001 con el servicio real de T09.
 export async function trySessionScenario(scenario: SessionScenario): Promise<StartSessionResult> {
   const consoles = await getConsoles();
