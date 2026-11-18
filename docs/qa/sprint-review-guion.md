@@ -46,7 +46,7 @@
 1. Abrir el diálogo de una consola libre.
 2. Cambiar los mandos y la modalidad, y ver el total estimado.
 
-**Pregunta:** ¿estos precios y el recargo coinciden con lo que cobra hoy? Los precios son provisionales hasta cerrar TW-12.
+**Pregunta:** ¿estos precios y el recargo coinciden con lo que cobra hoy?
 
 ### 4. HU-004 · Alerta de vencimiento
 

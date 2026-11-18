@@ -30,7 +30,7 @@ Los resultados se registran en [`registro-resultados.md`](registro-resultados.md
 
 Para repetir una prueba desde cero, borrar los datos de la app en Ajustes o reinstalarla.
 
-Para CP-011 hacen falta 6 mandos en una consola y el seed trae 4: inventario Por confirmar. Si no se resuelve, registrar el caso como `Bloqueado`.
+Para CP-011 se usa PS5 #1, que tiene 6 mandos.
 
 ## 3. Procedimientos
 

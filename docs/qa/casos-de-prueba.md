@@ -51,7 +51,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 | Prioridad         | Alta                                                      |
 | Tipo              | Automática                                                |
 | Tarea técnica     | T08, T09                                                  |
-| Datos de entrada  | D-01 (PS5 #1), 5 mandos (el seed tiene 4 por consola)     |
+| Datos de entrada  | PS4 #1 (4 mandos), 5 mandos                               |
 | Prueba automática | `__tests__/services/sessionService.test.ts` (escenario 2) |
 
 **Precondiciones**
@@ -207,7 +207,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 **Precondiciones**
 
-- Tarifas del seed cargadas (provisionales, ver `datos-de-prueba.md`).
+- Tarifas del seed cargadas (ver `datos-de-prueba.md`).
 
 **Pasos**
 
@@ -237,7 +237,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 **Precondiciones**
 
-- Tarifas del seed cargadas (provisionales).
+- Tarifas del seed cargadas.
 
 **Pasos**
 
@@ -328,7 +328,7 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 **Precondiciones**
 
-- La consola tiene 6 mandos operativos. El seed solo trae 4 por consola: en el celular hace falta inventario real (Por confirmar).
+- La consola tiene 6 mandos operativos (PS5 #1 o Switch #1).
 
 **Pasos**
 

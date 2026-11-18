@@ -57,7 +57,7 @@ beforeEach(() => {
     .mockImplementation(async (input) => ({ ...input, id: 'sesion' }) as unknown as Session);
 });
 
-describe('CP-011 · sesión con 6 mandos (montos provisionales, D-05)', () => {
+describe('CP-011 · sesión con 6 mandos (D-05)', () => {
   it.each([
     ['ps4', 2200],
     ['xbox', 3250],
