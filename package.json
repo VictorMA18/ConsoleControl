@@ -43,6 +43,7 @@
     "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
     "babel-plugin-inline-import": "^3.0.0",
+    "babel-preset-expo": "~58.0.19",
     "drizzle-kit": "^0.31.11",
     "eslint": "^8.57.1",
     "eslint-config-expo": "^58.0.4",
