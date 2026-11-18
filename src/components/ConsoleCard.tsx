@@ -24,8 +24,11 @@ export function ConsoleCard({ console, session, onPress }: Props) {
   }
   return (
     <CardShell console={console} state={cardState(console.status, null)} onPress={onPress}>
-      <Text className="text-base text-muted">
-        {CONSOLE_TYPE_LABELS[console.consoleType]} · {console.operationalControllers} mandos libres
+      <Text
+        accessibilityLabel={`${CONSOLE_TYPE_LABELS[console.consoleType]}, ${console.operationalControllers} mandos libres`}
+        className="text-base text-muted"
+      >
+        {console.operationalControllers} mandos libres
       </Text>
     </CardShell>
   );
@@ -49,8 +52,10 @@ function BusyConsoleCard({ console, session, onPress }: Required<Props>) {
       <Text className="text-base text-muted" style={{ fontVariant: ['tabular-nums'] }}>
         {remainingMs === null
           ? SESSION_MODE_LABELS[session.mode]
-          : `Quedan ${formatDuration(remainingMs)}`}{' '}
-        · {session.controllerCount} {session.controllerCount === 1 ? 'mando' : 'mandos'}
+          : `Quedan ${formatDuration(remainingMs)}`}
+      </Text>
+      <Text className="text-base text-muted">
+        {session.controllerCount} {session.controllerCount === 1 ? 'mando' : 'mandos'}
       </Text>
     </CardShell>
   );
