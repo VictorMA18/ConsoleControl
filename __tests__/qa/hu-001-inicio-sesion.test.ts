@@ -10,7 +10,8 @@ import { seedRates } from '../../src/db/seedData';
 import { startSession } from '../../src/services/sessionService';
 
 // Casos de docs/qa/casos-de-prueba.md. CP-001, CP-002 y CP-003 ya los cubre la lógica probada en
-// __tests__/services/sessionService.test.ts; aquí va lo que falta.
+// __tests__/services/sessionService.test.ts y los 2 toques, __tests__/app/sesion.test.tsx; aquí va
+// lo que falta.
 
 jest.mock('../../src/db/repositories/consoleRepository', () => ({
   countOperationalControllers: jest.fn(),
@@ -95,5 +96,4 @@ describe('CP-001 · partes sin prueba automática', () => {
     'CP-001 consola "En Juego" y mandos descontados. Bloqueado: openSession usa la transacción ' +
       'de expo-sqlite y Jest no tiene un driver SQLite (ver revision-codigo.md)',
   );
-  it.todo('CP-001 la operación toma máximo 2 toques. Bloqueado por T08');
 });
