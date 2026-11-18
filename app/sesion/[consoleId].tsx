@@ -1,12 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { ChoiceButton } from '../../src/components/ChoiceButton';
+import { EstimatedTotal } from '../../src/components/EstimatedTotal';
 import { MAX_CONTROLLERS, SESSION_MODES } from '../../src/db/schema/enums';
 import { useConsoles } from '../../src/hooks/useConsoles';
+import { useRateBlocks } from '../../src/hooks/useRateBlocks';
 import { useStartSession } from '../../src/hooks/useStartSession';
 import { type StartSessionInput, startSessionSchema } from '../../src/schemas/session';
 import type { ConsoleWithStock } from '../../src/services/consoleService';
@@ -25,11 +27,13 @@ export default function SessionDialogScreen() {
   const startSession = useStartSession();
   const [problem, setProblem] = useState<Problem | null>(null);
   const console = consoles?.find((c) => c.id === consoleId);
+  const { data: rates } = useRateBlocks(console?.consoleType);
 
   const { control, handleSubmit } = useForm<StartSessionInput>({
     resolver: zodResolver(startSessionSchema),
     defaultValues: { consoleId, controllerCount: 1, mode: 'fijo_60' },
   });
+  const [controllerCount, mode] = useWatch({ control, name: ['controllerCount', 'mode'] });
 
   const onSubmit = handleSubmit(async (input) => {
     setProblem(null);
@@ -119,6 +123,13 @@ export default function SessionDialogScreen() {
           )}
         />
       </View>
+
+      <EstimatedTotal
+        consoleType={console.consoleType}
+        mode={mode}
+        controllerCount={controllerCount}
+        rates={rates}
+      />
 
       {problem ? (
         <View accessibilityLiveRegion="polite" className="gap-3 rounded-xl bg-playing-soft p-4">
