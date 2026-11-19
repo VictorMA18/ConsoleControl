@@ -84,8 +84,9 @@ describe('CP-006 · código cromático', () => {
     ['disponible', null, 'disponible', 'bg-available-soft'],
     ['en_juego', 'en_curso', 'en_juego', 'bg-playing'],
     ['en_juego', 'libre', 'en_juego', 'bg-playing'],
-    ['en_juego', 'proxima_a_vencer', 'por_terminar', 'bg-warning'],
-    ['en_juego', 'tiempo_cumplido', 'tiempo_cumplido', 'bg-warning'],
+    // Los avisos de tiempo usan el ámbar suave con texto ámbar oscuro (ADR 0014).
+    ['en_juego', 'proxima_a_vencer', 'por_terminar', 'bg-warning-soft'],
+    ['en_juego', 'tiempo_cumplido', 'tiempo_cumplido', 'bg-warning-soft'],
   ] as const)('CP-006 consola %s con alerta %s se ve %s', (status, alert, state, band) => {
     expect(cardState(status, alert)).toBe(state);
     expect(CARD_STATE_STYLES[state].band).toBe(band);

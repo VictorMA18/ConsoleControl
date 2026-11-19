@@ -32,6 +32,8 @@ export function cardState(
   return 'en_juego';
 }
 
+// Franjas: suaves para el reposo (Disponible) y los avisos de tiempo (Por terminar, Tiempo
+// cumplido, que además titilan o llevan su ícono); fuertes para En juego y Por cobrar.
 // Cada estado tiene una etiqueta, sus colores y un icono (en src/components/stateIcons.ts): nunca
 // se depende solo del color (TW-90). band es el fondo de la franja y onBand el texto sobre ella;
 // tone es el texto del estado sobre la tarjeta y soft el fondo suave de avisos (global.css).
@@ -55,15 +57,15 @@ export const CARD_STATE_STYLES: Record<CardState, StateStyle> = {
   },
   por_terminar: {
     label: 'Por terminar',
-    band: 'bg-warning',
-    onBand: 'text-warning-foreground',
+    band: 'bg-warning-soft',
+    onBand: 'text-warning-tone',
     tone: 'text-warning-tone',
     soft: 'bg-warning-soft',
   },
   tiempo_cumplido: {
     label: 'Tiempo cumplido',
-    band: 'bg-warning',
-    onBand: 'text-warning-foreground',
+    band: 'bg-warning-soft',
+    onBand: 'text-warning-tone',
     tone: 'text-warning-tone',
     soft: 'bg-warning-soft',
   },
