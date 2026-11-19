@@ -21,7 +21,7 @@ Dependencias técnicas: HU-003. Casos de uso y reglas: CU-002, RF-05, RN-03, RN-
 
 ## Trabajo
 
-- **Datos (migración nueva):** estado de cobro de la sesión (hoy solo `activa` y `finalizada`): añadir `por_cobrar` y `cobrada`. Guardar `ended_at` al finalizar y el resultado de la liquidación (minutos jugados, minutos de exceso, penalidad y total, en céntimos) para que el cobro y el arqueo lean el mismo número. Registrar la decisión en `docs/adr/0012-estados-de-sesion-y-cobro.md`.
+- **Datos (migración nueva):** estado de cobro de la sesión (hoy solo `activa` y `finalizada`): añadir `por_cobrar` y `cobrada`. Guardar `ended_at` al finalizar y el resultado de la liquidación (minutos jugados, minutos de exceso, penalidad y total, en céntimos) para que el cobro y el arqueo lean el mismo número. Registrar la decisión en `docs/adr/0013-estados-de-sesion-y-cobro.md`.
 - **Lógica:** función pura `calculateSettlement` (en `src/services/`) que recibe la sesión (inicio, fin, duración contratada, modalidad, mandos), el tarifario y la hora, y devuelve el desglose. Minutos jugados = `fin − started_at`, nunca un contador. **Reutiliza `src/services/tariff.ts`** (`GRACE_MINUTES` = 3, `BLOCK_MINUTES` = 15, `chargedMinutes`, `calculateRate`): no dupliques las constantes.
 - **Interfaz:** ruta nueva `app/cobro/[sessionId].tsx`. Al tocar una tarjeta ocupada del muro se abre ese resumen (hoy abre el diálogo de inicio): minutos, mandos, penalidad y total en números grandes, y el botón "Finalizar sesión" que guarda `ended_at` y pasa la sesión a `por_cobrar`. El cálculo es en memoria (meta: menos de 100 ms). La consola sigue "en juego" hasta que se cobre (parte 03).
 

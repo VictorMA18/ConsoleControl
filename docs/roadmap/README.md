@@ -18,4 +18,4 @@ Las fechas siguen las semanas del calendario original del proyecto. El detalle d
 
 ## Ideas sin planificar
 
-[`mejoras-pendientes.md`](mejoras-pendientes.md): React Native Reusables y colores HSL. No tienen fecha ni tarea; se evalúan al planificar el Sprint 4 o el pulido.
+[`mejoras-pendientes.md`](mejoras-pendientes.md): hoy no hay ideas abiertas. React Native Reusables, los colores HSL y la organización de la interfaz ya se aplicaron ([ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md)).

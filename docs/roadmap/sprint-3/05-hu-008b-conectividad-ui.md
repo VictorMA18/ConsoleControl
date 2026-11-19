@@ -4,7 +4,7 @@ Rama: `feature/HU-008-conectividad`, sobre la rama de la parte 04. Criterios Giv
 
 ## Trabajo
 
-1. **ADR 0013** en `docs/adr/`: elegir `@react-native-community/netinfo` o `expo-network` (AGENTS §7: ninguna dependencia fuera del stack sin ADR). Instalar con `pnpm`, no antes del ADR.
+1. **ADR 0014** en `docs/adr/`: elegir `@react-native-community/netinfo` o `expo-network` (AGENTS §7: ninguna dependencia fuera del stack sin ADR). Instalar con `pnpm`, no antes del ADR.
 2. `src/sync/connectivity.ts`: monitor de conectividad que dispara la sincronización al recuperar conexión, al volver la app a primer plano y cada cierto intervalo.
 3. Store de Zustand en `src/stores/` con el estado de sincronización (sin conexión, pendiente con N registros, nube actualizada).
 4. Indicador simple en la cabecera del muro: "Sin conexión", "Pendiente (N)" o "Nube actualizada" (texto o icono pequeño; no hay boceto).

@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { useSessionAlertState } from '../hooks/useSessionAlerts';
 import { useSessionTimer } from '../hooks/useSessionTimer';
@@ -9,6 +9,8 @@ import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
 import { formatDuration } from '../utils/formatDuration';
 import { SESSION_MODE_LABELS } from '../utils/sessionLabels';
 import { StatusBand } from './StatusBand';
+import { Card } from './ui/card';
+import { Text } from './ui/text';
 
 type Props = {
   console: ConsoleWithStock;
@@ -26,7 +28,7 @@ export function ConsoleCard({ console, session, onPress }: Props) {
     <CardShell console={console} state={cardState(console.status, null)} onPress={onPress}>
       <Text
         accessibilityLabel={`${CONSOLE_TYPE_LABELS[console.consoleType]}, ${console.operationalControllers} mandos libres`}
-        className="text-base text-muted"
+        className="text-base text-muted-foreground"
       >
         {console.operationalControllers} mandos libres
       </Text>
@@ -44,17 +46,17 @@ function BusyConsoleCard({ console, session, onPress }: Required<Props>) {
       <Text
         testID={`cronometro-${console.id}`}
         accessibilityLabel={`Tiempo transcurrido ${formatDuration(elapsedMs)}`}
-        className="text-3xl font-bold text-ink"
+        className="text-3xl font-bold"
         style={{ fontVariant: ['tabular-nums'] }}
       >
         {formatDuration(elapsedMs)}
       </Text>
-      <Text className="text-base text-muted" style={{ fontVariant: ['tabular-nums'] }}>
+      <Text className="text-base text-muted-foreground" style={{ fontVariant: ['tabular-nums'] }}>
         {remainingMs === null
           ? SESSION_MODE_LABELS[session.mode]
           : `Quedan ${formatDuration(remainingMs)}`}
       </Text>
-      <Text className="text-base text-muted">
+      <Text className="text-base text-muted-foreground">
         {session.controllerCount} {session.controllerCount === 1 ? 'mando' : 'mandos'}
       </Text>
     </CardShell>
@@ -76,13 +78,15 @@ function CardShell({ console, state, onPress, children }: ShellProps) {
       accessibilityRole="button"
       accessibilityLabel={`${console.name}, ${style.label}`}
       onPress={() => onPress(console)}
-      className="flex-1 overflow-hidden rounded-2xl border border-line bg-surface active:opacity-80"
+      className="flex-1 active:opacity-80"
     >
-      <StatusBand testID={`estado-${console.id}`} state={state} />
-      <View className="gap-1 px-4 py-4">
-        <Text className="text-2xl font-bold text-ink">{console.name}</Text>
-        {children}
-      </View>
+      <Card className="flex-1 gap-0 overflow-hidden rounded-2xl py-0">
+        <StatusBand testID={`estado-${console.id}`} state={state} />
+        <View className="gap-1 px-4 py-4">
+          <Text className="text-2xl font-bold">{console.name}</Text>
+          {children}
+        </View>
+      </Card>
     </Pressable>
   );
 }

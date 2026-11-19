@@ -24,9 +24,17 @@ export function cardState(
 
 // Verde disponible, rojo en juego y ámbar próxima a terminar o tiempo cumplido (TW-90).
 export const CARD_STATE_STYLES: Record<CardState, { label: string; band: string; text: string }> = {
-  disponible: { label: 'Disponible', band: 'bg-available', text: 'text-white' },
-  en_juego: { label: 'En juego', band: 'bg-playing', text: 'text-white' },
-  por_terminar: { label: 'Por terminar', band: 'bg-warning', text: 'text-warning-ink' },
-  tiempo_cumplido: { label: 'Tiempo cumplido', band: 'bg-warning', text: 'text-warning-ink' },
-  mantenimiento: { label: 'Mantenimiento', band: 'bg-muted', text: 'text-white' },
+  disponible: { label: 'Disponible', band: 'bg-available', text: 'text-available-foreground' },
+  en_juego: { label: 'En juego', band: 'bg-playing', text: 'text-playing-foreground' },
+  por_terminar: { label: 'Por terminar', band: 'bg-warning', text: 'text-warning-foreground' },
+  tiempo_cumplido: {
+    label: 'Tiempo cumplido',
+    band: 'bg-warning',
+    text: 'text-warning-foreground',
+  },
+  mantenimiento: {
+    label: 'Mantenimiento',
+    band: 'bg-muted-foreground',
+    text: 'text-primary-foreground',
+  },
 };

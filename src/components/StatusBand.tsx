@@ -1,7 +1,8 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
 import { CARD_STATE_STYLES, type CardState } from '../utils/cardState';
+import { Text } from './ui/text';
 
 // Parpadeo del ámbar "Por terminar" (HU-004, T16): solo la opacidad, en el hilo de UI.
 const BLINK = {

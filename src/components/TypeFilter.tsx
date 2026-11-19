@@ -1,8 +1,10 @@
-import { Pressable, ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 
 import { CONSOLE_TYPES, type ConsoleType } from '../db/schema/enums';
 import { useWallFilterStore } from '../stores/wallFilterStore';
 import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
+import { Button } from './ui/button';
+import { Text } from './ui/text';
 
 const OPTIONS: { value: ConsoleType | null; label: string }[] = [
   { value: null, label: 'Todas' },
@@ -18,19 +20,15 @@ export function TypeFilter() {
       {OPTIONS.map((option) => {
         const active = option.value === selected;
         return (
-          <Pressable
+          <Button
             key={option.label}
-            accessibilityRole="button"
+            variant={active ? 'default' : 'outline'}
             accessibilityState={{ selected: active }}
             onPress={() => setConsoleType(option.value)}
-            className={`min-h-12 justify-center rounded-full border px-5 ${
-              active ? 'border-primary bg-primary' : 'border-line bg-surface'
-            }`}
+            className="h-12 rounded-full px-5"
           >
-            <Text className={`text-base font-semibold ${active ? 'text-white' : 'text-ink'}`}>
-              {option.label}
-            </Text>
-          </Pressable>
+            <Text className="text-base font-semibold">{option.label}</Text>
+          </Button>
         );
       })}
     </ScrollView>

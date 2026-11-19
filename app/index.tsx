@@ -1,10 +1,14 @@
 import { Link, Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, Vibration, View } from 'react-native';
+import { FlatList, Vibration, View } from 'react-native';
 
 import { AlertBanner } from '../src/components/AlertBanner';
 import { ConsoleCard } from '../src/components/ConsoleCard';
+import { StateView } from '../src/components/StateView';
 import { TypeFilter } from '../src/components/TypeFilter';
+import { Card } from '../src/components/ui/card';
+import { Text } from '../src/components/ui/text';
+import { WallSummary } from '../src/components/WallSummary';
 import { useActiveSessions } from '../src/hooks/useActiveSessions';
 import { useConsoles } from '../src/hooks/useConsoles';
 import { useSessionAlerts } from '../src/hooks/useSessionAlerts';
@@ -37,16 +41,17 @@ export default function ConsoleWallScreen() {
   }
 
   return (
-    <View className="flex-1 bg-canvas">
+    <View className="flex-1 bg-background">
       <Stack.Screen options={{ title: 'Muro de consolas' }} />
       {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
-      <View className="px-4 pb-2 pt-4">
+      <View className="gap-3 px-4 pb-2 pt-4">
+        {consoles ? <WallSummary consoles={consoles} /> : null}
         <TypeFilter />
       </View>
       {isPending ? (
-        <ActivityIndicator size="large" className="mt-12" />
+        <StateView kind="loading" message="Cargando consolas…" />
       ) : error ? (
-        <Text className="m-4 text-lg text-playing">No se pudo leer el inventario.</Text>
+        <StateView kind="error" message="No se pudo leer el inventario." />
       ) : (
         <FlatList
           data={visible}
@@ -67,19 +72,20 @@ export default function ConsoleWallScreen() {
               ) : null}
             </>
           )}
-          ListEmptyComponent={
-            <Text className="text-lg text-muted">No hay consolas de este tipo.</Text>
-          }
+          ListEmptyComponent={<StateView kind="empty" message="No hay consolas de este tipo." />}
           ListFooterComponent={
             __DEV__ ? (
-              <View className="mt-6 gap-3">
+              <Card className="mt-6 gap-2 px-4 py-4">
+                <Text variant="small" className="text-muted-foreground">
+                  Herramientas de desarrollo
+                </Text>
                 <Link href="/dev/persistencia" className="text-base text-primary underline">
-                  Prueba de persistencia (solo desarrollo)
+                  Prueba de persistencia
                 </Link>
                 <Link href="/dev/spike-cronometro" className="text-base text-primary underline">
-                  Spike del cronómetro (solo desarrollo)
+                  Spike del cronómetro
                 </Link>
-              </View>
+              </Card>
             ) : undefined
           }
         />
