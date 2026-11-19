@@ -14,7 +14,9 @@ export type SessionMode = (typeof SESSION_MODES)[number];
 export const RATE_BLOCK_MINUTES = [15, 30, 45, 60, 120] as const;
 export type RateBlockMinutes = (typeof RATE_BLOCK_MINUTES)[number];
 
-export const SESSION_STATUSES = ['activa', 'finalizada'] as const;
+// 'por_cobrar': la sesión terminó y espera el pago (HU-005); 'cobrada': pago registrado y consola
+// liberada (HU-006). 'finalizada' es el cierre sin cobro de las herramientas de desarrollo.
+export const SESSION_STATUSES = ['activa', 'por_cobrar', 'cobrada', 'finalizada'] as const;
 export type SessionStatus = (typeof SESSION_STATUSES)[number];
 
 // 'en_uso' marca los mandos prestados en una sesión activa; vuelven a 'operativo' al cerrarla.

@@ -27,7 +27,8 @@ export function getSessionAlertState(
   session: AlertableSession,
   now: number = Date.now(),
 ): SessionAlertState {
-  if (session.status === 'finalizada') {
+  // Por cobrar, cobrada o finalizada: ya no corre el tiempo.
+  if (session.status !== 'activa') {
     return 'finalizada';
   }
   const remaining = remainingMs(session, now);

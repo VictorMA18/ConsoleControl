@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, type SQL } from 'drizzle-orm';
 import { randomUUID } from 'expo-crypto';
 
 import { db } from '../client';
@@ -92,8 +92,29 @@ export async function openSession(
   });
 }
 
-// Termina una sesión activa y libera su consola y sus mandos en una sola transacción.
-// La liquidación y el cobro se agregan en HU-005.
+// Resultado de la liquidación que se guarda al finalizar (HU-005).
+export type SettlementResult = Required<
+  Pick<NewSession, 'playedMinutes' | 'chargedMinutes' | 'penaltyCents' | 'totalCents'>
+>;
+
+// Finaliza una sesión activa y la deja "por cobrar" (HU-005) con su liquidación. La consola y los
+// mandos siguen ocupados hasta que se registre el pago (HU-006). Es una sola sentencia, así que
+// es atómica; si la sesión ya no estaba activa devuelve undefined.
+export async function endSession(
+  id: string,
+  result: SettlementResult,
+  now: number = Date.now(),
+): Promise<Session | undefined> {
+  return db
+    .update(sessions)
+    .set({ ...result, status: 'por_cobrar', endedAt: now })
+    .where(and(eq(sessions.id, id), eq(sessions.status, 'activa')))
+    .returning()
+    .get();
+}
+
+// Cierra una sesión sin cobrarla y libera su consola y sus mandos en una sola transacción.
+// Solo lo usan las herramientas de desarrollo; el cierre normal es endSession + el cobro (HU-006).
 export async function finishSession(
   id: string,
   now: number = Date.now(),
@@ -102,7 +123,7 @@ export async function finishSession(
     const session = tx
       .update(sessions)
       .set({ status: 'finalizada', endedAt: now })
-      .where(and(eq(sessions.id, id), eq(sessions.status, 'activa')))
+      .where(and(eq(sessions.id, id), inArray(sessions.status, ['activa', 'por_cobrar'])))
       .returning()
       .get();
     if (!session) {
@@ -138,13 +159,12 @@ export async function getActiveSessions(): Promise<Session[]> {
 
 export type ActiveSession = Session & Pick<Console, 'consoleType'> & { consoleName: string };
 
-// Sesiones activas con el nombre y tipo de su consola, para mostrarlas en el muro (HU-002).
-export async function getActiveSessionsWithConsole(): Promise<ActiveSession[]> {
+function selectWithConsole(condition: SQL | undefined): ActiveSession[] {
   const rows = db
     .select({ session: sessions, consoleName: consoles.name, consoleType: consoles.consoleType })
     .from(sessions)
     .innerJoin(consoles, eq(sessions.consoleId, consoles.id))
-    .where(eq(sessions.status, 'activa'))
+    .where(condition)
     .orderBy(asc(sessions.startedAt))
     .all();
   return rows.map((row) => ({
@@ -152,6 +172,20 @@ export async function getActiveSessionsWithConsole(): Promise<ActiveSession[]> {
     consoleName: row.consoleName,
     consoleType: row.consoleType,
   }));
+}
+
+// Sesiones activas con el nombre y tipo de su consola, para mostrarlas en el muro (HU-002).
+export async function getActiveSessionsWithConsole(): Promise<ActiveSession[]> {
+  return selectWithConsole(eq(sessions.status, 'activa'));
+}
+
+// Sesiones finalizadas que esperan su pago (HU-005): su consola sigue ocupada en el muro.
+export async function getPendingSessionsWithConsole(): Promise<ActiveSession[]> {
+  return selectWithConsole(eq(sessions.status, 'por_cobrar'));
+}
+
+export async function getSessionWithConsole(id: string): Promise<ActiveSession | undefined> {
+  return selectWithConsole(eq(sessions.id, id))[0];
 }
 
 // updated_at y sync_status se actualizan solos (controlColumns.ts).
