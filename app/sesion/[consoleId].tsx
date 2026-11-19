@@ -16,7 +16,10 @@ import { SESSION_MODE_LABELS } from '../../src/utils/sessionLabels';
 
 const CONTROLLER_OPTIONS = Array.from({ length: MAX_CONTROLLERS }, (_, i) => i + 1);
 
-type Problem = { message: string; alternatives: ConsoleWithStock[] };
+type Problem = Pick<StartSessionInput, 'controllerCount' | 'mode'> & {
+  message: string;
+  alternatives: ConsoleWithStock[];
+};
 
 // Diálogo de configuración de sesión (HU-001, T08). Llega con 1 mando y 1 hora elegidos, así
 // que iniciar una sesión toma 2 toques: la tarjeta y "Iniciar sesión" (RNF-02).
@@ -34,6 +37,11 @@ export default function SessionDialogScreen() {
     defaultValues: { consoleId, controllerCount: 1, mode: 'fijo_60' },
   });
   const [controllerCount, mode] = useWatch({ control, name: ['controllerCount', 'mode'] });
+  // El aviso de un intento anterior deja de valer en cuanto cambian los mandos o la modalidad.
+  const visibleProblem =
+    problem && problem.controllerCount === controllerCount && problem.mode === mode
+      ? problem
+      : null;
 
   const onSubmit = handleSubmit(async (input) => {
     setProblem(null);
@@ -41,9 +49,9 @@ export default function SessionDialogScreen() {
     if (result.ok) {
       router.back();
     } else if (result.reason === 'mandos_insuficientes') {
-      setProblem({ message: result.message, alternatives: result.alternatives });
+      setProblem({ ...input, message: result.message, alternatives: result.alternatives });
     } else {
-      setProblem({ message: result.message, alternatives: [] });
+      setProblem({ ...input, message: result.message, alternatives: [] });
     }
   });
 
@@ -131,13 +139,13 @@ export default function SessionDialogScreen() {
         rates={rates}
       />
 
-      {problem ? (
+      {visibleProblem ? (
         <View accessibilityLiveRegion="polite" className="gap-3 rounded-xl bg-playing-soft p-4">
-          <Text className="text-lg font-bold text-ink">{problem.message}</Text>
-          {problem.alternatives.length > 0 ? (
+          <Text className="text-lg font-bold text-ink">{visibleProblem.message}</Text>
+          {visibleProblem.alternatives.length > 0 ? (
             <>
               <Text className="text-base text-ink">Consolas con mandos suficientes:</Text>
-              {problem.alternatives.map((alternative) => (
+              {visibleProblem.alternatives.map((alternative) => (
                 <Pressable
                   key={alternative.id}
                   accessibilityRole="button"
