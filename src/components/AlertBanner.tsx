@@ -1,6 +1,8 @@
-import { Pressable } from 'react-native';
+import { BellRing, X } from 'lucide-react-native';
+import { Pressable, View } from 'react-native';
 
 import type { SessionAlert } from '../services/sessionAlerts';
+import { Icon } from './ui/icon';
 import { Text } from './ui/text';
 
 type Props = { alert: SessionAlert; onDismiss: () => void };
@@ -19,10 +21,13 @@ export function AlertBanner({ alert, onDismiss }: Props) {
       accessibilityLiveRegion="assertive"
       accessibilityHint="Toca para cerrar el aviso"
       onPress={onDismiss}
-      className="mx-4 mt-3 min-h-14 flex-row items-center justify-between rounded-xl bg-warning px-4"
+      className="mx-4 mt-3 flex-row items-center gap-3 rounded-2xl border border-warning/60 bg-warning-soft px-4 py-3 active:opacity-80"
     >
-      <Text className="flex-1 text-lg font-bold text-warning-foreground">{message}</Text>
-      <Text className="text-base font-semibold text-warning-foreground">Cerrar</Text>
+      <Icon as={BellRing} size={22} className="text-warning" />
+      <View className="flex-1">
+        <Text className="text-base font-bold text-warning">{message}</Text>
+      </View>
+      <Icon as={X} size={18} className="text-warning" />
     </Pressable>
   );
 }
