@@ -9,12 +9,18 @@ Lo ejecuta VN en el celular, una sola vez, al final del sprint. Las casillas emp
 
 ## Interfaz y navegación
 
-- [ ] El muro muestra todas las consolas en dos columnas, sin filas colapsadas, y se lee en DM Sans.
+> El ícono y la pantalla de carga solo se ven en un APK nuevo (en Expo Go sale el de Expo).
+
+- [ ] Al abrir la app aparece el ícono (mando sobre verde) y se va con un fundido, sin spinner intermedio.
+- [ ] La barra de pestañas queda encima de la barra de navegación de Android (gestos y tres botones), sin taparse.
+- [ ] El muro muestra una tarjeta ancha por consola con la franja del estado, la pastilla de plataforma (logo de PlayStation), el nombre, el cronómetro y la columna de mandos, tiempo y dinero.
+- [ ] Una consola libre muestra sus mandos, «Libre» y la tarifa por hora; una en juego, «2/6 mandos», el restante y el total.
 - [ ] El resumen de arriba cuenta cada estado: Disponible, En juego, Por terminar, Tiempo cumplido y Por cobrar (los tres últimos aparecen cuando hay alguna).
-- [ ] Cada tarjeta lleva el icono, el texto y el color de su estado, el cronómetro y la barra de avance.
-- [ ] La barra de abajo cambia entre Consolas y Caja; el logo y la hora se ven arriba en el muro.
+- [ ] El botón de tema del muro pasa por Sistema → Claro → Oscuro; en Caja › Apariencia se elige igual, y la elección se mantiene al cerrar y reabrir.
+- [ ] En los dos temas todo se lee bien: textos, franjas, vuelto y avisos.
+- [ ] La tarjeta se hunde un poco al tocarla; al filtrar por tipo las tarjetas se reacomodan suave.
 - [ ] El diálogo de nueva sesión se cierra con la X, el botón "Iniciar sesión" queda fijo abajo y los totales cambian al elegir mandos y modalidad.
-- [ ] "Finalizar sesión" y "Cerrar turno" piden confirmación en un diálogo propio y se pueden cancelar tocando fuera.
+- [ ] "Finalizar sesión" y "Cerrar turno" piden confirmación en un diálogo que aparece con una transición corta y se puede cancelar tocando fuera.
 - [ ] Las herramientas de desarrollo se ven con el mismo estilo que el resto.
 
 ## HU-005 · Liquidación

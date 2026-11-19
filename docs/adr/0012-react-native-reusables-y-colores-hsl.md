@@ -2,7 +2,7 @@
 
 ## Estado
 
-Aceptada. Los colores y la tipografía los reemplaza el [ADR 0014](0014-sistema-de-diseno-sala-de-control.md).
+Aceptada. Los colores y la tipografía los reemplaza el [ADR 0014](0014-sistema-de-diseno-tarjeta-de-estado.md).
 
 ## Fecha
 
