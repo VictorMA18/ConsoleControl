@@ -1,3 +1,5 @@
+import '../global.css';
+
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -27,7 +29,9 @@ export default function RootLayout() {
   // Las pantallas leen SQLite solo después de aplicar migraciones y datos iniciales.
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack />
+      <Stack>
+        <Stack.Screen name="sesion/[consoleId]" options={{ presentation: 'modal' }} />
+      </Stack>
     </QueryClientProvider>
   );
 }

@@ -41,3 +41,21 @@ export async function getAvailableConsolesWithStock(): Promise<ConsoleWithStock[
     operationalControllers: row.operationalControllers,
   }));
 }
+
+// Todas las consolas con su estado y su stock de mandos operativos, para el muro (HU-001, T07).
+export async function getConsolesWithStock(): Promise<ConsoleWithStock[]> {
+  const rows = db
+    .select({ console: consoles, operationalControllers: count(controllers.id) })
+    .from(consoles)
+    .leftJoin(
+      controllers,
+      and(eq(controllers.consoleId, consoles.id), eq(controllers.status, 'operativo')),
+    )
+    .groupBy(consoles.id)
+    .orderBy(asc(consoles.name))
+    .all();
+  return rows.map((row) => ({
+    ...row.console,
+    operationalControllers: row.operationalControllers,
+  }));
+}
