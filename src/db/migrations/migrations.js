@@ -1,3 +1,7 @@
+// This file is required for Expo/React Native SQLite migrations - https://orm.drizzle.team/quick-sqlite/expo
+// El contenido de cada .sql se copia aquí al empaquetar (babel-plugin-inline-import) y Metro guarda
+// ese resultado en caché: después de editar un .sql, reinicia con `pnpm start --clear`.
+
 import journal from './meta/_journal.json';
 import m0000 from './0000_tense_lucky_pierre.sql';
 import m0001 from './0001_rates_by_block.sql';
