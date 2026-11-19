@@ -9,8 +9,8 @@ import { ConsoleSearch } from '../../src/components/ConsoleSearch';
 import { MaintenanceNotice } from '../../src/components/MaintenanceNotice';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { StateView } from '../../src/components/StateView';
+import { SyncIndicator } from '../../src/components/SyncIndicator';
 import { TypeFilter } from '../../src/components/TypeFilter';
-import { Text } from '../../src/components/ui/text';
 import { WallSummary } from '../../src/components/WallSummary';
 import { useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useConsoles } from '../../src/hooks/useConsoles';
@@ -70,14 +70,7 @@ export default function ConsoleWallScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader
-        logo
-        right={
-          <Text className="text-lg font-bold" style={{ fontVariant: ['tabular-nums'] }}>
-            {new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-        }
-      />
+      <ScreenHeader logo right={<SyncIndicator />} />
       {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
       {maintenanceDue > 0 ? (
         <MaintenanceNotice count={maintenanceDue} onPress={() => router.push('/salud')} />
