@@ -2,40 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tokens de color en HSL ("matiz saturación luminosidad"). Cambiar un color es cambiar una línea
-   aquí; los componentes solo usan los nombres (bg-primary, text-foreground...). Los mismos valores
-   están en src/utils/theme.ts para las propiedades que no aceptan className. Contrastes (WCAG):
-   texto blanco sobre available 5.02:1, sobre playing 6.46:1; warning-foreground sobre warning 6.98:1. */
+/* Sistema de diseño "sala de control" (ADR 0014). Tema oscuro pensado para un local con poca luz:
+   grafito azulado con texto marfil, sin gradientes. El color se reserva para los estados de la
+   consola, que siempre llevan icono y texto además del color. Tokens en HSL ("matiz saturación
+   luminosidad"); los mismos valores están en src/utils/theme.ts.
+   Contrastes (WCAG): texto sobre fondo 16.8:1, texto atenuado sobre tarjeta 7.0:1, estados sobre
+   tarjeta de 5.5:1 (en juego) a 9.6:1 (por terminar). */
 @layer base {
   :root {
-    --background: 210 40% 96.1%;
-    --foreground: 222.2 47.4% 11.2%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-    --primary: 201.3 96.3% 32.2%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 214.3 31.8% 91.4%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 214.3 31.8% 91.4%;
-    --muted-foreground: 215.3 19.3% 34.5%;
-    --accent: 214.3 31.8% 91.4%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 73.7% 41.8%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 212.7 26.8% 83.9%;
-    --input: 212.7 26.8% 83.9%;
-    --ring: 201.3 96.3% 32.2%;
-    --radius: 0.75rem;
+    --background: 228 16% 7%;
+    --foreground: 40 18% 94%;
+    --card: 228 14% 11%;
+    --card-foreground: 40 18% 94%;
+    --raised: 228 12% 15%;
+    --primary: 40 18% 94%;
+    --primary-foreground: 228 16% 8%;
+    --secondary: 228 12% 17%;
+    --secondary-foreground: 40 18% 94%;
+    --muted: 228 12% 15%;
+    --muted-foreground: 228 9% 66%;
+    --accent: 228 12% 19%;
+    --accent-foreground: 40 18% 94%;
+    --destructive: 5 82% 64%;
+    --destructive-foreground: 228 16% 8%;
+    --border: 228 11% 20%;
+    --input: 228 11% 24%;
+    --ring: 40 18% 94%;
+    --radius: 0.875rem;
 
-    /* Estados de la consola (HU-002): siempre acompañados de su etiqueta. */
-    --available: 142.4 71.8% 29.2%;
-    --available-foreground: 0 0% 100%;
-    --available-soft: 140.6 84.2% 92.5%;
-    --playing: 0 73.7% 41.8%;
-    --playing-foreground: 0 0% 100%;
-    --playing-soft: 0 93.3% 94.1%;
-    --warning: 37.7 92.1% 50.2%;
-    --warning-foreground: 20.9 91.7% 14.1%;
-    --warning-soft: 48 96.5% 88.8%;
+    /* Estados de la consola (HU-002 y HU-005). */
+    --available: 152 58% 52%;
+    --available-foreground: 228 16% 8%;
+    --available-soft: 152 42% 13%;
+    --playing: 5 82% 64%;
+    --playing-foreground: 228 16% 8%;
+    --playing-soft: 5 48% 15%;
+    --warning: 40 96% 56%;
+    --warning-foreground: 228 16% 8%;
+    --warning-soft: 40 60% 14%;
+    --pending: 199 88% 62%;
+    --pending-foreground: 228 16% 8%;
+    --pending-soft: 199 55% 14%;
   }
 }
