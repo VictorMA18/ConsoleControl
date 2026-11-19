@@ -17,10 +17,10 @@ Las ramas van apiladas en este orden: cada una sale de la anterior.
 
 | Parte                          | Historia             | Puntos | Rama                                           | Estado |
 | ------------------------------ | -------------------- | ------ | ---------------------------------------------- | ------ |
-| [01](01-hu-005-liquidacion.md) | HU-005 · Liquidación | 5      | `feature/HU-005-liquidacion` (desde `develop`) | ☐      |
-| [02](02-hu-010-vuelto.md)      | HU-010 · Vuelto      | 2      | `feature/HU-010-vuelto` (sobre la 01)          | ☐      |
-| [03](03-hu-006-cobro.md)       | HU-006 · Cobro       | 5      | `feature/HU-006-cobro` (sobre la 02)           | ☐      |
-| [04](04-hu-007-arqueo.md)      | HU-007 · Arqueo      | 8      | `feature/HU-007-arqueo` (sobre la 03)          | ☐      |
+| [01](01-hu-005-liquidacion.md) | HU-005 · Liquidación | 5      | `feature/HU-005-liquidacion` (desde `develop`) | ✔      |
+| [02](02-hu-010-vuelto.md)      | HU-010 · Vuelto      | 2      | `feature/HU-010-vuelto` (sobre la 01)          | ✔      |
+| [03](03-hu-006-cobro.md)       | HU-006 · Cobro       | 5      | `feature/HU-006-cobro` (sobre la 02)           | ✔      |
+| [04](04-hu-007-arqueo.md)      | HU-007 · Arqueo      | 8      | `feature/HU-007-arqueo` (sobre la 03)          | ✔      |
 
 ## Al terminar el sprint
 
