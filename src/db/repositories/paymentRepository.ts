@@ -1,4 +1,4 @@
-import { and, eq, gte, lt, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, lt, sql } from 'drizzle-orm';
 import { randomUUID } from 'expo-crypto';
 
 import { db } from '../client';
@@ -9,6 +9,7 @@ import {
   payments,
   type Session,
   sessions,
+  shifts,
 } from '../schema';
 
 export class SessionNotPayableError extends Error {
@@ -43,6 +44,21 @@ export async function registerPayments(
       throw new SessionNotPayableError();
     }
 
+    // Si no hay turno abierto, el primer cobro abre uno (por confirmar con VN).
+    const shift =
+      tx.select().from(shifts).where(eq(shifts.status, 'abierto')).get() ??
+      tx
+        .insert(shifts)
+        .values({
+          id: randomUUID(),
+          openedAt: now,
+          status: 'abierto',
+          createdAt: now,
+          updatedAt: now,
+        })
+        .returning()
+        .get();
+
     tx.insert(payments)
       .values(
         lines.map((line) => ({
@@ -51,6 +67,7 @@ export async function registerPayments(
           method: line.method,
           amountCents: line.amountCents,
           customerName: line.customerName ?? null,
+          shiftId: shift.id,
           createdAt: now,
           updatedAt: now,
         })),
@@ -82,4 +99,10 @@ export async function getPaymentTotalsByMethod(from: number, to: number): Promis
     .where(and(gte(payments.createdAt, from), lt(payments.createdAt, to)))
     .groupBy(payments.method)
     .all();
+}
+
+// Marca cobros como sincronizados (HU-008). Es lo único que se permite en un turno cerrado (RN-05):
+// asigna sync_status de forma explícita, así no vuelve a 'pendiente' (controlColumns.ts).
+export async function markPaymentsSynced(ids: string[]): Promise<void> {
+  db.update(payments).set({ syncStatus: 'sincronizado' }).where(inArray(payments.id, ids)).run();
 }

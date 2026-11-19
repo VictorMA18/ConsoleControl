@@ -4,6 +4,7 @@ import { registerPayment } from '../services/paymentService';
 import { activeSessionsQueryKey } from './useActiveSessions';
 import { consolesQueryKey } from './useConsoles';
 import { pendingSessionsQueryKey } from './usePendingSessions';
+import { shiftQueryKey } from './useShift';
 
 // Cobra una sesión (HU-006). Al terminar bien, la consola vuelve a estar disponible en el muro.
 export function useRegisterPayment() {
@@ -17,6 +18,7 @@ export function useRegisterPayment() {
           queryClient.invalidateQueries({ queryKey: activeSessionsQueryKey }),
           queryClient.invalidateQueries({ queryKey: pendingSessionsQueryKey }),
           queryClient.invalidateQueries({ queryKey: ['sessions', 'detail'] }),
+          queryClient.invalidateQueries({ queryKey: shiftQueryKey }),
         ]);
       }
     },
