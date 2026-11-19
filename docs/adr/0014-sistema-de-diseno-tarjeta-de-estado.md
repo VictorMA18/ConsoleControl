@@ -21,10 +21,10 @@ VN diseñó la tarjeta de consola que quiere ver en el muro: una franja de color
 - **Plataforma.** `PlatformBadge` dibuja el símbolo y el modelo de PlayStation con los trazos de Simple Icons (CC0, copiados en `src/components/platformLogos.ts`). Xbox y Nintendo Switch salen de Simple Icons 9.0 (la última versión que los incluye) y van con el nombre en texto.
 - **Marca.** Ícono propio en blanco y negro: mando blanco roto sobre grafito (`assets/brand/*.svg`, exportado a los PNG de `assets/`). Se muestra en la pantalla de carga nativa (`expo-splash-screen`), que se queda hasta que la base de datos y la fuente están listas y sale con un fundido de 250 ms. La configuración nativa no acepta HSL: `app.json` lleva los hexadecimales equivalentes a `--background` y al grafito del ícono.
 - **Movimiento** (criterios de la skill `expo-animation`):
-  - pantallas con la transición nativa de la plataforma; diálogo de sesión como modal que sube; pestañas sin animación;
+  - pantallas que entran deslizando desde la derecha y salen hacia la derecha al volver; diálogo de sesión que sube y baja al cerrarlo; pestañas con un desplazamiento corto y fundido (`shift`), a pedido de VN;
   - tarjeta presionada a 0.97 en 120 ms (`PressableScale`); color de la franja que cambia en 200 ms;
   - en el muro, reacomodo con `LinearTransition` (220 ms) y fundido de entrada de 200 ms;
-  - `ConfirmDialog` entra desde 0.96 con opacidad en 200 ms sobre el fundido nativo del fondo;
+  - `ConfirmDialog` entra desde 0.96 con opacidad en 200 ms y sale encogiéndose en 150 ms (se mantiene montado mientras sale);
   - curva `cubicBezier(0.23, 1, 0.32, 1)`; solo se animan `transform`, `opacity` y color; con movimiento reducido no hay escala ni titileo.
 - **Bordes del sistema y teclado.** La app se dibuja de borde a borde: la barra de pestañas, los botones fijos abajo y el final de las pantallas sin barra suman el margen inferior del sistema (`useInsets`). Los formularios usan `react-native-keyboard-controller` (`KeyboardProvider` y `FormScrollView`), incluido en Expo Go, para que el campo enfocado quede encima del teclado.
 - **Identificadores.** Las máquinas se llaman «MAQ #n» (migración 0005) y el muro tiene un buscador por número.
