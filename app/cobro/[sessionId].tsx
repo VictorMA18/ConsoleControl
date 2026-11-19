@@ -1,9 +1,10 @@
 import { CheckCheck, Flag } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
+import { FormScrollView } from '../../src/components/FormScrollView';
 import { PaymentForm } from '../../src/components/PaymentForm';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SettlementSummary } from '../../src/components/SettlementSummary';
@@ -79,7 +80,7 @@ export default function SettlementScreen() {
         subtitle={active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
         onBack={() => router.back()}
       />
-      <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
+      <FormScrollView insetBottom={!active}>
         <SettlementSummary
           settlement={settlement}
           state={active ? 'en_juego' : payable ? 'por_cobrar' : 'disponible'}
@@ -107,7 +108,7 @@ export default function SettlementScreen() {
             </Text>
           </View>
         ) : null}
-      </ScrollView>
+      </FormScrollView>
 
       {active ? (
         <View

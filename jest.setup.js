@@ -23,3 +23,8 @@ jest.mock('react-native-reanimated', () => {
     },
   };
 });
+
+// Teclado: el mock oficial cambia KeyboardAwareScrollView por un ScrollView normal.
+jest.mock('react-native-keyboard-controller', () =>
+  jest.requireActual('react-native-keyboard-controller/jest'),
+);

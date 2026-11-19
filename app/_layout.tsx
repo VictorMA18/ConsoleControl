@@ -13,6 +13,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { StateView } from '../src/components/StateView';
 import { useDatabaseSetup } from '../src/db/migrate';
@@ -64,24 +65,28 @@ export default function RootLayout() {
   // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Las transiciones entre
   // pantallas son las nativas de la plataforma (ADR 0014).
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style="auto" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.background },
-          animation: 'default',
-        }}
-      >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen
-          name="sesion/[consoleId]"
-          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
-        />
-        <Stack.Screen name="cobro/[sessionId]" />
-        <Stack.Screen name="dev/persistencia" />
-        <Stack.Screen name="dev/spike-cronometro" />
-      </Stack>
-    </QueryClientProvider>
+    // KeyboardProvider permite que los formularios se desplacen hasta el campo enfocado
+    // (FormScrollView). La app va de borde a borde, por eso las barras del sistema son translúcidas.
+    <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style="auto" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.background },
+            animation: 'default',
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            name="sesion/[consoleId]"
+            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+          />
+          <Stack.Screen name="cobro/[sessionId]" />
+          <Stack.Screen name="dev/persistencia" />
+          <Stack.Screen name="dev/spike-cronometro" />
+        </Stack>
+      </QueryClientProvider>
+    </KeyboardProvider>
   );
 }

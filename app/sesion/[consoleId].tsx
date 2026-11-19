@@ -3,10 +3,11 @@ import { CircleAlert, Hourglass, Play, Timer, type LucideIcon } from 'lucide-rea
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ChoiceButton } from '../../src/components/ChoiceButton';
 import { EstimatedTotal } from '../../src/components/EstimatedTotal';
+import { FormScrollView } from '../../src/components/FormScrollView';
 import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { Section } from '../../src/components/Section';
@@ -108,7 +109,7 @@ export default function SessionDialogScreen() {
         subtitle={`${console.name} · ${CONSOLE_TYPE_LABELS[console.consoleType]}`}
         onClose={() => router.back()}
       />
-      <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
+      <FormScrollView>
         <View className="flex-row items-center gap-3">
           <PlatformBadge consoleType={console.consoleType} />
           <Text className="text-2xl font-extrabold tracking-tight">{console.name}</Text>
@@ -199,7 +200,7 @@ export default function SessionDialogScreen() {
             ) : null}
           </View>
         ) : null}
-      </ScrollView>
+      </FormScrollView>
 
       <View
         className="border-t border-border bg-card px-4 pt-3"

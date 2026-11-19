@@ -2,19 +2,21 @@
 import { TextInput } from 'react-native';
 
 import { cn } from '../../utils/cn';
+import { useThemeColors } from '../../utils/theme';
 
 function Input({
   className,
   ...props
 }: React.ComponentProps<typeof TextInput> & React.RefAttributes<TextInput>) {
+  const { mutedForeground } = useThemeColors();
   return (
     <TextInput
       className={cn(
-        'h-14 w-full rounded-xl border border-input bg-card px-4 font-sans text-xl text-foreground',
+        'h-14 w-full rounded-2xl border border-input bg-card px-4 font-sans text-xl text-foreground',
         props.editable === false && 'opacity-50',
         className,
       )}
-      placeholderTextColor="hsl(228 9% 45%)"
+      placeholderTextColor={mutedForeground}
       {...props}
     />
   );

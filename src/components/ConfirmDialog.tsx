@@ -44,6 +44,7 @@ export function ConfirmDialog({
     <Modal
       transparent
       statusBarTranslucent
+      navigationBarTranslucent
       animationType="fade"
       visible={visible}
       onRequestClose={onCancel}
