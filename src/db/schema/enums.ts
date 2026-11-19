@@ -27,6 +27,13 @@ export type ControllerStatus = (typeof CONTROLLER_STATUSES)[number];
 export const PAYMENT_METHODS = ['efectivo', 'yape', 'plin', 'fiado'] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
+// Turno de caja (HU-007): abierto hasta que el propietario cierra y concilia la caja (RN-05).
+export const SHIFT_STATUSES = ['abierto', 'cerrado'] as const;
+export type ShiftStatus = (typeof SHIFT_STATUSES)[number];
+
+export const BALANCE_STATUSES = ['conforme', 'faltante', 'sobrante'] as const;
+export type BalanceStatus = (typeof BALANCE_STATUSES)[number];
+
 export const SYNC_STATUSES = ['pendiente', 'sincronizado'] as const;
 export type SyncStatus = (typeof SYNC_STATUSES)[number];
 

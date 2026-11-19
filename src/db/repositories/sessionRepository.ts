@@ -7,9 +7,12 @@ import {
   consoles,
   controllers,
   type NewSession,
+  payments,
   type Session,
   sessions,
+  shifts,
 } from '../schema';
+import { assertShiftEditable } from '../shiftLock';
 
 export class ConsoleNotAvailableError extends Error {
   constructor() {
@@ -193,5 +196,15 @@ export async function updateSession(
   id: string,
   changes: SessionChanges,
 ): Promise<Session | undefined> {
+  // RN-05: la sesión de un turno cerrado es de solo lectura, salvo lo que necesita la sincronización.
+  const closedShift = db
+    .select({ status: shifts.status })
+    .from(payments)
+    .innerJoin(shifts, eq(payments.shiftId, shifts.id))
+    .where(and(eq(payments.sessionId, id), eq(shifts.status, 'cerrado')))
+    .get();
+  if (closedShift) {
+    assertShiftEditable(closedShift, Object.keys(changes));
+  }
   return db.update(sessions).set(changes).where(eq(sessions.id, id)).returning().get();
 }

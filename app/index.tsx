@@ -53,7 +53,20 @@ export default function ConsoleWallScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <Stack.Screen options={{ title: 'Muro de consolas' }} />
+      <Stack.Screen
+        options={{
+          title: 'Muro de consolas',
+          headerRight: () => (
+            <Link
+              href="/caja"
+              accessibilityLabel="Abrir caja"
+              className="text-lg font-bold text-primary"
+            >
+              Caja
+            </Link>
+          ),
+        }}
+      />
       {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
       <View className="gap-3 px-4 pb-2 pt-4">
         {consoles ? <WallSummary consoles={consoles} /> : null}

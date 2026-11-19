@@ -46,6 +46,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="sesion/[consoleId]" options={{ presentation: 'modal' }} />
         <Stack.Screen name="cobro/[sessionId]" options={{ title: 'Cobro' }} />
+        <Stack.Screen name="caja/index" options={{ title: 'Caja y finanzas' }} />
       </Stack>
     </QueryClientProvider>
   );
