@@ -1,11 +1,20 @@
-import { BellRing, ChevronRight, Gamepad2, Wrench } from 'lucide-react-native';
+import {
+  BellRing,
+  ChevronRight,
+  Clock3,
+  Gamepad2,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
 import { CONSOLE_HEALTH_LABELS } from '../../src/components/HealthControls';
-import { HEALTH_LOOK } from '../../src/components/HealthLightBadge';
+import { HEALTH_LOOK, HealthLightBadge } from '../../src/components/HealthLightBadge';
+import { PlatformBadge } from '../../src/components/PlatformBadge';
+import { PressableScale } from '../../src/components/PressableScale';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SearchField } from '../../src/components/SearchField';
 import { StateView } from '../../src/components/StateView';
@@ -20,9 +29,9 @@ import {
   type HealthLight,
 } from '../../src/services/health';
 import type { EquipmentConsole } from '../../src/services/healthService';
+import { MAINTENANCE_LABELS, type MaintenanceStatus } from '../../src/services/maintenanceAlerts';
 import { matchesQuery } from '../../src/stores/wallFilterStore';
 import { cn } from '../../src/utils/cn';
-import { CONSOLE_TYPE_LABELS } from '../../src/utils/consoleLabels';
 
 type Filter = 'todas' | 'alertas' | 'ambar' | 'rojo';
 
@@ -47,8 +56,13 @@ export default function HealthScreen() {
     const out = console.controllers.filter(
       (m) => m.status === 'mantenimiento' || m.status === 'averiado',
     ).length;
-    const due = maintenance.some((m) => m.consoleId === console.id && m.due);
-    return { console, out, due, light: consoleLight(console.status) };
+    const own = maintenance.filter((m) => m.consoleId === console.id);
+    const due = own.some((m) => m.due);
+    // El mantenimiento más cercano a su umbral, para mostrar «Limpieza en 12 h» o «vencida».
+    const next = [...own].sort(
+      (a, b) => a.thresholdMinutes - a.minutesSince - (b.thresholdMinutes - b.minutesSince),
+    )[0];
+    return { console, out, due, next, light: consoleLight(console.status) };
   });
   const visible = rows.filter(
     (row) =>
@@ -65,7 +79,14 @@ export default function HealthScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader title="Salud" subtitle="Semáforo de consolas y mandos" />
+      <ScreenHeader
+        title="Salud"
+        subtitle={
+          equipment
+            ? `${equipment.length} máquinas · ${equipment.reduce((n, c) => n + c.controllers.length, 0)} mandos`
+            : 'Semáforo de consolas y mandos'
+        }
+      />
       {isPending ? (
         <StateView kind="loading" message="Cargando equipos…" />
       ) : error ? (
@@ -142,12 +163,11 @@ export default function HealthScreen() {
               message={query ? `No hay ninguna máquina «${query}».` : 'Nada en este filtro.'}
             />
           ) : (
-            <View className="overflow-hidden rounded-3xl border border-border bg-card">
-              {visible.map((row, index) => (
+            <View className="gap-3">
+              {visible.map((row) => (
                 <Animated.View key={row.console.id} layout={LinearTransition.duration(200)}>
                   <HealthRow
                     {...row}
-                    first={index === 0}
                     onPress={() =>
                       router.push({
                         pathname: '/salud/[consoleId]',
@@ -165,106 +185,119 @@ export default function HealthScreen() {
   );
 }
 
-// Una fila por máquina: estado, tipo y horas a la izquierda; avisos y flecha a la derecha.
+// Una tarjeta por máquina: plataforma, nombre y estado arriba; abajo, horas de uso, mandos
+// operativos y el próximo mantenimiento. Toda la tarjeta abre el detalle.
 function HealthRow({
   console,
   out,
   due,
+  next,
   light,
-  first,
   onPress,
 }: {
   console: EquipmentConsole;
   out: number;
   due: boolean;
+  next: MaintenanceStatus | undefined;
   light: HealthLight;
-  first: boolean;
   onPress: () => void;
 }) {
+  const operative = console.controllers.length - out;
+  const nextLabel = next
+    ? next.due
+      ? `${MAINTENANCE_LABELS[next.kind]} vencida`
+      : `${MAINTENANCE_LABELS[next.kind]} en ${formatUsage(next.thresholdMinutes - next.minutesSince)}`
+    : null;
   return (
-    <Pressable
+    <PressableScale
       testID={`salud-${console.id}`}
       accessibilityRole="button"
       accessibilityLabel={`${console.name}, ${CONSOLE_HEALTH_LABELS[console.status]}${due ? ', mantenimiento pendiente' : ''}${out > 0 ? `, ${out} mandos fuera de servicio` : ''}`}
       onPress={onPress}
-      className={cn(
-        'flex-row items-center gap-3 px-4 py-3.5 active:bg-accent',
-        !first && 'border-t border-border',
-      )}
+      className="gap-3 rounded-3xl border border-border bg-card p-4"
     >
-      <View className={cn('h-2.5 w-2.5 rounded-full', HEALTH_LOOK[light].dot)} />
-      <View className="flex-1 gap-0.5">
-        <Text className="text-base font-extrabold">{console.name}</Text>
-        <Text
-          className="text-xs font-semibold text-muted-foreground"
-          style={{ fontVariant: ['tabular-nums'] }}
-        >
-          {CONSOLE_TYPE_LABELS[console.consoleType]} · {CONSOLE_HEALTH_LABELS[console.status]} ·{' '}
-          {formatUsage(console.usageMinutes)}
+      <View className="flex-row items-center gap-2.5">
+        <PlatformBadge consoleType={console.consoleType} compact />
+        <Text className="shrink text-lg font-extrabold" numberOfLines={1}>
+          {console.name}
         </Text>
+        <View className="flex-1" />
+        <HealthLightBadge light={light} label={CONSOLE_HEALTH_LABELS[console.status]} />
+        <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
       </View>
-      {out > 0 ? (
-        <View className="flex-row items-center gap-1 rounded-full bg-warning-soft px-2 py-1">
-          <Icon as={Gamepad2} size={13} className="text-warning-tone" />
-          <Text className="text-xs font-bold text-warning-tone">{out}</Text>
-        </View>
-      ) : null}
-      {due ? (
-        <View className="rounded-full bg-warning-soft p-1.5">
-          <Icon as={Wrench} size={13} className="text-warning-tone" />
-        </View>
-      ) : null}
-      <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
-    </Pressable>
+      <View className="flex-row items-center gap-4">
+        <Fact icon={Clock3} text={formatUsage(console.usageMinutes)} />
+        <Fact icon={Gamepad2} text={`${operative}/${console.controllers.length}`} warn={out > 0} />
+        {nextLabel ? <Fact icon={Wrench} text={nextLabel} warn={due} grow /> : null}
+      </View>
+    </PressableScale>
+  );
+}
+
+function Fact({
+  icon,
+  text,
+  warn,
+  grow,
+}: {
+  icon: LucideIcon;
+  text: string;
+  warn?: boolean;
+  grow?: boolean;
+}) {
+  return (
+    <View className={cn('flex-row items-center gap-1.5', grow && 'shrink')}>
+      <Icon as={icon} size={15} className={warn ? 'text-warning-tone' : 'text-muted-foreground'} />
+      <Text
+        numberOfLines={1}
+        className={cn(
+          'shrink text-sm font-semibold',
+          warn ? 'text-warning-tone' : 'text-muted-foreground',
+        )}
+        style={{ fontVariant: ['tabular-nums'] }}
+      >
+        {text}
+      </Text>
+    </View>
   );
 }
 
 // Conteo de equipos (consolas y mandos) por color del semáforo, con el mismo lenguaje que el
-// resumen del muro: una tarjeta, una barra de proporción y columnas separadas por líneas finas.
+// resumen del muro: tarjetas con la etiqueta y su punto de color arriba y el número abajo.
 function HealthOverview({ lights }: { lights: HealthLight[] }) {
-  const columns: { light: HealthLight; label: string }[] = [
+  const columns: { light: HealthLight; label: string; a11y?: string }[] = [
     { light: 'verde', label: 'Operativos' },
-    { light: 'ambar', label: 'Mantenimiento' },
+    { light: 'ambar', label: 'Revisión', a11y: 'en mantenimiento' },
     { light: 'rojo', label: 'Averiados' },
   ];
-  const totals = columns.map((c) => ({ ...c, total: lights.filter((l) => l === c.light).length }));
   return (
-    <View
-      accessibilityRole="summary"
-      className="overflow-hidden rounded-3xl border border-border bg-card"
-    >
-      <View className="h-1.5 flex-row bg-secondary">
-        {totals.map((c) =>
-          c.total > 0 ? (
-            <View key={c.light} className={HEALTH_LOOK[c.light].dot} style={{ flex: c.total }} />
-          ) : null,
-        )}
-      </View>
-      <View className="flex-row">
-        {totals.map((c, index) => (
+    <View accessibilityRole="summary" className="flex-row gap-3">
+      {columns.map((c) => {
+        const total = lights.filter((l) => l === c.light).length;
+        return (
           <View
             key={c.light}
-            accessibilityLabel={`${c.total} ${c.label}`}
-            className={cn('flex-1 gap-1 px-3 py-3', index > 0 && 'border-l border-border')}
+            accessibilityLabel={`${total} ${c.a11y ?? c.label}`}
+            className={cn(
+              'flex-1 gap-3 rounded-2xl border bg-card px-4 py-3.5',
+              total > 0 && c.light !== 'verde' ? 'border-warning' : 'border-border',
+            )}
           >
-            <Text
-              className={cn('text-2xl font-extrabold', c.total === 0 && 'text-muted-foreground')}
-              style={{ fontVariant: ['tabular-nums'] }}
-            >
-              {c.total}
-            </Text>
             <View className="flex-row items-center gap-1.5">
-              <View className={cn('h-1.5 w-1.5 rounded-full', HEALTH_LOOK[c.light].dot)} />
-              <Text
-                numberOfLines={1}
-                className="flex-1 text-[11px] font-bold text-muted-foreground"
-              >
+              <View className={cn('h-2 w-2 rounded-full', HEALTH_LOOK[c.light].dot)} />
+              <Text numberOfLines={1} className="shrink text-xs font-bold text-muted-foreground">
                 {c.label}
               </Text>
             </View>
+            <Text
+              className={cn('text-3xl font-extrabold', total === 0 && 'text-muted-foreground')}
+              style={{ fontVariant: ['tabular-nums'] }}
+            >
+              {total}
+            </Text>
           </View>
-        ))}
-      </View>
+        );
+      })}
     </View>
   );
 }

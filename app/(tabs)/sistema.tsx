@@ -14,7 +14,7 @@ import { Text } from '../../src/components/ui/text';
 export default function SystemScreen() {
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader title="Sistema" subtitle="Apariencia y herramientas" />
+      <ScreenHeader title="Sistema" subtitle="Ajustes de la app" />
       <ScrollView contentContainerClassName="gap-4 p-4 pb-8">
         <Section title="Apariencia">
           <ThemeToggle />
@@ -24,7 +24,7 @@ export default function SystemScreen() {
         </Section>
 
         {__DEV__ ? (
-          <Section title="Herramientas de desarrollo" trailing="Solo en desarrollo">
+          <Section title="Herramientas de desarrollo">
             <ToolButton
               href="/dev/persistencia"
               icon={Database}

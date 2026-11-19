@@ -51,7 +51,7 @@ const BALANCE_LOOK = {
   },
 } as const;
 
-// Una fila por método de pago: icono, nombre, monto y qué parte del total representa.
+// Una fila por método de pago: ícono, nombre, monto y qué porcentaje del turno representa.
 function MethodRow({
   icon,
   label,
@@ -65,25 +65,29 @@ function MethodRow({
   totalCents: number;
   testID: string;
 }) {
-  const share = totalCents > 0 ? cents / totalCents : 0;
+  // Qué parte del total representa, en texto (sin barras: se veían recargadas).
+  const share = totalCents > 0 ? Math.round((cents / totalCents) * 100) : 0;
   return (
-    <View className="gap-2">
-      <View className="flex-row items-center gap-3">
-        <View className="h-10 w-10 items-center justify-center rounded-xl bg-secondary">
-          <Icon as={icon} size={20} />
-        </View>
-        <Text className="flex-1 text-base font-bold">{label}</Text>
+    <View className="flex-row items-center gap-3">
+      <View className="h-10 w-10 items-center justify-center rounded-xl bg-secondary">
+        <Icon as={icon} size={20} />
+      </View>
+      <View className="flex-1">
+        <Text className="text-base font-bold">{label}</Text>
         <Text
-          testID={testID}
-          className="text-lg font-extrabold"
+          className="text-xs font-semibold text-muted-foreground"
           style={{ fontVariant: ['tabular-nums'] }}
         >
-          {formatMoney(cents)}
+          {share} % del turno
         </Text>
       </View>
-      <View className="ml-[52px] h-1.5 overflow-hidden rounded-full bg-secondary">
-        <View className="h-1.5 rounded-full bg-foreground" style={{ width: `${share * 100}%` }} />
-      </View>
+      <Text
+        testID={testID}
+        className={cn('text-lg font-extrabold', cents === 0 && 'text-muted-foreground')}
+        style={{ fontVariant: ['tabular-nums'] }}
+      >
+        {formatMoney(cents)}
+      </Text>
     </View>
   );
 }
@@ -135,7 +139,14 @@ export default function CashScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader title="Caja" subtitle="Turno, arqueo y cierre" />
+      <ScreenHeader
+        title="Caja"
+        subtitle={
+          overview?.shift
+            ? `Turno abierto desde las ${formatTime(overview.shift.openedAt)}`
+            : 'Sin turno abierto'
+        }
+      />
       <FormScrollView>
         {message ? (
           <View
@@ -160,8 +171,7 @@ export default function CashScreen() {
                 {formatMoney(balance.totalCents)}
               </Text>
               <Text className="text-sm font-semibold text-muted-foreground">
-                Abierto a las {formatTime(overview.shift.openedAt)} ·{' '}
-                {sessionCount === 1 ? '1 cobro' : `${sessionCount} cobros`}
+                {sessionCount === 1 ? '1 sesión cobrada' : `${sessionCount} sesiones cobradas`}
               </Text>
             </View>
             <View className="h-px bg-border" />
