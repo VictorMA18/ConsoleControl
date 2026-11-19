@@ -1,20 +1,33 @@
 /** @type {import('tailwindcss').Config} */
+const color = (name) => `hsl(var(--${name}))`;
+const pair = (name) => ({ DEFAULT: color(name), foreground: color(`${name}-foreground`) });
+
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
-      // Paleta de alto contraste (T04). Cada color de estado se acompaña siempre de su etiqueta.
+      // Nombres de React Native Reusables (ADR 0012) con valores en HSL (global.css).
       colors: {
-        canvas: '#F1F5F9',
-        surface: '#FFFFFF',
-        ink: '#0F172A',
-        muted: '#475569',
-        line: '#CBD5E1',
-        primary: { DEFAULT: '#0369A1', pressed: '#075985' },
-        available: { DEFAULT: '#15803D', soft: '#DCFCE7' },
-        playing: { DEFAULT: '#B91C1C', soft: '#FEE2E2' },
-        warning: { DEFAULT: '#F59E0B', ink: '#451A03', soft: '#FEF3C7' },
+        border: color('border'),
+        input: color('input'),
+        ring: color('ring'),
+        background: color('background'),
+        foreground: color('foreground'),
+        primary: pair('primary'),
+        secondary: pair('secondary'),
+        destructive: pair('destructive'),
+        muted: pair('muted'),
+        accent: pair('accent'),
+        card: pair('card'),
+        available: { ...pair('available'), soft: color('available-soft') },
+        playing: { ...pair('playing'), soft: color('playing-soft') },
+        warning: { ...pair('warning'), soft: color('warning-soft') },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
     },
   },
