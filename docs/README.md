@@ -28,5 +28,6 @@ Decisiones técnicas registradas:
 | [0012](adr/0012-react-native-reusables-y-colores-hsl.md) | React Native Reusables y colores en HSL               |
 | [0013](adr/0013-estados-de-sesion-y-cobro.md)            | Estados de sesión y cobro                             |
 | [0014](adr/0014-sistema-de-diseno-tarjeta-de-estado.md)  | Sistema de diseño «tarjeta de estado», claro y oscuro |
+| [0015](adr/0015-expo-network-para-conectividad.md)       | expo-network para detectar la conexión                |
 
 Regla: una decisión por ADR, una fase por archivo de roadmap, una historia de usuario por archivo de `specs/`.
