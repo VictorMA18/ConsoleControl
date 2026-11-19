@@ -26,20 +26,56 @@ export function cardState(
   return 'en_juego';
 }
 
-// Verde disponible, rojo en juego y ámbar próxima a terminar o tiempo cumplido (TW-90).
-export const CARD_STATE_STYLES: Record<CardState, { label: string; band: string; text: string }> = {
-  disponible: { label: 'Disponible', band: 'bg-available', text: 'text-available-foreground' },
-  en_juego: { label: 'En juego', band: 'bg-playing', text: 'text-playing-foreground' },
-  por_terminar: { label: 'Por terminar', band: 'bg-warning', text: 'text-warning-foreground' },
+// Cada estado tiene una etiqueta, un color (de la franja, el texto y el fondo suave) y un icono
+// (en src/components/stateIcons.ts): nunca se depende solo del color (TW-90).
+export const CARD_STATE_STYLES: Record<
+  CardState,
+  { label: string; band: string; tone: string; soft: string }
+> = {
+  disponible: {
+    label: 'Disponible',
+    band: 'bg-available',
+    tone: 'text-available',
+    soft: 'bg-available-soft',
+  },
+  en_juego: {
+    label: 'En juego',
+    band: 'bg-playing',
+    tone: 'text-playing',
+    soft: 'bg-playing-soft',
+  },
+  por_terminar: {
+    label: 'Por terminar',
+    band: 'bg-warning',
+    tone: 'text-warning',
+    soft: 'bg-warning-soft',
+  },
   tiempo_cumplido: {
     label: 'Tiempo cumplido',
     band: 'bg-warning',
-    text: 'text-warning-foreground',
+    tone: 'text-warning',
+    soft: 'bg-warning-soft',
   },
-  por_cobrar: { label: 'Por cobrar', band: 'bg-primary', text: 'text-primary-foreground' },
+  por_cobrar: {
+    label: 'Por cobrar',
+    band: 'bg-pending',
+    tone: 'text-pending',
+    soft: 'bg-pending-soft',
+  },
   mantenimiento: {
     label: 'Mantenimiento',
     band: 'bg-muted-foreground',
-    text: 'text-primary-foreground',
+    tone: 'text-muted-foreground',
+    soft: 'bg-secondary',
   },
 };
+
+// Orden en que se listan los estados en el resumen del muro.
+export const CARD_STATE_ORDER: CardState[] = [
+  'disponible',
+  'en_juego',
+  'por_terminar',
+  'tiempo_cumplido',
+  'por_cobrar',
+  'mantenimiento',
+];

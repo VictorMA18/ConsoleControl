@@ -1,7 +1,12 @@
 import { useContext } from 'react';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 
-// Margen inferior del sistema (barra de gestos). Si no hay proveedor, como en las pruebas, es 0.
+// Márgenes del sistema (barra de estado y de gestos). Sin proveedor, como en las pruebas, son 0.
+export function useInsets(): { top: number; bottom: number } {
+  const insets = useContext(SafeAreaInsetsContext);
+  return { top: insets?.top ?? 0, bottom: insets?.bottom ?? 0 };
+}
+
 export function useBottomInset(): number {
-  return useContext(SafeAreaInsetsContext)?.bottom ?? 0;
+  return useInsets().bottom;
 }
