@@ -28,4 +28,5 @@ Hasta el Sprint 1 una sesión solo era `activa` o `finalizada`, y finalizarla li
 
 - Las consultas de sesiones activas y pendientes de cobro son separadas (`getActiveSessionsWithConsole`, `getPendingSessionsWithConsole`); el muro une ambas.
 - Una migración nueva (`0002_settlement_columns`) agrega las tres columnas de liquidación.
-- Las partes siguientes del Sprint 2 agregan a este ADR el pago por método (HU-006) y el turno (HU-007).
+- HU-006: el pago se guarda en `payments`, una fila por método. Cobrar es una sola transacción: pagos, sesión `cobrada`, consola `disponible` y mandos `operativo`.
+- La parte de HU-007 agrega a este ADR el turno.
