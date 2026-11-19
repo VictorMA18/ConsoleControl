@@ -1,12 +1,19 @@
 import { Link, Stack, useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, FlatList, Text, Vibration, View } from 'react-native';
 
+import { AlertBanner } from '../src/components/AlertBanner';
 import { ConsoleCard } from '../src/components/ConsoleCard';
 import { TypeFilter } from '../src/components/TypeFilter';
 import { useActiveSessions } from '../src/hooks/useActiveSessions';
 import { useConsoles } from '../src/hooks/useConsoles';
+import { useSessionAlerts } from '../src/hooks/useSessionAlerts';
 import type { ConsoleWithStock } from '../src/services/consoleService';
+import type { SessionAlert } from '../src/services/sessionAlerts';
 import { useWallFilterStore } from '../src/stores/wallFilterStore';
+
+// Dos vibraciones de medio segundo: se distinguen de una notificación cualquiera.
+const ALERT_VIBRATION = [0, 500, 250, 500];
 
 // Muro de consolas (HU-001, T07): una tarjeta por consola del inventario con su estado actual.
 export default function ConsoleWallScreen() {
@@ -15,6 +22,13 @@ export default function ConsoleWallScreen() {
   // Las sesiones activas se restauran desde SQLite al abrir la app (T10).
   const { data: sessions } = useActiveSessions();
   const sessionByConsole = new Map(sessions?.map((s) => [s.consoleId, s]));
+  const [lastAlert, setLastAlert] = useState<SessionAlert | null>(null);
+
+  // HU-004 (T16): cada alerta llega una sola vez por sesión; el celular vibra y queda el aviso.
+  useSessionAlerts((alert) => {
+    Vibration.vibrate(ALERT_VIBRATION);
+    setLastAlert(alert);
+  });
   const consoleType = useWallFilterStore((s) => s.consoleType);
   const visible = consoles?.filter((c) => consoleType === null || c.consoleType === consoleType);
 
@@ -25,6 +39,7 @@ export default function ConsoleWallScreen() {
   return (
     <View className="flex-1 bg-canvas">
       <Stack.Screen options={{ title: 'Muro de consolas' }} />
+      {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
       <View className="px-4 pb-2 pt-4">
         <TypeFilter />
       </View>
