@@ -8,6 +8,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/montserrat-alternates';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { isRunningInExpoGo } from 'expo';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,8 +24,12 @@ import { useThemeColors } from '../src/utils/theme';
 
 // La pantalla de carga nativa (ícono de la app, app.json) se queda hasta que la base de datos y la
 // fuente están listas, y se va con un fundido corto. Así no aparece un spinner intermedio.
+// Expo Go muestra su propia pantalla de carga y no permite configurarla: el fundido solo se pide
+// en el APK.
 SplashScreen.preventAutoHideAsync().catch(() => {});
-SplashScreen.setOptions({ fade: true, duration: 250 });
+if (!isRunningInExpoGo()) {
+  SplashScreen.setOptions({ fade: true, duration: 250 });
+}
 applySavedTheme();
 
 export default function RootLayout() {
