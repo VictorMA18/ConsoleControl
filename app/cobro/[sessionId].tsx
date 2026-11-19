@@ -80,7 +80,10 @@ export default function SettlementScreen() {
         onBack={() => router.back()}
       />
       <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
-        <SettlementSummary settlement={settlement} />
+        <SettlementSummary
+          settlement={settlement}
+          state={active ? 'en_juego' : payable ? 'por_cobrar' : 'disponible'}
+        />
         {payable ? (
           <PaymentForm
             totalCents={session.totalCents}
@@ -93,13 +96,13 @@ export default function SettlementScreen() {
             accessibilityRole="alert"
             className="rounded-2xl border border-playing/40 bg-playing-soft p-4"
           >
-            <Text className="font-bold text-playing">{error}</Text>
+            <Text className="font-bold text-playing-tone">{error}</Text>
           </View>
         ) : null}
         {!active && !payable ? (
           <View className="flex-row items-center gap-3 rounded-2xl border border-available/40 bg-available-soft p-4">
-            <Icon as={CheckCheck} size={22} className="text-available" />
-            <Text className="flex-1 text-base font-semibold text-available">
+            <Icon as={CheckCheck} size={22} className="text-available-tone" />
+            <Text className="flex-1 text-base font-semibold text-available-tone">
               Esta sesión ya está cobrada.
             </Text>
           </View>
@@ -109,7 +112,7 @@ export default function SettlementScreen() {
       {active ? (
         <View
           className="border-t border-border bg-card px-4 pt-3"
-          style={{ paddingBottom: Math.max(bottomInset, 12) }}
+          style={{ paddingBottom: bottomInset + 12 }}
         >
           <Button
             testID="finalizar-sesion"

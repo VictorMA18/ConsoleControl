@@ -4,7 +4,7 @@ import {
   getAvailableConsolesWithStock,
   getConsoleById,
 } from '../db/repositories/consoleRepository';
-import { getRateBlocks } from '../db/repositories/rateRepository';
+import { getRateBlocks, getRates } from '../db/repositories/rateRepository';
 import {
   type ActiveSession,
   ConsoleNotAvailableError,
@@ -126,6 +126,18 @@ export async function startSession(
 }
 
 export type { ActiveSession };
+
+// Precio de una hora con un mando por tipo de consola, para la tarjeta libre del muro. Un tipo sin
+// bloque de 60 minutos no aparece.
+export async function listHourlyPrices(): Promise<Partial<Record<ConsoleType, number>>> {
+  const prices: Partial<Record<ConsoleType, number>> = {};
+  for (const rate of await getRates()) {
+    if (rate.blockMinutes === 60) {
+      prices[rate.consoleType] = rate.priceCents;
+    }
+  }
+  return prices;
+}
 
 // Tarifario de un tipo de consola, para que el diálogo calcule el total en vivo (T14).
 export async function listRateBlocks(consoleType: ConsoleType): Promise<RateBlock[]> {

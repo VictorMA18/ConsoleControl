@@ -25,8 +25,9 @@ describe('ConsoleCard', () => {
 
     expect(screen.getByText('PS5 #1')).toBeTruthy();
     expect(screen.getByText('Disponible')).toBeTruthy();
-    expect(screen.getByText('6 mandos libres')).toBeTruthy();
-    expect(screen.getByLabelText('PS5, 6 mandos libres')).toBeTruthy();
+    expect(screen.getByText('6 mandos')).toBeTruthy();
+    expect(screen.getByText('Libre')).toBeTruthy();
+    expect(screen.getByLabelText('PS5')).toBeTruthy();
   });
 
   it('indica el estado con texto además del color', async () => {
@@ -77,8 +78,9 @@ describe('ConsoleCard con sesión activa (T11)', () => {
     await render(<ConsoleCard console={playing} session={session} onPress={jest.fn()} />);
 
     expect(screen.getByTestId(`cronometro-${ps5.id}`)).toHaveTextContent('00:10:05');
-    expect(screen.getByText('Quedan 00:19:55')).toBeTruthy();
-    expect(screen.getByText('2 mandos')).toBeTruthy();
+    expect(screen.getByTestId(`restante-${ps5.id}`)).toHaveTextContent('00:19:55');
+    // Dos prestados de ocho: los seis libres del inventario más los dos en uso.
+    expect(screen.getByText('2/8 mandos')).toBeTruthy();
     expect(screen.getByLabelText('PS5 #1, En juego')).toBeTruthy();
   });
 
@@ -94,7 +96,7 @@ describe('ConsoleCard con sesión activa (T11)', () => {
     await render(<ConsoleCard console={playing} session={session} onPress={jest.fn()} />);
 
     expect(screen.getByText('Tiempo cumplido')).toBeTruthy();
-    expect(screen.getByText('Quedan 00:00:00')).toBeTruthy();
+    expect(screen.getByTestId(`restante-${ps5.id}`)).toHaveTextContent('Cumplido');
   });
 
   it('en tiempo libre muestra la modalidad en lugar del restante', async () => {

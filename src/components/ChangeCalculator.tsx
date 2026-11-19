@@ -1,4 +1,4 @@
-import { Delete } from 'lucide-react-native';
+import { CircleAlert, Delete, HandCoins } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -55,26 +55,37 @@ export function ChangeCalculator({ cashCents }: Props) {
         </Text>
       </View>
 
+      {/* Mismo lenguaje que la tarjeta de consola: franja con la etiqueta y el monto grande. */}
       <View
         accessibilityLiveRegion="polite"
-        className={cn(
-          'items-center gap-1 rounded-2xl p-4',
-          short ? 'bg-playing-soft' : 'bg-available-soft',
-        )}
+        className="overflow-hidden rounded-3xl border border-border bg-card"
       >
-        <Text
+        <View
           className={cn(
-            'text-xs font-bold uppercase tracking-widest',
-            short ? 'text-playing' : 'text-available',
+            'flex-row items-center gap-2 px-5 py-2.5',
+            short ? 'bg-playing' : 'bg-available',
           )}
         >
-          {short ? 'Falta' : 'Vuelto'}
-        </Text>
+          <Icon
+            as={short ? CircleAlert : HandCoins}
+            size={18}
+            strokeWidth={2.5}
+            className={short ? 'text-playing-foreground' : 'text-available-foreground'}
+          />
+          <Text
+            className={cn(
+              'text-lg font-extrabold',
+              short ? 'text-playing-foreground' : 'text-available-foreground',
+            )}
+          >
+            {short ? 'Falta' : 'Vuelto'}
+          </Text>
+        </View>
         <Text
           testID={short ? 'faltante' : 'vuelto'}
           className={cn(
-            'text-6xl font-extrabold tracking-tight',
-            short ? 'text-playing' : 'text-available',
+            'px-5 py-4 text-center text-6xl font-extrabold tracking-tight',
+            short ? 'text-playing-tone' : 'text-foreground',
           )}
           style={{ fontVariant: ['tabular-nums'] }}
         >

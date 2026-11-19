@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, ScrollView, View } from 'react-native';
 
 import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { Section } from '../../src/components/Section';
 import { Button } from '../../src/components/ui/button';
 import { Icon } from '../../src/components/ui/icon';
@@ -50,6 +51,7 @@ function RestoredSessionRow({ session }: { session: ActiveSession }) {
 
 export default function TimerSpikeScreen() {
   const router = useRouter();
+  const bottomInset = useBottomInset();
   const queryClient = useQueryClient();
   const restored = useActiveSessions();
   const [memoryCounter, setMemoryCounter] = useState(0);
@@ -134,7 +136,10 @@ export default function TimerSpikeScreen() {
         subtitle="Solo desarrollo"
         onBack={() => router.back()}
       />
-      <ScrollView contentContainerClassName="gap-4 p-4 pb-10">
+      <ScrollView
+        contentContainerClassName="gap-4 p-4"
+        contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
+      >
         <Section title="A) Contador en memoria">
           <Text className="text-5xl font-extrabold" style={{ fontVariant: ['tabular-nums'] }}>
             {formatDuration(memoryCounter * 1000)}
@@ -155,7 +160,7 @@ export default function TimerSpikeScreen() {
         <Section title="Sesiones restauradas al abrir la app (TW-86)">
           {restored.isPending ? <Text className="text-muted-foreground">Cargando…</Text> : null}
           {restored.error ? (
-            <Text className="text-playing">Error: {restored.error.message}</Text>
+            <Text className="text-playing-tone">Error: {restored.error.message}</Text>
           ) : null}
           {restored.data?.length === 0 ? (
             <Text className="text-base text-muted-foreground">Ninguna sesión activa</Text>

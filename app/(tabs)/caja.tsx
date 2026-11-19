@@ -14,6 +14,7 @@ import { ScrollView, View } from 'react-native';
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { Section } from '../../src/components/Section';
+import { ThemeToggle } from '../../src/components/ThemeToggle';
 import { StateView } from '../../src/components/StateView';
 import { Button } from '../../src/components/ui/button';
 import { Icon } from '../../src/components/ui/icon';
@@ -34,11 +35,19 @@ const BALANCE_LABELS = {
 const BALANCE_LOOK = {
   conforme: {
     box: 'border-available/40 bg-available-soft',
-    tone: 'text-available',
+    tone: 'text-available-tone',
     icon: CircleCheck,
   },
-  faltante: { box: 'border-playing/40 bg-playing-soft', tone: 'text-playing', icon: TriangleAlert },
-  sobrante: { box: 'border-warning/40 bg-warning-soft', tone: 'text-warning', icon: CircleAlert },
+  faltante: {
+    box: 'border-playing/40 bg-playing-soft',
+    tone: 'text-playing-tone',
+    icon: TriangleAlert,
+  },
+  sobrante: {
+    box: 'border-warning/40 bg-warning-soft',
+    tone: 'text-warning-tone',
+    icon: CircleAlert,
+  },
 } as const;
 
 function Stat({
@@ -241,6 +250,10 @@ export default function CashScreen() {
           ) : (
             <Text className="text-base text-muted-foreground">Aún no hay turnos cerrados.</Text>
           )}
+        </Section>
+
+        <Section title="Apariencia">
+          <ThemeToggle />
         </Section>
       </ScrollView>
 

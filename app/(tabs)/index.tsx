@@ -2,17 +2,20 @@ import { ChevronRight, Terminal } from 'lucide-react-native';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Vibration, View } from 'react-native';
+import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import { AlertBanner } from '../../src/components/AlertBanner';
 import { ConsoleCard } from '../../src/components/ConsoleCard';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { StateView } from '../../src/components/StateView';
+import { ThemeButton } from '../../src/components/ThemeToggle';
 import { TypeFilter } from '../../src/components/TypeFilter';
 import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import { WallSummary } from '../../src/components/WallSummary';
 import { useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useConsoles } from '../../src/hooks/useConsoles';
+import { useHourlyPrices } from '../../src/hooks/useHourlyPrices';
 import { useNow } from '../../src/hooks/useNow';
 import { usePendingSessions } from '../../src/hooks/usePendingSessions';
 import { useSessionAlerts } from '../../src/hooks/useSessionAlerts';
@@ -33,6 +36,7 @@ export default function ConsoleWallScreen() {
   const { data: sessions } = useActiveSessions();
   // Las finalizadas esperan su pago y siguen ocupando la consola (HU-005).
   const { data: pending } = usePendingSessions();
+  const { data: hourlyPrices } = useHourlyPrices();
   const sessionByConsole = new Map(
     [...(sessions ?? []), ...(pending ?? [])].map((s) => [s.consoleId, s]),
   );
@@ -65,9 +69,12 @@ export default function ConsoleWallScreen() {
       <ScreenHeader
         logo
         right={
-          <Text className="text-lg font-bold" style={{ fontVariant: ['tabular-nums'] }}>
-            {new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
+          <View className="flex-row items-center gap-3">
+            <Text className="text-lg font-bold" style={{ fontVariant: ['tabular-nums'] }}>
+              {new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+            <ThemeButton />
+          </View>
         }
       />
       {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
@@ -84,15 +91,22 @@ export default function ConsoleWallScreen() {
             <TypeFilter />
           </View>
           {visible && visible.length > 0 ? (
-            <View className="flex-row flex-wrap px-2.5">
+            // Una columna de tarjetas anchas, legibles a distancia (ADR 0014). Al filtrar, las que
+            // quedan se reacomodan con una transición y las nuevas aparecen con un fundido corto.
+            <View className="gap-3 px-4">
               {visible.map((item) => (
-                <View key={item.id} className="w-1/2 p-1.5">
+                <Animated.View
+                  key={item.id}
+                  entering={FadeIn.duration(200)}
+                  layout={LinearTransition.duration(220)}
+                >
                   <ConsoleCard
                     console={item}
                     session={sessionByConsole.get(item.id)}
+                    hourCents={hourlyPrices?.[item.consoleType]}
                     onPress={openConsole}
                   />
-                </View>
+                </Animated.View>
               ))}
             </View>
           ) : (
