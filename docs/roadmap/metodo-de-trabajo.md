@@ -31,8 +31,9 @@ Reglas comunes. Cada parte de `sprint-N/` las da por leídas y no las repite. Le
 
 ## Pantallas nuevas (para no rehacer el trabajo después)
 
-- Usa los componentes de `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`; ver [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md)) y solo los tokens de color por nombre (`bg-primary`, `text-foreground`...). Nada de colores sueltos ni de hexadecimales.
-- Para cargando, error y vacío usa `StateView`. En diálogos con una acción principal, déjala fija abajo como en `app/sesion/[consoleId].tsx` (`useBottomInset` para la barra de gestos).
+- Usa los componentes de `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`; ver [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md) y [ADR 0014](../adr/0014-sistema-de-diseno-sala-de-control.md)), los iconos de Lucide y solo los tokens de color por nombre (`bg-card`, `text-foreground`...). Nada de colores sueltos ni de hexadecimales. Cada pantalla empieza con `ScreenHeader` y agrupa su contenido con `Section`.
+- Para cargando, error y vacío usa `StateView`; para confirmar, `ConfirmDialog` (no `Alert`). En diálogos con una acción principal, déjala fija abajo como en `app/sesion/[consoleId].tsx` (`useBottomInset` para la barra de gestos). Una pantalla nueva con pestaña va en `app/(tabs)/`.
+- Evita `flex-1` en vertical dentro de un contenedor de altura automática: colapsa el elemento. Usa `w-full` o deja que el contenido fije la altura.
 - Si necesitas otro componente de Reusables, cópialo a `src/components/ui/` con el mismo criterio (sin `asChild`) y anótalo en el ADR 0012.
 - Reutiliza `ChoiceButton`, `ConsoleCard`, `formatMoney` y `WallSummary`; no hay bocetos nuevos.
 

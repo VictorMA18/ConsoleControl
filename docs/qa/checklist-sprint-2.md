@@ -2,6 +2,21 @@
 
 Lo ejecuta VN en el celular, una sola vez, al final del sprint. Las casillas empiezan vacías.
 
+## Antes de empezar
+
+- [ ] Borra los datos de la app (o reinstálala): hay 3 migraciones nuevas (`0002` a `0004`) y se aplican solas al abrirla. Corre con `pnpm start`.
+- [ ] Para ver los estados sin esperar, abre **Herramientas de desarrollo → Prueba de persistencia** y pulsa "4. Sesión con 6 min restantes": al minuto 1 pasa a **Por terminar** (titila y vibra) y al minuto 6 a **Tiempo cumplido**.
+
+## Interfaz y navegación
+
+- [ ] El muro muestra todas las consolas en dos columnas, sin filas colapsadas, y se lee en DM Sans.
+- [ ] El resumen de arriba cuenta cada estado: Disponible, En juego, Por terminar, Tiempo cumplido y Por cobrar (los tres últimos aparecen cuando hay alguna).
+- [ ] Cada tarjeta lleva el icono, el texto y el color de su estado, el cronómetro y la barra de avance.
+- [ ] La barra de abajo cambia entre Consolas y Caja; el logo y la hora se ven arriba en el muro.
+- [ ] El diálogo de nueva sesión se cierra con la X, el botón "Iniciar sesión" queda fijo abajo y los totales cambian al elegir mandos y modalidad.
+- [ ] "Finalizar sesión" y "Cerrar turno" piden confirmación en un diálogo propio y se pueden cancelar tocando fuera.
+- [ ] Las herramientas de desarrollo se ven con el mismo estilo que el resto.
+
 ## HU-005 · Liquidación
 
 - [ ] Finalizar una sesión "En Juego" muestra minutos, mandos y total.
