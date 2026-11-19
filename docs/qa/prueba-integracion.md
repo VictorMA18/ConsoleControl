@@ -10,7 +10,7 @@
 
 ## Ejecución en el emulador
 
-Pasos 1 a 4 con Switch #1, 1 mando y 30 min. Pasos 5 a 8 con la sesión de prueba "4. Sesión que vence en 5 min" de la pantalla de diagnóstico (PS3 #1, 30 min, iniciada 24 min 50 s antes), para no esperar media hora.
+Pasos 1 a 4 con Switch #1, 1 mando y 30 min. Pasos 5 a 8 con la sesión de prueba "4. Sesión con 6 min restantes" de la pantalla de diagnóstico (PS3 #1, 30 min, iniciada 24 min 50 s antes), para no esperar media hora.
 
 | Paso | Acción                     | Resultado esperado                          | Observado                                                                                                                        | Estado |
 | ---- | -------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------ |
