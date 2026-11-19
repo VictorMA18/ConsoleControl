@@ -78,9 +78,14 @@ export default function SessionDialogScreen() {
     return null;
   }
 
-  // Escenario 3: una consola en juego o en mantenimiento no admite otra sesión.
+  // Escenario 3: una consola en juego, en mantenimiento o averiada no admite otra sesión (RN-06).
   if (console.status !== 'disponible') {
-    const reason = console.status === 'en_juego' ? 'está en juego' : 'está en mantenimiento';
+    const reason =
+      console.status === 'en_juego'
+        ? 'está en juego'
+        : console.status === 'averiado'
+          ? 'está averiada'
+          : 'está en mantenimiento';
     return (
       <View className="flex-1 bg-background">
         <ScreenHeader title="Consola ocupada" onClose={() => router.back()} />
