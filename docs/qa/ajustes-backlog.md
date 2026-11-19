@@ -35,8 +35,8 @@ Por revisar con su responsable: T04, T05 y T12 (en revisión) y T06 (en curso).
 
 ## Decisiones pendientes
 
-| Decisión                             | Origen | Responsable   |
-| ------------------------------------ | ------ | ------------- |
-| Tarifas definitivas                  | H-06   | Por confirmar |
-| Inventario real de consolas y mandos | H-05   | Por confirmar |
-| Avisos con la app cerrada            | H-04   | Por confirmar |
+| Decisión                             | Origen | Responsable     |
+| ------------------------------------ | ------ | --------------- |
+| Tarifas definitivas                  | H-06   | Resuelto en T12 |
+| Inventario real de consolas y mandos | H-05   | Resuelto en T12 |
+| Avisos con la app cerrada            | H-04   | Por confirmar   |

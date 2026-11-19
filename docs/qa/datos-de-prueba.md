@@ -5,21 +5,21 @@
 | Tarea  | T17 (TW-17) · TW-119                                                   |
 | Fecha  | 06/11/2026                                                             |
 | Fuente | `src/db/seedData.ts` y `src/services/tariff.ts` en `develop` (2d820b1) |
-| Estado | **Provisional**                                                        |
+| Estado | Vigente                                                                |
 
-**Aviso.** Las tarifas son las del seed y siguen provisionales: TW-12 está "En revisión" y el comentario de `seedData.ts` dice que el documento de T12 trae otros precios en sus tablas. Cuando TW-12 se cierre, hay que recalcular los montos de este archivo. Las consolas y mandos también son de ejemplo hasta tener el inventario real.
+Las tarifas y el inventario son los de [`../architecture/tarifario.md`](../architecture/tarifario.md).
 
 ## Consolas y mandos
 
-Cinco consolas, una por tipo, con 4 mandos cada una (`CONTROLLERS_PER_CONSOLE`). Inventario real: Por confirmar.
+Cinco consolas, una por tipo. PS5 y Switch tienen 6 mandos; las demás, 4 (`CONTROLLERS_BY_CONSOLE_TYPE`).
 
 | Dato | Consola   | Tipo     | Mandos en el seed |
 | ---- | --------- | -------- | ----------------- |
-| D-01 | PS5 #1    | `ps5`    | 4                 |
+| D-01 | PS5 #1    | `ps5`    | 6                 |
 |      | PS4 #1    | `ps4`    | 4                 |
 |      | PS3 #1    | `ps3`    | 4                 |
 |      | Xbox #1   | `xbox`   | 4                 |
-|      | Switch #1 | `switch` | 4                 |
+|      | Switch #1 | `switch` | 6                 |
 
 ## Tarifario del seed
 
@@ -39,7 +39,7 @@ Montos en soles. `Precio` es el bloque con 1 mando. `Extra` es el recargo del bl
 
 PS5 #1 con `fijo_120` y 2 mandos, para que no venza durante la prueba. Otra consola en tiempo libre para CP-005. La referencia es un cronómetro externo.
 
-### D-03 · CP-007, recargo por mando (provisional)
+### D-03 · CP-007, recargo por mando
 
 | Consola | Modalidad | Mandos | Cálculo         | Total esperado |
 | ------- | --------- | ------ | --------------- | -------------- |
@@ -48,7 +48,7 @@ PS5 #1 con `fijo_120` y 2 mandos, para que no venza durante la prueba. Otra cons
 | PS4     | `fijo_60` | 3      | 7.00 + 3.00 × 2 | S/ 13.00       |
 | PS5     | `fijo_60` | 2      | 10.00 + 4.50    | S/ 14.50       |
 
-### D-04 · CP-008, tiempo fijo con 1 mando (provisional)
+### D-04 · CP-008, tiempo fijo con 1 mando
 
 | Tipo     | `fijo_30` | `fijo_60` | `fijo_120` |
 | -------- | --------- | --------- | ---------- |
@@ -58,7 +58,7 @@ PS5 #1 con `fijo_120` y 2 mandos, para que no venza durante la prueba. Otra cons
 | `ps5`    | S/ 5.00   | S/ 10.00  | S/ 19.00   |
 | `xbox`   | S/ 5.00   | S/ 10.00  | S/ 19.00   |
 
-### D-05 · CP-011, 6 mandos con `fijo_60` (provisional)
+### D-05 · CP-011, 6 mandos con `fijo_60`
 
 | Consola                       | Cálculo                     | Total esperado |
 | ----------------------------- | --------------------------- | -------------- |
@@ -66,7 +66,7 @@ PS5 #1 con `fijo_120` y 2 mandos, para que no venza durante la prueba. Otra cons
 | Xbox (sin descuento)          | 10.00 + 4.50 × 5            | S/ 32.50       |
 | PS5 (mandos 4.º a 6.º a 3.10) | 10.00 + 4.50 × 2 + 3.10 × 3 | S/ 28.30       |
 
-El seed tiene 4 mandos por consola, así que hoy este caso no se puede ejecutar en el celular sin agregar mandos. Inventario para esta prueba: Por confirmar.
+PS5 #1 tiene 6 mandos, así que el caso se ejecuta con ella.
 
 ### D-06 · CP-013, cuatro consolas
 

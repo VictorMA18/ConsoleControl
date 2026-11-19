@@ -1,6 +1,6 @@
 import { CONSOLE_TYPES, RATE_BLOCK_MINUTES } from '../../src/db/schema/enums';
 import {
-  CONTROLLERS_PER_CONSOLE,
+  CONTROLLERS_BY_CONSOLE_TYPE,
   seedConsoles,
   seedControllers,
   seedRates,
@@ -28,7 +28,7 @@ describe('datos iniciales', () => {
     );
     seedConsoles.forEach((console) => {
       const count = seedControllers.filter((c) => c.consoleId === console.id).length;
-      expect(count).toBe(CONTROLLERS_PER_CONSOLE);
+      expect(count).toBe(CONTROLLERS_BY_CONSOLE_TYPE[console.consoleType]);
     });
   });
 
