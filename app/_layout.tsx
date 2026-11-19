@@ -12,10 +12,11 @@ import { isRunningInExpoGo } from 'expo';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
+import { BrandSplash } from '../src/components/BrandSplash';
 import { StateView } from '../src/components/StateView';
 import { useDatabaseSetup } from '../src/db/migrate';
 import { queryClient } from '../src/hooks/queryClient';
@@ -44,6 +45,9 @@ export default function RootLayout() {
     MontserratAlternates_800ExtraBold,
   });
   const fontsDone = fontsLoaded || Boolean(fontError);
+  // Pantalla de marca encima de la app al abrirla; se va sola (BrandSplash).
+  const [brandVisible, setBrandVisible] = useState(true);
+  const hideBrand = useCallback(() => setBrandVisible(false), []);
 
   // Respaldo en la nube (HU-008): arranca cuando la base está lista y corre aparte de la interfaz.
   useEffect(() => (ready ? startSyncLoop() : undefined), [ready]);
@@ -100,7 +104,9 @@ export default function RootLayout() {
           <Stack.Screen name="cobro/[sessionId]" />
           <Stack.Screen name="dev/persistencia" />
           <Stack.Screen name="dev/spike-cronometro" />
+          <Stack.Screen name="salud/[consoleId]" />
         </Stack>
+        {brandVisible ? <BrandSplash onDone={hideBrand} /> : null}
       </QueryClientProvider>
     </KeyboardProvider>
   );
