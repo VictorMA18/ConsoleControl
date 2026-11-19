@@ -20,3 +20,5 @@ Entregables de calidad del Sprint 1. Las reglas generales están en [`../guides/
 | [`planning-siguiente-sprint.md`](planning-siguiente-sprint.md) | Preparación de la Planning                 | T21      |
 | [`validacion-prototipo.md`](validacion-prototipo.md)           | Validación del prototipo                   | T05      |
 | [`evaluacion-usabilidad.md`](evaluacion-usabilidad.md)         | Evaluación heurística y medición del flujo | T20      |
+| [`acta-sprint-review.md`](acta-sprint-review.md)               | Acta de la Sprint Review                   | T21      |
+| [`evidencias/`](evidencias/)                                   | Capturas de la ejecución de pruebas        | T18      |

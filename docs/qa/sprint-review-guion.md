@@ -1,13 +1,11 @@
 # Guion de la Sprint Review
 
-| Campo               | Valor                                                         |
-| ------------------- | ------------------------------------------------------------- |
-| Tarea               | T21 (TW-21) · TW-141 y TW-142                                 |
-| Conduce             | VN, con el propietario y el equipo                            |
-| Fecha de la reunión | Por confirmar                                                 |
-| Requisito           | APK de T19 instalado (ver [`generar-apk.md`](generar-apk.md)) |
-
-**Aviso.** Hoy la demo no se puede hacer: falta la interfaz (T07, T08, T11, T14 y T16). Este guion describe lo que se mostrará cuando exista.
+| Campo               | Valor                                                                         |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Tarea               | T21 (TW-21) · TW-141 y TW-142                                                 |
+| Conduce             | VN                                                                            |
+| Fecha de la reunión | 18/11/2026 (acta en [`acta-sprint-review.md`](acta-sprint-review.md))         |
+| Requisito           | APK de T19 instalado (build 9ee60139, ver [`generar-apk.md`](generar-apk.md)) |
 
 ## Antes de empezar
 
@@ -59,9 +57,4 @@
 
 ## Retroalimentación del propietario
 
-| Historia | Comentario | ¿Cambio pedido? | Prioridad |
-| -------- | ---------- | --------------- | --------- |
-| HU-001   |            |                 |           |
-| HU-002   |            |                 |           |
-| HU-003   |            |                 |           |
-| HU-004   |            |                 |           |
+La retroalimentación quedó registrada en [`acta-sprint-review.md`](acta-sprint-review.md).

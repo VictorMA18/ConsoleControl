@@ -1,39 +1,32 @@
-# Planning del siguiente sprint
+# Planning del Sprint 2
 
-| Campo               | Valor                |
-| ------------------- | -------------------- |
-| Tarea               | T21 (TW-21) · TW-146 |
-| Fecha de la reunión | Por confirmar        |
-| Fechas del sprint   | Por confirmar        |
+| Campo             | Valor                                                                   |
+| ----------------- | ----------------------------------------------------------------------- |
+| Tarea             | T21 (TW-21) · TW-146                                                    |
+| Fecha             | 18/11/2026                                                              |
+| Fechas del sprint | 23/11 al 04/12/2026                                                     |
+| Capacidad         | 40 h y unos 7 SP (ver [`velocidad-sprint-1.md`](velocidad-sprint-1.md)) |
 
-**Aviso.** El roadmap decía que el Sprint 2 era del 26/10 al 06/11/2026, y esa fecha ya pasó. VN debe indicar las fechas reales. Las fases 1 y 2 del roadmap siguen "por confirmar con el backlog".
-
-## Entradas
-
-- Capacidad: [`velocidad-sprint-1.md`](velocidad-sprint-1.md).
-- Tareas que pasan: [`ajustes-backlog.md`](ajustes-backlog.md).
-- Retroalimentación: [`sprint-review-guion.md`](sprint-review-guion.md).
-- Acuerdos: [`retrospectiva-sprint-1.md`](retrospectiva-sprint-1.md).
-
-## Agenda
-
-1. Confirmar las fechas y la capacidad del sprint.
-2. Revisar las tareas que pasan y lo que falta de cada una.
-3. Revisar los cambios pedidos por el propietario.
-4. Elegir las historias del backlog que entran.
-5. Asignar responsable a cada tarea e historia.
+Las fechas siguen el calendario del roadmap: el MVP sigue el 11/12/2026, después de este sprint y de la fase de pulido.
 
 ## Objetivo del sprint
 
-Por confirmar.
+Que el administrador pueda cerrar una sesión y cobrarla (HU-005), y dejar el proceso de revisión protegido.
 
 ## Compromiso
 
-| Historia o tarea | Horas estimadas | Responsable |
-| ---------------- | --------------- | ----------- |
-|                  |                 |             |
+| Elemento                                                                                     | Horas estimadas | Responsable |
+| -------------------------------------------------------------------------------------------- | --------------- | ----------- |
+| Redactar los criterios Given-When-Then de HU-005 en `docs/specs/`                            | 3 h             | JS          |
+| HU-005 · Lógica de liquidación (cierre, cobro con el motor de T13, liberar consola y mandos) | 10 h            | VM          |
+| HU-005 · Botón "Cerrar sesión" en la tarjeta y resumen del cobro                             | 10 h            | RF          |
+| HU-005 · Casos de prueba y pruebas automáticas                                               | 5 h             | VN          |
+| Proteger `develop` y `main` (CI obligatorio y 1 aprobación)                                  | 1 h             | VN          |
+| Pruebas de los repositorios con base SQLite real                                             | 6 h             | VM          |
+| Evaluar notificaciones locales con la app cerrada (ADR nuevo)                                | 5 h             | VM          |
+| **Total**                                                                                    | **40 h**        |             |
 
-| Dato                | Valor         |
-| ------------------- | ------------- |
-| Capacidad acordada  | Por confirmar |
-| Horas comprometidas | Por confirmar |
+## Fuera del sprint
+
+- HU-008 (respaldo con Supabase): pasa al siguiente sprint para no superar la capacidad.
+- Formato de los `.md` y el cambio de `pnpm-lock.yaml`: tareas menores para cuando haya holgura.

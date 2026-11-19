@@ -10,4 +10,4 @@ Las fechas siguen los sprints del proyecto. El detalle de cada fase está en su 
 | [Fase 3 · Respaldo con Supabase (Sprint 4)](fase-3.md) | 23/11–4/12/2026 | Respaldo dispositivo → nube de los registros pendientes (HU-008) | Un registro creado sin internet aparece en Supabase tras recuperar la conexión |
 | [Fase 4 · Pulido y MVP](fase-4.md) | 7–11/12/2026 | Corrección de errores, pruebas con el cliente y presentación del MVP | MVP presentado el 11/12/2026 sin errores bloqueantes abiertos |
 
-La fase vigente es la Fase 0.
+La Fase 0 (Sprint 1) se cerró el 18/11/2026. El siguiente sprint va del 23/11 al 04/12/2026 ([`../qa/planning-siguiente-sprint.md`](../qa/planning-siguiente-sprint.md)).

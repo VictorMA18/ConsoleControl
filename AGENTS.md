@@ -10,8 +10,8 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 
 ## 2. Estado actual
 
-- Fase vigente: Fase 0, Fundación (Sprint 1). Roadmap en [`docs/roadmap/README.md`](docs/roadmap/README.md).
-- Proyecto Expo inicializado en T02 (SDK 58, Expo Router). La base de datos se agrega en T03.
+- Sprint 1 (Fase 0) cerrado el 18/11/2026: HU-001 a HU-004 aceptadas. Siguiente: Sprint 2, del 23/11 al 04/12/2026 ([`docs/qa/planning-siguiente-sprint.md`](docs/qa/planning-siguiente-sprint.md)). Roadmap en [`docs/roadmap/README.md`](docs/roadmap/README.md).
+- App Expo (SDK 58, Expo Router, NativeWind) con SQLite, muro de consolas, diálogo de sesión, cronómetro y alertas. APK con EAS (`docs/qa/generar-apk.md`).
 
 ## 3. Equipo y áreas
 

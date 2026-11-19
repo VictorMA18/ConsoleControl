@@ -3,40 +3,33 @@
 | Campo | Valor                |
 | ----- | -------------------- |
 | Tarea | T21 (TW-21) · TW-145 |
-| Fecha | 06/11/2026           |
+| Fecha | 18/11/2026           |
 
-## Cambios pedidos por el propietario
+## Cambios pedidos en la Sprint Review
 
-Se rellena después de la Sprint Review.
-
-| Historia | Cambio pedido | Prioridad | Tarea en Jira | Estado |
-| -------- | ------------- | --------- | ------------- | ------ |
-|          |               |           |               |        |
+En la revisión con cliente simulado no se pidieron cambios a HU-001 a HU-004 (ver [`acta-sprint-review.md`](acta-sprint-review.md)).
 
 ## Tareas que pasan al siguiente sprint
 
-**Propuesta del agente, a partir de [`estado-integracion.md`](estado-integracion.md). VN decide.**
+Ninguna: las 21 tareas del Sprint 1 quedaron en "Listo".
 
-| Tarea                                | Estado en Jira | Motivo                                |
-| ------------------------------------ | -------------- | ------------------------------------- |
-| T07 Tarjeta y muro                   | En curso       | Sin código en `develop`               |
-| T08 Diálogo de sesión                | En curso       | Sin código en `develop`               |
-| T11 Cronómetro en pantalla y colores | En curso       | Sin código en `develop`               |
-| T14 Total estimado en el diálogo     | Por hacer      | Depende de T08                        |
-| T16 Ámbar titilante y vibración      | En curso       | Sin código en `develop`               |
-| T18 Pruebas en Android               | Por hacer      | Depende de la interfaz y el APK       |
-| T19 Integración                      | En revisión    | Falta la prueba con interfaz y el APK |
-| T20 Usabilidad y ajustes de UI       | En curso       | Depende de la interfaz                |
-| T21 Sprint Review y retrospectiva    | Por hacer      | Depende de T19                        |
+## Nuevos elementos del backlog
 
-Por revisar con su responsable: T04, T05 y T12 (en revisión) y T06 (en curso).
+Salen de la evaluación de usabilidad (T20) y de la revisión de código (T19).
 
-`hu-004-alerta-vencimiento.md` indica que HU-004 es la primera historia en pasar al Sprint 2 si el Sprint 1 se retrasa.
+| Elemento                                                               | Origen         | Tipo                                               | Prioridad |
+| ---------------------------------------------------------------------- | -------------- | -------------------------------------------------- | --------- |
+| HU-005 · Liquidación de la sesión: cerrar, cobrar y liberar la consola | U-07           | Historia (criterios por redactar en `docs/specs/`) | Alta      |
+| Avisos con la app cerrada (`expo-notifications`)                       | U-08, ADR 0011 | Tarea técnica                                      | Media     |
+| Proteger `develop` y `main` con CI obligatorio y 1 aprobación          | H-03           | Tarea de proceso                                   | Alta      |
+| Pruebas de los repositorios con una base SQLite real                   | H-01           | Tarea técnica                                      | Media     |
+| Formatear los 14 `.md` con Prettier o excluirlos                       | H-08           | Tarea técnica                                      | Baja      |
+| Confirmar el cambio de `pnpm-lock.yaml` que agrega `@pnpm/exe`         | H-09           | Tarea técnica                                      | Baja      |
 
-## Decisiones pendientes
+## Decisiones cerradas
 
-| Decisión                             | Origen | Responsable          |
-| ------------------------------------ | ------ | -------------------- |
-| Tarifas definitivas                  | H-06   | Resuelto en T12      |
-| Inventario real de consolas y mandos | H-05   | Resuelto en T12      |
-| Avisos con la app cerrada            | H-04   | Decidido en ADR 0011 |
+| Decisión                        | Origen | Resultado               |
+| ------------------------------- | ------ | ----------------------- |
+| Tarifas definitivas             | H-06   | Resuelto en T12         |
+| Inventario de consolas y mandos | H-05   | Resuelto en T12         |
+| Avisos con la app cerrada       | H-04   | Decidido en el ADR 0011 |
