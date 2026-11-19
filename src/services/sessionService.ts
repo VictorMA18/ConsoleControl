@@ -8,7 +8,10 @@ import { getRateBlocks } from '../db/repositories/rateRepository';
 import {
   type ActiveSession,
   ConsoleNotAvailableError,
+  endSession,
   getActiveSessionsWithConsole,
+  getPendingSessionsWithConsole,
+  getSessionWithConsole,
   InsufficientControllersError,
   openSession,
 } from '../db/repositories/sessionRepository';
@@ -16,6 +19,7 @@ import type { ConsoleStatus, ConsoleType } from '../db/schema/enums';
 import type { RateBlock, Session } from '../db/schema';
 import { startSessionSchema } from '../schemas/session';
 import { estimateTotalCents, MODE_DURATION_MS } from './sessionQuote';
+import { calculateSettlement } from './settlement';
 
 export { estimateTotalCents, MODE_DURATION_MS };
 
@@ -133,4 +137,54 @@ export async function listRateBlocks(consoleType: ConsoleType): Promise<RateBloc
 // que se calcula desde started_at.
 export async function listActiveSessions(): Promise<ActiveSession[]> {
   return getActiveSessionsWithConsole();
+}
+
+// Sesiones finalizadas que esperan su pago (HU-005). Siguen ocupando su consola en el muro.
+export async function listPendingSessions(): Promise<ActiveSession[]> {
+  return getPendingSessionsWithConsole();
+}
+
+export async function getSessionDetail(id: string): Promise<ActiveSession | undefined> {
+  return getSessionWithConsole(id);
+}
+
+export type EndSessionResult =
+  | { ok: true; session: Session }
+  | { ok: false; reason: 'sesion_no_encontrada' | 'sesion_no_activa'; message: string };
+
+// Finaliza una sesión activa (HU-005): calcula la liquidación con las tarifas guardadas en la
+// sesión y la deja "por cobrar". El cobro y la liberación de la consola son de HU-006.
+export async function endSessionForPayment(
+  id: string,
+  now: number = Date.now(),
+): Promise<EndSessionResult> {
+  const detail = await getSessionWithConsole(id);
+  if (!detail) {
+    return { ok: false, reason: 'sesion_no_encontrada', message: 'La sesión no existe' };
+  }
+  if (detail.status !== 'activa') {
+    return { ok: false, reason: 'sesion_no_activa', message: 'La sesión ya fue finalizada' };
+  }
+  const settlement = calculateSettlement({
+    consoleType: detail.consoleType,
+    controllerCount: detail.controllerCount,
+    durationMs: detail.durationMs,
+    startedAt: detail.startedAt,
+    endedAt: now,
+    rates: detail.rateSnapshot,
+  });
+  const session = await endSession(
+    id,
+    {
+      playedMinutes: settlement.playedMinutes,
+      chargedMinutes: settlement.chargedMinutes,
+      penaltyCents: settlement.penaltyCents,
+      totalCents: settlement.totalCents,
+    },
+    now,
+  );
+  if (!session) {
+    return { ok: false, reason: 'sesion_no_activa', message: 'La sesión ya fue finalizada' };
+  }
+  return { ok: true, session };
 }
