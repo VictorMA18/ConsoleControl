@@ -1,13 +1,21 @@
 # Roadmap hasta el MVP
 
-Las fechas siguen los sprints del proyecto. El detalle de cada fase está en su archivo.
+Las fechas siguen las semanas del calendario original del proyecto. El detalle de cada fase está en su archivo y, desde el Sprint 2, **cada sprint está segmentado en partes** para avanzar una por una.
 
-| Fase | Fechas | Objetivo | Criterio de salida |
-|---|---|---|---|
-| [Fase 0 · Sprint 1: núcleo de sesiones](fase-0.md) | 12–23/10/2026 | Tareas T01 a T21: arquitectura, proyecto base, esquema SQLite y historias HU-001 a HU-004 | Una sesión iniciada sigue con el tiempo correcto tras cerrar y reabrir la app |
-| [Fase 1 · Sprint 2](fase-1.md) | 26/10–6/11/2026 | Por confirmar con el backlog | Por definir con el backlog |
-| [Fase 2 · Sprint 3](fase-2.md) | 9–20/11/2026 | Por confirmar con el backlog | Por definir con el backlog |
-| [Fase 3 · Respaldo con Supabase (Sprint 4)](fase-3.md) | 23/11–4/12/2026 | Respaldo dispositivo → nube de los registros pendientes (HU-008) | Un registro creado sin internet aparece en Supabase tras recuperar la conexión |
-| [Fase 4 · Pulido y MVP](fase-4.md) | 7–11/12/2026 | Corrección de errores, pruebas con el cliente y presentación del MVP | MVP presentado el 11/12/2026 sin errores bloqueantes abiertos |
+## Cómo continuar
 
-La Fase 0 (Sprint 1) se cerró el 18/11/2026. El siguiente sprint va del 23/11 al 04/12/2026 ([`../qa/planning-siguiente-sprint.md`](../qa/planning-siguiente-sprint.md)).
+1. Lee [`metodo-de-trabajo.md`](metodo-de-trabajo.md) (reglas comunes, pruebas y PR).
+2. Abre el `README.md` del sprint vigente y toma la primera parte sin ✔ (en la tabla de avance).
+3. Lee solo esa parte; no abras las demás.
+
+| Fase                               | Fechas          | Contenido                                                                            | Partes                            |
+| ---------------------------------- | --------------- | ------------------------------------------------------------------------------------ | --------------------------------- |
+| [Fase 0 · Sprint 1](fase-0.md)     | 12–23/10/2026   | Núcleo de sesiones: HU-001 a HU-004 (cerrada y fusionada)                            | —                                 |
+| [Fase 1 · Sprint 2](fase-1.md)     | 26/10–6/11/2026 | Cobro, caja y arqueo: HU-005, HU-006, HU-007 y HU-010                                | [`sprint-2/`](sprint-2/README.md) |
+| [Fase 2 · Sprint 3](fase-2.md)     | 9–20/11/2026    | Sincronización, extensión de tiempo y mantenimiento: HU-008, HU-009, HU-012 y HU-014 | [`sprint-3/`](sprint-3/README.md) |
+| [Fase 3 · Sprint 4](fase-3.md)     | 23/11–4/12/2026 | Fiados completos (HU-011) y parametrización (HU-013); instrucciones por entregar     | [`sprint-4/`](sprint-4/README.md) |
+| [Fase 4 · Pulido y MVP](fase-4.md) | 7–11/12/2026    | Corrección de errores, pruebas con el cliente y presentación del MVP                 | —                                 |
+
+## Ideas sin planificar
+
+[`mejoras-pendientes.md`](mejoras-pendientes.md): React Native Reusables y colores HSL. No tienen fecha ni tarea; se evalúan al planificar el Sprint 4 o el pulido.

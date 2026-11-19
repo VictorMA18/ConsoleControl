@@ -2,26 +2,28 @@
 
 ## Ramas
 
-| Rama | Uso |
-|---|---|
-| `main` | Estable. Solo por pull request desde `develop`. |
-| `develop` | Integración. Solo por pull request desde una feature. |
-| `feature/T0X-nombre` | Una por tarea. Ejemplos: `feature/T10-cronometro-persistente`, `feature/T03-esquema-sqlite`. |
+| Rama                    | Uso                                                                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`                  | Estable. Solo por pull request desde `develop`.                                                                                                                      |
+| `develop`               | Integración. Solo por pull request desde una feature.                                                                                                                |
+| `feature/T0X-nombre`    | Una por tarea. Ejemplos: `feature/T10-cronometro-persistente`, `feature/T03-esquema-sqlite`.                                                                         |
+| `feature/HU-0XX-nombre` | Desde el Sprint 2, una por parte de una historia. Ejemplo: `feature/HU-005-liquidacion`. Ver [`docs/roadmap/metodo-de-trabajo.md`](../roadmap/metodo-de-trabajo.md). |
 
 ## Commits
 
-Formato: `tipo(T0X): descripción en minúsculas y en presente`
+Formato: `tipo(T0X): descripción en minúsculas y en presente`. Desde el Sprint 2 el ámbito puede ser la historia: `tipo(HU-0XX): descripción`.
 
-| Tipo | Cuándo se usa |
-|---|---|
-| `feat` | Se agrega una funcionalidad |
-| `fix` | Se corrige un error |
-| `docs` | Cambios solo de documentación |
+| Tipo       | Cuándo se usa                                      |
+| ---------- | -------------------------------------------------- |
+| `feat`     | Se agrega una funcionalidad                        |
+| `fix`      | Se corrige un error                                |
+| `docs`     | Cambios solo de documentación                      |
 | `refactor` | Se reorganiza código sin cambiar su comportamiento |
-| `test` | Se agregan o ajustan pruebas |
-| `chore` | Configuración, herramientas y mantenimiento |
+| `test`     | Se agregan o ajustan pruebas                       |
+| `chore`    | Configuración, herramientas y mantenimiento        |
 
 Ejemplos:
+
 - `feat(T10): calcular tiempo transcurrido desde started_at`
 - `fix(T03): corregir tipo de la columna started_at`
 - `docs(T01): agregar diagrama de capas`

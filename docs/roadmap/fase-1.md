@@ -1,8 +1,8 @@
-# Fase 1 · Sprint 2
+# Fase 1 · Sprint 2: cobro, caja y arqueo
 
 ## Objetivo
 
-Historias por confirmar con el backlog (historias restantes del Product Backlog).
+Cerrar una sesión, ver el resumen exacto de cobro, registrar el pago (efectivo, Yape, Plin o fiado, incluso mixto), calcular el vuelto y cerrar el turno comparando el efectivo contado contra lo registrado.
 
 ## Fechas
 
@@ -10,22 +10,17 @@ Historias por confirmar con el backlog (historias restantes del Product Backlog)
 
 ## Entregables
 
-Por definir con el backlog.
-
-## Tareas principales
-
-Historias por confirmar con el backlog.
+HU-005, HU-006, HU-007 y HU-010 (20 puntos). Partes, orden y avance en [`sprint-2/README.md`](sprint-2/README.md).
 
 ## Criterio de salida
 
-- Las historias acordadas para el sprint cumplen sus criterios Given-When-Then (historias por definir).
+- Cada historia cumple sus criterios Given-When-Then y el checklist de [`checklist-sprint-2.md`](../qa/checklist-sprint-2.md) lo ejecuta VN en el celular.
 - `pnpm lint`, `pnpm typecheck` y `pnpm test` pasan en `develop`.
 
 ## Riesgos
 
-- Cambio de hora del dispositivo.
-- Ausencia de internet en el ciber.
-- El cliente pide login (Observación O1).
+- Penalidad después de la gracia y definición de "Conforme" por confirmar con el propietario.
+- El cierre de turno (solo lectura) no puede impedir marcar registros como sincronizados.
 
 ## Depende de
 

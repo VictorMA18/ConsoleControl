@@ -10,7 +10,7 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 
 ## 2. Estado actual
 
-- Sprint 1 (Fase 0) cerrado el 18/11/2026: HU-001 a HU-004 aceptadas. Siguiente: Sprint 2, del 23/11 al 04/12/2026 ([`docs/qa/planning-siguiente-sprint.md`](docs/qa/planning-siguiente-sprint.md)). Roadmap en [`docs/roadmap/README.md`](docs/roadmap/README.md).
+- Sprint 1 (Fase 0) cerrado: HU-001 a HU-004 aceptadas y fusionadas en `develop`. Siguiente: Sprint 2 (cobro, caja y arqueo: HU-005, 006, 007 y 010) y Sprint 3 (sincronización, extensión de tiempo y mantenimiento: HU-008, 009, 012 y 014), segmentados por partes en [`docs/roadmap/`](docs/roadmap/README.md).
 - App Expo (SDK 58, Expo Router, NativeWind) con SQLite, muro de consolas, diálogo de sesión, cronómetro y alertas. APK con EAS (`docs/qa/generar-apk.md`).
 
 ## 3. Equipo y áreas
@@ -100,6 +100,8 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 | `pnpm format` | Aplicar Prettier |
 | `pnpm db:generate` | Generar migraciones con drizzle-kit en `src/db/migrations/` |
 
+**Cómo se verifica mientras se desarrolla.** El agente solo ejecuta `pnpm lint` y `pnpm typecheck`. No ejecuta el emulador, `adb` ni builds de EAS, y `pnpm test` solo una vez al final de cada sprint, porque consumen mucho tiempo y uso. Las pruebas en el celular las hace VN al final de cada bloque de desarrollo y reporta los errores; en la app de desarrollo (`app/dev/persistencia.tsx`) los botones de sesión de prueba dejan 6 min restantes para ver la alerta y el cambio de color.
+
 ## 9. Dónde buscar
 
 | Si te piden | Lee |
@@ -107,7 +109,7 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 | Entender la arquitectura o dónde va un archivo | [`docs/architecture/arquitectura.md`](docs/architecture/arquitectura.md) |
 | Tablas, columnas o relaciones de la base de datos | [`docs/architecture/base-de-datos.md`](docs/architecture/base-de-datos.md) |
 | Saber por qué se eligió una tecnología | [`docs/adr/`](docs/adr/) (un archivo por decisión) |
-| Saber qué toca hacer ahora o qué viene | [`docs/roadmap/README.md`](docs/roadmap/README.md) y la fase vigente |
+| Saber qué toca hacer ahora o qué viene | [`docs/roadmap/README.md`](docs/roadmap/README.md): abre el sprint vigente y la primera parte sin ✔ |
 | Ramas, commits o pull requests | [`docs/guides/flujo-git.md`](docs/guides/flujo-git.md) y [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 | Estilo de código, ESLint, Prettier | [`docs/guides/estilo-codigo.md`](docs/guides/estilo-codigo.md) |
 | Escribir o ejecutar pruebas | [`docs/guides/pruebas.md`](docs/guides/pruebas.md) |
@@ -121,8 +123,8 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 ## 10. Observaciones y decisiones abiertas
 
 - **O1 (usuarios).** El MVP no tiene login ni roles: el cliente es una persona mayor de edad que opera el ciber directamente. Puede cambiar después (PIN local o Supabase Auth). No agregues columnas ni pantallas de usuario ahora, pero no acoples la lógica a la idea de un único usuario (por ejemplo, no uses datos globales sueltos para identificar al operador). Ver [ADR 0009](docs/adr/0009-sin-login-en-el-mvp.md).
-- Historias de las fases 1 y 2: por definir con el backlog.
-- Nombres de las tareas T07 a T09, T11 a T16 y T20: por definir (no constan en las instrucciones de T01).
+- Historias del Sprint 4 (HU-011 y HU-013): instrucciones por entregar.
+- Ideas de interfaz sin planificar (React Native Reusables, colores HSL): [`docs/roadmap/mejoras-pendientes.md`](docs/roadmap/mejoras-pendientes.md).
 
 ## 11. Cómo mantener este archivo
 
