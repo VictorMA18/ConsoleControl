@@ -9,19 +9,20 @@ Lo ejecuta VN en el celular, una sola vez, al final del sprint. Las casillas emp
 
 ## Interfaz y navegación
 
-> El ícono y la pantalla de carga solo se ven en un APK nuevo (en Expo Go sale el de Expo).
+> El ícono y la pantalla de carga solo se ven en un APK nuevo (en Expo Go sale el de Expo). La migración 0005 renombra las consolas a «MAQ #n» sin borrar datos.
 
-- [ ] Al abrir la app aparece el ícono (mando sobre verde) y se va con un fundido, sin spinner intermedio.
-- [ ] La barra de pestañas queda encima de la barra de navegación de Android (gestos y tres botones), sin taparse.
-- [ ] El muro muestra una tarjeta ancha por consola con la franja del estado, la pastilla de plataforma (logo de PlayStation), el nombre, el cronómetro y la columna de mandos, tiempo y dinero.
-- [ ] Una consola libre muestra sus mandos, «Libre» y la tarifa por hora; una en juego, «2/6 mandos», el restante y el total.
-- [ ] El resumen de arriba cuenta cada estado: Disponible, En juego, Por terminar, Tiempo cumplido y Por cobrar (los tres últimos aparecen cuando hay alguna).
-- [ ] El botón de tema del muro pasa por Sistema → Claro → Oscuro; en Caja › Apariencia se elige igual, y la elección se mantiene al cerrar y reabrir.
-- [ ] En los dos temas todo se lee bien: textos, franjas, vuelto y avisos.
-- [ ] La tarjeta se hunde un poco al tocarla; al filtrar por tipo las tarjetas se reacomodan suave.
-- [ ] El diálogo de nueva sesión se cierra con la X, el botón "Iniciar sesión" queda fijo abajo y los totales cambian al elegir mandos y modalidad.
+- [ ] Al abrir la app aparece el ícono en blanco y negro y se va con un fundido, sin spinner intermedio.
+- [ ] Ningún contenido queda debajo de la barra de navegación de Android: pestañas, botón «Cobrar y Liberar», diálogo de sesión y herramientas de desarrollo.
+- [ ] Arriba del muro hay 4 fichas en 2 × 2 (Disponible, En juego, Por terminar, Por cobrar), sin franja y con el icono del color del estado.
+- [ ] Las máquinas se llaman «MAQ #1» a «MAQ #5»; buscar «3» deja solo MAQ #3.
+- [ ] Cada tarjeta muestra la pastilla con el logo de su plataforma (PlayStation, Xbox o Switch), el nombre, el cronómetro y la columna de mandos, tiempo y dinero.
+- [ ] En el diálogo de sesión, las opciones de modalidad (incluida «Tiempo libre») tienen el texto centrado.
+- [ ] En el cobro con efectivo hay un solo campo «Recibido» y debajo el vuelto; en pago mixto el vuelto usa solo la parte en efectivo.
+- [ ] Al tocar un campo (recibido, montos de pago mixto, efectivo contado), la pantalla sube y el campo queda visible encima del teclado.
+- [ ] Caja muestra el total del turno, el reparto por método, el arqueo con el efectivo esperado y el historial de turnos.
+- [ ] La pestaña Sistema cambia el tema (Sistema, Claro, Oscuro), la elección se mantiene al reabrir, y las herramientas de desarrollo son botones legibles en los dos temas.
+- [ ] La tarjeta se hunde un poco al tocarla; al filtrar o buscar, las tarjetas se reacomodan suave.
 - [ ] "Finalizar sesión" y "Cerrar turno" piden confirmación en un diálogo que aparece con una transición corta y se puede cancelar tocando fuera.
-- [ ] Las herramientas de desarrollo se ven con el mismo estilo que el resto.
 
 ## HU-005 · Liquidación
 

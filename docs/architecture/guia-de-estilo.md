@@ -41,13 +41,15 @@ Todo sale de la tarjeta de consola que diseñó VN ([ADR 0014](../adr/0014-siste
 ┌──────────────────────────────────────────────┐
 │ ✓ Disponible                     (franja)    │
 ├──────────────────────────────────────────────┤
-│ ( PS logo PS3 )  PS3 #1   │ 🎮 2/6 mandos     │
+│ ( PS logo PS3 )  MAQ #1   │ 🎮 2/6 mandos     │
 │ ⏱ 00:12:05               │ ⏳ 47:55          │
 │                           │ 🪙 S/ 6.00        │
 ├──────────────────────────────────────────────┤
 │ ███████████░░░░░ avance del tiempo fijo      │
 └──────────────────────────────────────────────┘
 ```
+
+Las máquinas se llaman «MAQ #n»; el tipo se ve en la pastilla (logo de PlayStation, Xbox o Switch). El buscador del muro encuentra una máquina por su número.
 
 Columna derecha: mandos en uso sobre el total (libres si no hay sesión); tiempo restante, modalidad o «Libre»; total de la sesión o tarifa por hora si la consola está libre.
 
@@ -90,15 +92,19 @@ Montserrat Alternates: 500 (texto), 600 (pestañas), 700 (datos y botones) y 800
 ### Componentes y organización
 
 - Base en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`, copiados de React Native Reusables).
-- Patrón de tarjeta: `ConsoleCard`, `PlatformBadge`, `InfoRow` y `PressableScale`. La misma franja de estado aparece en `WallSummary`, `SettlementSummary` y `ChangeCalculator`.
-- `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado en línea, `Logo` y `BrandMark` para la marca, `ThemeToggle` y `ThemeButton` para el tema.
-- Navegación: pestañas Consolas y Caja (Salud en el Sprint 3). Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
-- Muro: logo, hora y botón de tema; resumen por estado; filtro por tipo; una columna de tarjetas anchas.
+- Patrón de tarjeta: `ConsoleCard`, `PlatformBadge`, `InfoRow` y `PressableScale`. La franja de estado se usa solo en las tarjetas grandes (consola y resumen de cobro).
+- Resumen del muro (`WallSummary`): cuadrícula de 2 × 2 con Disponible, En juego, Por terminar (suma tiempo cumplido) y Por cobrar; sin franja, el color va en el icono sobre su fondo suave.
+- Vuelto (`ChangeCalculator`): un campo «Recibido» con el teclado numérico del celular y, debajo, el vuelto o lo que falta. En pago mixto usa solo la parte en efectivo.
+- Formularios dentro de `FormScrollView`: al enfocar un campo, la pantalla se desplaza para dejarlo encima del teclado (`react-native-keyboard-controller`).
+- `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado en línea, `Logo` y `BrandMark` para la marca, `ThemeToggle` para el tema y `ConsoleSearch` para buscar máquinas.
+- Navegación: pestañas Consolas, Caja y Sistema (Salud en el Sprint 3). Sistema reúne la apariencia y, en desarrollo, las herramientas de prueba como botones. Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
+- Muro: logo y hora; resumen 2 × 2; buscador; filtro por tipo; una columna de tarjetas anchas.
+- Caja: total del turno en grande con el reparto por método (barra de proporción), arqueo con el efectivo esperado y el resultado, cobros a revisar e historial compacto de turnos.
 - Diálogos con acción principal: el botón queda fijo abajo y suma el margen de la barra del sistema.
 
 ### Ícono y pantalla de carga
 
-Mando marfil sobre el verde de «Disponible». Fuentes en `assets/brand/*.svg`; los PNG de `assets/` se exportan de ahí (ícono, adaptativo de Android con su monocromo, pantalla de carga y favicon). La pantalla de carga usa fondo `#F0F2F4` (claro) o `#101219` (oscuro), que son `--background` en hexadecimal.
+En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. Fuentes en `assets/brand/*.svg`; los PNG de `assets/` se exportan de ahí (ícono, adaptativo de Android con su monocromo, pantalla de carga y favicon). La pantalla de carga usa fondo `#F0F2F4` (claro) o `#101219` (oscuro), que son `--background` en hexadecimal; en oscuro el recuadro del ícono es un grafito más claro (`splash-icon-dark.png`) para que se distinga del fondo.
 
 ## Medidas
 
