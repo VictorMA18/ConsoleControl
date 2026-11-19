@@ -4,7 +4,13 @@ import type { SessionAlertState } from '../services/sessionAlerts';
 // Estado visible de una tarjeta del muro (HU-002 escenario 3, T11). Cada estado tiene un color y
 // una etiqueta, para no depender solo del color.
 export type CardState =
-  'disponible' | 'en_juego' | 'por_terminar' | 'tiempo_cumplido' | 'por_cobrar' | 'mantenimiento';
+  | 'disponible'
+  | 'en_juego'
+  | 'por_terminar'
+  | 'tiempo_cumplido'
+  | 'por_cobrar'
+  | 'mantenimiento'
+  | 'averiado';
 
 export function cardState(
   consoleStatus: ConsoleStatus,
@@ -74,6 +80,14 @@ export const CARD_STATE_STYLES: Record<CardState, StateStyle> = {
     tone: 'text-maintenance-tone',
     soft: 'bg-maintenance-soft',
   },
+  // Falla reportada en el semáforo de salud (HU-012): fuera de servicio hasta repararla.
+  averiado: {
+    label: 'Averiada',
+    band: 'bg-maintenance',
+    onBand: 'text-maintenance-foreground',
+    tone: 'text-destructive',
+    soft: 'bg-playing-soft',
+  },
 };
 
 // Orden en que se listan los estados en el resumen del muro.
@@ -84,4 +98,5 @@ export const CARD_STATE_ORDER: CardState[] = [
   'tiempo_cumplido',
   'por_cobrar',
   'mantenimiento',
+  'averiado',
 ];
