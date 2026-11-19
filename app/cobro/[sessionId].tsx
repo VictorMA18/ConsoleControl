@@ -2,6 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 
+import { PaymentForm } from '../../src/components/PaymentForm';
 import { SettlementSummary } from '../../src/components/SettlementSummary';
 import { StateView } from '../../src/components/StateView';
 import { Button } from '../../src/components/ui/button';
@@ -9,7 +10,9 @@ import { Text } from '../../src/components/ui/text';
 import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { useEndSession } from '../../src/hooks/useEndSession';
 import { useNow } from '../../src/hooks/useNow';
+import { useRegisterPayment } from '../../src/hooks/useRegisterPayment';
 import { useSessionDetail } from '../../src/hooks/useSessionDetail';
+import type { PaymentLineInput } from '../../src/schemas/payment';
 import { calculateSettlement } from '../../src/services/settlement';
 
 // Resumen de cobro de una consola ocupada (HU-005, CU-002). Mientras la sesión sigue activa muestra
@@ -22,6 +25,7 @@ export default function SettlementScreen() {
   const now = useNow();
   const { data: session, isPending } = useSessionDetail(sessionId);
   const endSession = useEndSession();
+  const registerPayment = useRegisterPayment();
   const [error, setError] = useState<string | null>(null);
 
   if (isPending) {
@@ -32,6 +36,7 @@ export default function SettlementScreen() {
   }
 
   const active = session.status === 'activa';
+  const payable = session.status === 'por_cobrar';
   // Una sesión finalizada se detiene en ended_at (ADR 0003); la activa llega hasta ahora.
   const settlement = calculateSettlement({
     consoleType: session.consoleType,
@@ -58,24 +63,36 @@ export default function SettlementScreen() {
     ]);
   }
 
+  async function pay(payments: PaymentLineInput[]) {
+    setError(null);
+    const result = await registerPayment.mutateAsync({ sessionId, payments });
+    if (result.ok) {
+      router.back();
+    } else {
+      setError(result.message);
+    }
+  }
+
   return (
     <View className="flex-1 bg-background">
       <Stack.Screen options={{ title: `Cobro · ${session.consoleName}` }} />
       <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
         <Text variant="large">
-          {active ? 'Resumen hasta ahora' : 'Sesión finalizada · por cobrar'}
+          {active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
         </Text>
         <SettlementSummary settlement={settlement} />
-        {error ? (
+        {payable ? (
+          <PaymentForm
+            totalCents={session.totalCents}
+            isPending={registerPayment.isPending}
+            error={error}
+            onSubmit={pay}
+          />
+        ) : error ? (
           <View accessibilityRole="alert" className="rounded-xl bg-playing-soft p-4">
             <Text className="font-bold">{error}</Text>
           </View>
         ) : null}
-        {active ? null : (
-          <Text className="text-base text-muted-foreground">
-            El cobro y la liberación de la consola se registran en el siguiente paso.
-          </Text>
-        )}
       </ScrollView>
       <View
         className="border-t border-border bg-card px-4 pt-3"
