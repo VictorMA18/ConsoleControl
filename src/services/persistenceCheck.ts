@@ -5,6 +5,7 @@ import {
   createSession,
   finishSession,
   getActiveSessions,
+  getPendingSessionsWithConsole,
 } from '../db/repositories/sessionRepository';
 import { startSession, type StartSessionResult } from './sessionService';
 
@@ -108,7 +109,8 @@ export async function trySessionScenario(scenario: SessionScenario): Promise<Sta
 }
 
 export async function finishActiveSessions(now: number = Date.now()): Promise<number> {
-  const active = await getActiveSessions();
+  // También las que esperan su cobro: esta herramienta las libera sin registrar el pago.
+  const active = [...(await getActiveSessions()), ...(await getPendingSessionsWithConsole())];
   for (const session of active) {
     await finishSession(session.id, now);
   }
