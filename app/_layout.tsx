@@ -71,8 +71,9 @@ export default function RootLayout() {
   }
 
   // Las pantallas leen SQLite solo después de aplicar migraciones y datos iniciales. Cada pantalla
-  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Las transiciones entre
-  // pantallas son las nativas de la plataforma (ADR 0014).
+  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Abrir una pantalla la
+  // desliza desde la derecha y volver atrás la devuelve hacia la derecha; el diálogo de sesión sube
+  // desde abajo y al cerrarlo baja. Todo es la animación nativa del stack (ADR 0014).
   return (
     // KeyboardProvider permite que los formularios se desplacen hasta el campo enfocado
     // (FormScrollView). La app va de borde a borde, por eso las barras del sistema son translúcidas.
@@ -83,13 +84,18 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
-            animation: 'default',
+            animation: 'slide_from_right',
+            gestureEnabled: true,
           }}
         >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
             name="sesion/[consoleId]"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureDirection: 'vertical',
+            }}
           />
           <Stack.Screen name="cobro/[sessionId]" />
           <Stack.Screen name="dev/persistencia" />

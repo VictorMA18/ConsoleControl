@@ -6,8 +6,8 @@ import { FONTS, useThemeColors } from '../../src/utils/theme';
 
 // Barra de pestañas: Consolas (muro), Caja, Salud (HU-012) y Sistema.
 // La app se dibuja de borde a borde: la barra suma el margen inferior del sistema (barra de gestos
-// o botones de Android) para no quedar debajo de ella. Las pestañas cambian sin animación: se usan
-// decenas de veces por turno (ADR 0014).
+// o botones de Android) para no quedar debajo de ella. Al cambiar de pestaña el contenido se desliza
+// un poco con un fundido hacia el lado de la pestaña elegida ('shift', ADR 0014).
 export default function TabsLayout() {
   const colors = useThemeColors();
   const { bottom } = useInsets();
@@ -15,7 +15,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        animation: 'none',
+        animation: 'shift',
         tabBarActiveTintColor: colors.foreground,
         tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
