@@ -20,7 +20,9 @@ import { useNow } from '../../src/hooks/useNow';
 import { useRegisterPayment } from '../../src/hooks/useRegisterPayment';
 import { useSessionDetail } from '../../src/hooks/useSessionDetail';
 import type { PaymentLineInput } from '../../src/schemas/payment';
+import { getSessionAlertState } from '../../src/services/sessionAlerts';
 import { calculateSettlement } from '../../src/services/settlement';
+import { CARD_STATE_STYLES, cardState, type CardState } from '../../src/utils/cardState';
 
 // Resumen de cobro de una consola ocupada (HU-005, CU-002). Mientras la sesión sigue activa muestra
 // la liquidación al momento (se recalcula cada segundo, sin consultar la base) y permite
@@ -47,6 +49,12 @@ export default function SettlementScreen() {
 
   const active = session.status === 'activa';
   const payable = session.status === 'por_cobrar';
+  // Mismo estado que la tarjeta del muro: en juego, por terminar, tiempo cumplido o por cobrar.
+  const state: CardState = active
+    ? cardState('en_juego', getSessionAlertState(session, now))
+    : payable
+      ? 'por_cobrar'
+      : 'disponible';
   // Una sesión finalizada se detiene en ended_at (ADR 0003); la activa llega hasta ahora.
   const settlement = calculateSettlement({
     consoleType: session.consoleType,
@@ -88,14 +96,17 @@ export default function SettlementScreen() {
     <View className="flex-1 bg-background">
       <ScreenHeader
         title={session.consoleName}
-        subtitle={active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
+        subtitle={
+          active
+            ? `${CARD_STATE_STYLES[state].label} · resumen hasta ahora`
+            : payable
+              ? 'Por cobrar'
+              : 'Sesión cobrada'
+        }
         onBack={() => router.back()}
       />
       <FormScrollView insetBottom={!active}>
-        <SettlementSummary
-          settlement={settlement}
-          state={active ? 'en_juego' : payable ? 'por_cobrar' : 'disponible'}
-        />
+        <SettlementSummary settlement={settlement} state={state} />
         {active ? (
           <ExtendTime
             session={session}
