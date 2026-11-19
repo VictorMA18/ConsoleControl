@@ -1,11 +1,15 @@
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { CheckCheck, Flag } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
+import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { PaymentForm } from '../../src/components/PaymentForm';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SettlementSummary } from '../../src/components/SettlementSummary';
 import { StateView } from '../../src/components/StateView';
 import { Button } from '../../src/components/ui/button';
+import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { useEndSession } from '../../src/hooks/useEndSession';
@@ -17,7 +21,8 @@ import { calculateSettlement } from '../../src/services/settlement';
 
 // Resumen de cobro de una consola ocupada (HU-005, CU-002). Mientras la sesión sigue activa muestra
 // la liquidación al momento (se recalcula cada segundo, sin consultar la base) y permite
-// finalizarla; una vez finalizada la deja "por cobrar" con el resumen fijo. El pago es HU-006.
+// finalizarla; una vez finalizada queda "por cobrar" con el resumen fijo y el formulario de pago
+// (HU-006).
 export default function SettlementScreen() {
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
   const router = useRouter();
@@ -27,6 +32,7 @@ export default function SettlementScreen() {
   const endSession = useEndSession();
   const registerPayment = useRegisterPayment();
   const [error, setError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
   if (isPending) {
     return <StateView kind="loading" />;
@@ -47,20 +53,13 @@ export default function SettlementScreen() {
     rates: session.rateSnapshot,
   });
 
-  function confirmEnd() {
-    Alert.alert('Finalizar sesión', `¿Finalizar la sesión de ${session?.consoleName}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Finalizar',
-        onPress: async () => {
-          setError(null);
-          const result = await endSession.mutateAsync(sessionId);
-          if (!result.ok) {
-            setError(result.message);
-          }
-        },
-      },
-    ]);
+  async function finish() {
+    setConfirming(false);
+    setError(null);
+    const result = await endSession.mutateAsync(sessionId);
+    if (!result.ok) {
+      setError(result.message);
+    }
   }
 
   async function pay(payments: PaymentLineInput[]) {
@@ -75,11 +74,12 @@ export default function SettlementScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <Stack.Screen options={{ title: `Cobro · ${session.consoleName}` }} />
+      <ScreenHeader
+        title={session.consoleName}
+        subtitle={active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
+        onBack={() => router.back()}
+      />
       <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
-        <Text variant="large">
-          {active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
-        </Text>
         <SettlementSummary settlement={settlement} />
         {payable ? (
           <PaymentForm
@@ -89,36 +89,50 @@ export default function SettlementScreen() {
             onSubmit={pay}
           />
         ) : error ? (
-          <View accessibilityRole="alert" className="rounded-xl bg-playing-soft p-4">
-            <Text className="font-bold">{error}</Text>
+          <View
+            accessibilityRole="alert"
+            className="rounded-2xl border border-playing/40 bg-playing-soft p-4"
+          >
+            <Text className="font-bold text-playing">{error}</Text>
+          </View>
+        ) : null}
+        {!active && !payable ? (
+          <View className="flex-row items-center gap-3 rounded-2xl border border-available/40 bg-available-soft p-4">
+            <Icon as={CheckCheck} size={22} className="text-available" />
+            <Text className="flex-1 text-base font-semibold text-available">
+              Esta sesión ya está cobrada.
+            </Text>
           </View>
         ) : null}
       </ScrollView>
-      <View
-        className="border-t border-border bg-card px-4 pt-3"
-        style={{ paddingBottom: Math.max(bottomInset, 12) }}
-      >
-        {active ? (
+
+      {active ? (
+        <View
+          className="border-t border-border bg-card px-4 pt-3"
+          style={{ paddingBottom: Math.max(bottomInset, 12) }}
+        >
           <Button
             testID="finalizar-sesion"
             size="lg"
             disabled={endSession.isPending}
-            onPress={confirmEnd}
-            className="h-16 rounded-xl"
+            onPress={() => setConfirming(true)}
+            className="h-16 rounded-2xl"
           >
+            <Icon as={Flag} size={20} className="text-primary-foreground" />
             <Text className="text-xl font-bold">Finalizar sesión</Text>
           </Button>
-        ) : (
-          <Button
-            variant="outline"
-            size="lg"
-            onPress={() => router.back()}
-            className="h-16 rounded-xl border-2"
-          >
-            <Text className="text-xl font-bold">Volver al muro</Text>
-          </Button>
-        )}
-      </View>
+        </View>
+      ) : null}
+
+      <ConfirmDialog
+        visible={confirming}
+        icon={Flag}
+        title="Finalizar sesión"
+        message={`Se detiene el tiempo de ${session.consoleName} y queda por cobrar. No se puede deshacer.`}
+        confirmLabel="Finalizar"
+        onConfirm={finish}
+        onCancel={() => setConfirming(false)}
+      />
     </View>
   );
 }

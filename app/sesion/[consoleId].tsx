@@ -1,24 +1,35 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { CircleAlert, Hourglass, Play, Timer, type LucideIcon } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
 
 import { ChoiceButton } from '../../src/components/ChoiceButton';
 import { EstimatedTotal } from '../../src/components/EstimatedTotal';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { Section } from '../../src/components/Section';
 import { Button } from '../../src/components/ui/button';
-import { Card } from '../../src/components/ui/card';
+import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
-import { MAX_CONTROLLERS, SESSION_MODES } from '../../src/db/schema/enums';
+import { MAX_CONTROLLERS, type SessionMode, SESSION_MODES } from '../../src/db/schema/enums';
 import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { useConsoles } from '../../src/hooks/useConsoles';
 import { useRateBlocks } from '../../src/hooks/useRateBlocks';
 import { useStartSession } from '../../src/hooks/useStartSession';
 import { type StartSessionInput, startSessionSchema } from '../../src/schemas/session';
 import type { ConsoleWithStock } from '../../src/services/consoleService';
+import { CONSOLE_TYPE_LABELS } from '../../src/utils/consoleLabels';
 import { SESSION_MODE_LABELS } from '../../src/utils/sessionLabels';
 
 const CONTROLLER_OPTIONS = Array.from({ length: MAX_CONTROLLERS }, (_, i) => i + 1);
+
+const MODE_ICONS: Record<SessionMode, LucideIcon> = {
+  fijo_30: Timer,
+  fijo_60: Timer,
+  fijo_120: Timer,
+  libre: Hourglass,
+};
 
 type Problem = Pick<StartSessionInput, 'controllerCount' | 'mode'> & {
   message: string;
@@ -69,74 +80,77 @@ export default function SessionDialogScreen() {
   if (console.status !== 'disponible') {
     const reason = console.status === 'en_juego' ? 'está en juego' : 'está en mantenimiento';
     return (
-      <View className="flex-1 gap-6 bg-background p-5">
-        <Stack.Screen options={{ title: console.name }} />
-        <View className="rounded-xl bg-playing-soft p-4">
-          <Text className="text-xl font-bold">
-            {console.name} {reason}
-          </Text>
-          <Text className="mt-1">No se puede iniciar otra sesión en ella.</Text>
+      <View className="flex-1 bg-background">
+        <ScreenHeader title="Consola ocupada" onClose={() => router.back()} />
+        <View className="gap-6 p-4">
+          <View className="gap-2 rounded-3xl border border-playing/40 bg-playing-soft p-5">
+            <Icon as={CircleAlert} size={26} className="text-playing" />
+            <Text className="text-xl font-extrabold">
+              {console.name} {reason}
+            </Text>
+            <Text className="text-base text-muted-foreground">
+              No se puede iniciar otra sesión en ella.
+            </Text>
+          </View>
+          <Button variant="outline" onPress={() => router.back()} className="h-14 rounded-2xl">
+            <Text className="text-lg font-bold">Volver al muro</Text>
+          </Button>
         </View>
-        <Button
-          variant="outline"
-          onPress={() => router.back()}
-          className="h-auto min-h-14 rounded-xl border-2"
-        >
-          <Text className="text-lg font-bold">Volver al muro</Text>
-        </Button>
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-background">
-      <Stack.Screen options={{ title: `Nueva sesión · ${console.name}` }} />
+      <ScreenHeader
+        title="Nueva sesión"
+        subtitle={`${console.name} · ${CONSOLE_TYPE_LABELS[console.consoleType]}`}
+        onClose={() => router.back()}
+      />
       <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
-        <Card className="gap-3 px-4 py-4">
-          <Text variant="large">Mandos</Text>
+        <Section title="Mandos" trailing={`${console.operationalControllers} libres`}>
           <Controller
             control={control}
             name="controllerCount"
             render={({ field }) => (
               <View className="flex-row gap-2">
                 {CONTROLLER_OPTIONS.map((count) => (
-                  <ChoiceButton
-                    key={count}
-                    testID={`mandos-${count}`}
-                    label={String(count)}
-                    selected={field.value === count}
-                    onPress={() => field.onChange(count)}
-                  />
-                ))}
-              </View>
-            )}
-          />
-          <Text className="text-base text-muted-foreground">
-            {console.operationalControllers} mandos libres en esta consola
-          </Text>
-        </Card>
-
-        <Card className="gap-3 px-4 py-4">
-          <Text variant="large">Modalidad</Text>
-          <Controller
-            control={control}
-            name="mode"
-            render={({ field }) => (
-              <View className="flex-row flex-wrap gap-2">
-                {SESSION_MODES.map((mode) => (
-                  <View key={mode} className="basis-[48%]">
+                  <View key={count} className="flex-1">
                     <ChoiceButton
-                      testID={`modalidad-${mode}`}
-                      label={SESSION_MODE_LABELS[mode]}
-                      selected={field.value === mode}
-                      onPress={() => field.onChange(mode)}
+                      testID={`mandos-${count}`}
+                      label={String(count)}
+                      selected={field.value === count}
+                      onPress={() => field.onChange(count)}
                     />
                   </View>
                 ))}
               </View>
             )}
           />
-        </Card>
+        </Section>
+
+        <Section title="Modalidad">
+          <Controller
+            control={control}
+            name="mode"
+            render={({ field }) => (
+              <View className="flex-row flex-wrap gap-2">
+                {SESSION_MODES.map((option) => (
+                  <View key={option} className="basis-[48%] grow">
+                    <ChoiceButton
+                      testID={`modalidad-${option}`}
+                      icon={MODE_ICONS[option]}
+                      label={SESSION_MODE_LABELS[option]}
+                      hint={option === 'libre' ? 'Se cobra al cerrar' : 'Tiempo fijo'}
+                      selected={field.value === option}
+                      onPress={() => field.onChange(option)}
+                    />
+                  </View>
+                ))}
+              </View>
+            )}
+          />
+        </Section>
 
         <EstimatedTotal
           consoleType={console.consoleType}
@@ -146,11 +160,19 @@ export default function SessionDialogScreen() {
         />
 
         {visibleProblem ? (
-          <View accessibilityLiveRegion="polite" className="gap-3 rounded-xl bg-playing-soft p-4">
-            <Text className="text-lg font-bold">{visibleProblem.message}</Text>
+          <View
+            accessibilityLiveRegion="polite"
+            className="gap-3 rounded-3xl border border-playing/40 bg-playing-soft p-5"
+          >
+            <View className="flex-row items-center gap-2">
+              <Icon as={CircleAlert} size={20} className="text-playing" />
+              <Text className="flex-1 text-lg font-bold">{visibleProblem.message}</Text>
+            </View>
             {visibleProblem.alternatives.length > 0 ? (
               <>
-                <Text>Consolas con mandos suficientes:</Text>
+                <Text className="text-base text-muted-foreground">
+                  Consolas con mandos suficientes:
+                </Text>
                 {visibleProblem.alternatives.map((alternative) => (
                   <Button
                     key={alternative.id}
@@ -163,7 +185,7 @@ export default function SessionDialogScreen() {
                     }
                     className="h-auto min-h-12 justify-start px-4"
                   >
-                    <Text className="font-semibold text-primary">
+                    <Text className="font-semibold">
                       {alternative.name} · {alternative.operationalControllers} mandos libres
                     </Text>
                   </Button>
@@ -183,8 +205,9 @@ export default function SessionDialogScreen() {
           size="lg"
           disabled={startSession.isPending}
           onPress={() => onSubmit()}
-          className="h-16 rounded-xl"
+          className="h-16 rounded-2xl"
         >
+          <Icon as={Play} size={20} className="text-primary-foreground" />
           <Text className="text-xl font-bold">Iniciar sesión</Text>
         </Button>
       </View>

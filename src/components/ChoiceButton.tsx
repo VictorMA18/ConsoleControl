@@ -1,5 +1,8 @@
+import type { LucideIcon } from 'lucide-react-native';
+import { Pressable } from 'react-native';
+
 import { cn } from '../utils/cn';
-import { Button } from './ui/button';
+import { Icon } from './ui/icon';
 import { Text } from './ui/text';
 
 type Props = {
@@ -7,24 +10,61 @@ type Props = {
   selected: boolean;
   onPress: () => void;
   testID?: string;
+  icon?: LucideIcon;
+  // Texto pequeño bajo la etiqueta.
+  hint?: string;
+  // 'radio' para elegir una opción; 'checkbox' cuando se pueden elegir varias.
+  role?: 'radio' | 'checkbox';
 };
 
-// Botón grande de una opción en el diálogo de sesión (mandos o modalidad), mínimo 56 dp de alto.
-export function ChoiceButton({ label, selected, onPress, testID }: Props) {
+// Opción grande y táctil (mandos, modalidad, método de pago): mínimo 56 dp de alto. La elegida se
+// invierte (fondo claro, texto oscuro) para distinguirse sin depender de un color.
+export function ChoiceButton({
+  label,
+  selected,
+  onPress,
+  testID,
+  icon,
+  hint,
+  role = 'radio',
+}: Props) {
   return (
-    <Button
+    <Pressable
       testID={testID}
-      role="radio"
-      accessibilityRole="radio"
+      role={role}
+      accessibilityRole={role}
       accessibilityState={{ checked: selected }}
-      variant={selected ? 'default' : 'outline'}
       onPress={onPress}
       className={cn(
-        'h-auto min-h-14 flex-1 rounded-xl border-2 px-2',
-        selected ? 'border-primary' : 'border-border',
+        'min-h-14 w-full items-center justify-center gap-1 rounded-2xl border px-2 py-3 active:opacity-80',
+        selected ? 'border-primary bg-primary' : 'border-border bg-raised',
       )}
     >
-      <Text className="text-lg font-bold">{label}</Text>
-    </Button>
+      {icon ? (
+        <Icon
+          as={icon}
+          size={22}
+          className={selected ? 'text-primary-foreground' : 'text-muted-foreground'}
+        />
+      ) : null}
+      <Text
+        className={cn(
+          'text-lg font-bold',
+          selected ? 'text-primary-foreground' : 'text-foreground',
+        )}
+      >
+        {label}
+      </Text>
+      {hint ? (
+        <Text
+          className={cn(
+            'text-xs font-medium',
+            selected ? 'text-primary-foreground/70' : 'text-muted-foreground',
+          )}
+        >
+          {hint}
+        </Text>
+      ) : null}
+    </Pressable>
   );
 }

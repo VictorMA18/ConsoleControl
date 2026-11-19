@@ -1,10 +1,12 @@
+import { Delete } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 import { calculateChange, parseTendered } from '../services/change';
+import { cn } from '../utils/cn';
 import { formatMoney } from '../utils/formatMoney';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { Icon } from './ui/icon';
 import { Text } from './ui/text';
 
 type Props = {
@@ -21,6 +23,7 @@ export function ChangeCalculator({ cashCents }: Props) {
   const tenderedCents = parseTendered(typed);
   const { changeCents, missingCents } = calculateChange(cashCents, tenderedCents);
   const entered = typed !== '';
+  const short = missingCents > 0 && entered;
 
   function press(key: (typeof KEYS)[number]) {
     if (key === '⌫') {
@@ -34,55 +37,76 @@ export function ChangeCalculator({ cashCents }: Props) {
   }
 
   return (
-    <Card className="gap-4 px-4 py-4">
+    <View className="gap-4 rounded-3xl border border-border bg-card p-5">
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg text-muted-foreground">A cobrar en efectivo</Text>
-        <Text className="text-xl font-bold">{formatMoney(cashCents)}</Text>
+        <Text className="text-base text-muted-foreground">A cobrar en efectivo</Text>
+        <Text className="text-xl font-bold" style={{ fontVariant: ['tabular-nums'] }}>
+          {formatMoney(cashCents)}
+        </Text>
       </View>
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg text-muted-foreground">Entregó</Text>
-        <Text testID="entregado" className="text-2xl font-bold">
+        <Text className="text-base text-muted-foreground">Entregó</Text>
+        <Text
+          testID="entregado"
+          className="text-3xl font-extrabold"
+          style={{ fontVariant: ['tabular-nums'] }}
+        >
           {formatMoney(tenderedCents)}
         </Text>
       </View>
 
       <View
         accessibilityLiveRegion="polite"
-        className={`items-center rounded-xl p-4 ${missingCents > 0 && entered ? 'bg-playing-soft' : 'bg-secondary'}`}
-      >
-        {missingCents > 0 && entered ? (
-          <>
-            <Text className="text-lg font-bold">Falta</Text>
-            <Text testID="faltante" className="text-5xl font-bold text-destructive">
-              {formatMoney(missingCents)}
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text className="text-lg font-bold">Vuelto</Text>
-            <Text testID="vuelto" className="text-5xl font-bold">
-              {formatMoney(changeCents)}
-            </Text>
-          </>
+        className={cn(
+          'items-center gap-1 rounded-2xl p-4',
+          short ? 'bg-playing-soft' : 'bg-available-soft',
         )}
+      >
+        <Text
+          className={cn(
+            'text-xs font-bold uppercase tracking-widest',
+            short ? 'text-playing' : 'text-available',
+          )}
+        >
+          {short ? 'Falta' : 'Vuelto'}
+        </Text>
+        <Text
+          testID={short ? 'faltante' : 'vuelto'}
+          className={cn(
+            'text-6xl font-extrabold tracking-tight',
+            short ? 'text-playing' : 'text-available',
+          )}
+          style={{ fontVariant: ['tabular-nums'] }}
+        >
+          {formatMoney(short ? missingCents : changeCents)}
+        </Text>
       </View>
 
       <View className="flex-row flex-wrap gap-2">
         {KEYS.map((key) => (
-          <Button
-            key={key}
-            variant="outline"
-            accessibilityLabel={key === '⌫' ? 'Borrar' : key}
-            onPress={() => press(key)}
-            className="h-14 basis-[31%] grow rounded-xl"
-          >
-            <Text className="text-2xl font-bold">{key}</Text>
-          </Button>
+          <View key={key} className="basis-[31%] grow">
+            <Button
+              variant="secondary"
+              accessibilityLabel={key === '⌫' ? 'Borrar' : key}
+              onPress={() => press(key)}
+              className="h-14 w-full rounded-2xl"
+            >
+              {key === '⌫' ? (
+                <Icon as={Delete} size={24} />
+              ) : (
+                <Text className="text-2xl font-bold">{key}</Text>
+              )}
+            </Button>
+          </View>
         ))}
       </View>
-      <Button variant="secondary" onPress={() => setTyped((cashCents / 100).toString())}>
+      <Button
+        variant="outline"
+        onPress={() => setTyped((cashCents / 100).toString())}
+        className="h-12"
+      >
         <Text className="text-base font-semibold">Pagó exacto</Text>
       </Button>
-    </Card>
+    </View>
   );
 }
