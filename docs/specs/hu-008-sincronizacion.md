@@ -51,3 +51,9 @@
 - Corre aparte de la interfaz: nunca bloquea ni lanza, y sin internet solo espera (RN-09). El número de pendientes se refresca cada 10 s.
 - `useSyncStore` (`src/stores/syncStore.ts`) guarda el estado para la pantalla, e `indicatorState` decide qué mostrar.
 - El indicador `SyncIndicator`, en la cabecera del muro, muestra «Sin conexión», «Sin nube» (falta configurar Supabase), «Subiendo…», «Pendiente (N)» o «Nube al día».
+
+### c. Supabase
+
+- `SupabaseRemoteStore` (`src/sync/supabaseRemoteStore.ts`) inicia una sesión anónima por dispositivo y hace un upsert por `(owner_id, id)`. `sync_status` no viaja.
+- `getRemoteStore` (`src/sync/remote.ts`) lo crea solo si existen `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (en `.env`, fuera del repositorio; ver `.env.example`).
+- La nube usa el esquema espejo de `supabase/schema.sql`, con RLS por dueño ([ADR 0016](../adr/0016-rls-con-usuario-anonimo-por-dispositivo.md)). Los pasos para configurarlo están en [`docs/guides/supabase.md`](../guides/supabase.md).

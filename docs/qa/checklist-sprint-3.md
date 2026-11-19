@@ -26,9 +26,12 @@ Lo ejecuta VN en el celular, una sola vez, al final del sprint, más una pasada 
 
 ## HU-008 · Sincronización
 
+> Antes: el `.env` con la URL y la clave publicable (ver `docs/guides/supabase.md`), «Allow anonymous sign-ins» activado en Supabase y `pnpm start --clear`.
+
 - [ ] Sin internet (modo avión), iniciar, extender y cobrar una sesión funciona igual que siempre y sin demora.
-- [ ] El indicador muestra "Pendiente" con el número de registros.
-- [ ] Al volver el internet, el indicador pasa a "Nube actualizada". _(necesita Supabase real)_
-- [ ] En Supabase aparecen los registros, sin duplicados. _(necesita Supabase real)_
-- [ ] Cortar el internet a mitad del envío y reconectar no duplica registros. _(necesita Supabase real)_
+- [ ] Sin `.env`, el indicador dice «Sin nube» y la app funciona igual.
+- [ ] El indicador muestra «Pendiente (N)» con el número de registros.
+- [ ] Al volver el internet, el indicador pasa a «Nube al día».
+- [ ] En Supabase aparecen los registros, sin duplicados.
+- [ ] Cortar el internet a mitad del envío y reconectar no duplica registros.
 - [ ] Un turno cerrado sigue sin poder editarse, pero sus registros se sincronizan.
