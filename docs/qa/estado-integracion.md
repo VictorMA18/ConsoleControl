@@ -1,54 +1,50 @@
 # Estado de integración
 
-| Campo         | Valor                                                                         |
-| ------------- | ----------------------------------------------------------------------------- |
-| Tarea         | T19 (TW-19) · TW-134                                                          |
-| Fecha         | 06/11/2026                                                                    |
-| Commit medido | `develop` en 2d820b1                                                          |
-| Método        | Checkout limpio; `gh pr list`, `git log` y estado de Jira leído el 06/11/2026 |
+| Campo            | Valor                                                                  |
+| ---------------- | ---------------------------------------------------------------------- |
+| Tarea            | T19 (TW-19) · TW-134                                                   |
+| Primera medición | 06/11/2026, `develop` en 2d820b1: solo lógica de negocio, sin interfaz |
+| Medición actual  | 18/11/2026, cadena de ramas hasta `feature/T19-cierre-integracion`     |
 
-**Conclusión.** `develop` compila y está sano, pero solo contiene la lógica de negocio. La interfaz de las historias no existe: `app/index.tsx` es una pantalla provisional. Ninguna historia puede completarse hasta tener T07, T08, T11, T14 y T16.
+**Conclusión.** Con las ramas de T12, T07, T08, T14, T11, T16, T18, T19, T04, T05 y T20, el proyecto tiene la interfaz completa de HU-001 a HU-004 y compila para Android. Lint, tipos y pruebas pasan.
 
 ## Tareas T07 a T16
 
-| Tarea                                | Responsable | PR        | Estado del PR | ¿En develop? | Observaciones                                         |
-| ------------------------------------ | ----------- | --------- | ------------- | ------------ | ----------------------------------------------------- |
-| T07 Tarjeta y muro                   | RF          | Ninguno   | Sin PR        | No           | Jira "En curso". Sin rama en el remoto                |
-| T08 Diálogo de sesión                | RF          | Ninguno   | Sin PR        | No           | Jira "En curso". Sin rama en el remoto                |
-| T09 Lógica de inicio                 | VM          | #7        | Fusionado     | Sí           | Jira "Listo"                                          |
-| T10 Cronómetro persistente           | VM          | #8        | Fusionado     | Sí           | Jira "Listo"                                          |
-| T11 Cronómetro en pantalla y colores | RF          | Ninguno   | Sin PR        | No           | Jira "En curso". Hay hooks de VM, falta la vista      |
-| T12 Tarifas base                     | JS          | No aplica | No aplica     | Parcial      | Jira "En revisión". El seed usa precios provisionales |
-| T13 Motor de tarifas                 | VM          | #9        | Fusionado     | Sí           | Jira "Listo"                                          |
-| T14 Total estimado en el diálogo     | RF          | Ninguno   | Sin PR        | No           | Jira "Por hacer". Depende de T08                      |
-| T15 Alerta y "Tiempo cumplido"       | VM          | #10       | Fusionado     | Sí           | Jira "Listo"                                          |
-| T16 Ámbar titilante y vibración      | RF          | Ninguno   | Sin PR        | No           | Jira "En curso". Sin rama en el remoto                |
+| Tarea                           | Responsable | Rama                             | ¿En develop?      | Observaciones                                              |
+| ------------------------------- | ----------- | -------------------------------- | ----------------- | ---------------------------------------------------------- |
+| T07 Tarjeta y muro              | RF          | `feature/T07-muro-consolas`      | Al fusionar su PR | Muro con filtro por tipo (Zustand), NativeWind configurado |
+| T08 Diálogo de sesión           | RF          | `feature/T08-dialogo-sesion`     | Al fusionar su PR | React Hook Form con el esquema Zod; 2 toques               |
+| T09 Lógica de inicio            | VM          | PR #7                            | Sí                |                                                            |
+| T10 Cronómetro persistente      | VM          | PR #8                            | Sí                |                                                            |
+| T11 Cronómetro y colores        | RF          | `feature/T11-cronometro-colores` | Al fusionar su PR | Tiempo transcurrido y restante; verde, rojo y ámbar        |
+| T12 Tarifas base                | JS          | `feature/T12-tarifario`          | Al fusionar su PR | Tarifario aprobado en `docs/architecture/tarifario.md`     |
+| T13 Motor de tarifas            | VM          | PR #9                            | Sí                |                                                            |
+| T14 Total estimado              | RF          | `feature/T14-total-estimado`     | Al fusionar su PR | Total en vivo con el motor de T13                          |
+| T15 Alerta y "Tiempo cumplido"  | VM          | PR #10                           | Sí                |                                                            |
+| T16 Ámbar titilante y vibración | RF          | `feature/T16-ambar-vibracion`    | Al fusionar su PR | ADR 0011                                                   |
 
-Otras ramas del remoto: `feature/T02-navegacion-readme` tiene un commit sin PR (a85ed2e). `feature/T09-inicio-sesion` ya está fusionada y no se borró.
+## Comandos
 
-## Comandos en `develop`
+Ejecutados el 18/11/2026 sobre `feature/T19-cierre-integracion`.
 
-| Comando                              | Resultado                                                    |
-| ------------------------------------ | ------------------------------------------------------------ |
-| `pnpm install --frozen-lockfile`     | Termina bien. Modifica `pnpm-lock.yaml` (agrega `@pnpm/exe`) |
-| `pnpm lint`                          | Pasa, código de salida 0                                     |
-| `pnpm typecheck`                     | Pasa, código de salida 0                                     |
-| `pnpm test`                          | Pasa: 9 suites, 113 pruebas                                  |
-| `npx expo export --platform android` | Pasa: genera el bundle Android (3.7 MB), código de salida 0  |
-| `pnpm exec prettier --check .`       | **Falla**: 14 archivos, todos `.md`                          |
-
-Con las pruebas de QA de estos PR: 14 suites, 128 pruebas pasan, 0 fallan, 8 `todo`.
-
-Salida de `pnpm test` en `develop`:
+| Comando                              | Resultado                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------- |
+| `pnpm lint`                          | Pasa, código de salida 0                                                |
+| `pnpm typecheck`                     | Pasa, código de salida 0                                                |
+| `pnpm test`                          | Pasa: 18 suites, 159 pruebas, 0 fallan, 5 `todo` (de dispositivo)       |
+| `npx expo export --platform android` | Pasa: bundle Android de 5.1 MB                                          |
+| `pnpm exec prettier --check .`       | Fallan los mismos 14 `.md` de antes (H-08); los archivos nuevos cumplen |
 
 ```
-Test Suites: 9 passed, 9 total
-Tests:       113 passed, 113 total
+Test Suites: 18 passed, 18 total
+Tests:       5 todo, 159 passed, 164 total
 ```
 
-Archivos que falla Prettier: `AGENTS.md`, `docs/README.md`, `docs/architecture/arquitectura.md`, `docs/architecture/base-de-datos.md`, `docs/architecture/spike-cronometro.md`, `docs/guides/estilo-codigo.md`, `docs/guides/flujo-git.md`, `docs/guides/pruebas.md`, `docs/roadmap/README.md`, `docs/roadmap/fase-0.md` y las cuatro historias de `docs/specs/`.
+## En el emulador
+
+Emulador `ConsoleControl_GamaBaja` (Android 17, 720 × 1600, 3 GB de RAM) con Expo Go 58.0.5. El flujo completo se ejecutó con la interfaz real: ver [`prueba-integracion.md`](prueba-integracion.md).
 
 ## Verificaciones de GitHub
 
-- CI: las últimas ejecuciones en `develop` y los PR #5 a #10 terminaron bien.
-- `develop` no tiene protección de rama (`gh api` responde "Branch not protected").
+- CI pasa en cada PR.
+- `develop` sigue sin protección de rama (H-03).

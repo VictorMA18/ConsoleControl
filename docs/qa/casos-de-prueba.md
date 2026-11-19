@@ -390,22 +390,22 @@ Trece casos: diez de los escenarios de las historias y tres de borde. Todas las 
 
 ## Cobertura automática
 
-Resultado de `pnpm test` el 06/11/2026 en `feature/T17-pruebas-automaticas`: 13 suites, 127 pruebas pasan, 0 fallan, 6 `todo`. Las pruebas de `__tests__/qa/` son 14 nuevas; el resto ya existía y no se duplicó.
+Resultado de `pnpm test` el 18/11/2026 en `feature/T19-cierre-integracion`: 18 suites, 159 pruebas pasan, 0 fallan, 5 `todo`. Los `todo` que quedan son de dispositivo (reinicio real, vibración real y transacción SQLite) y se cubren en T18.
 
-| Caso   | Archivo                                                                                | Estado                                                                     |
-| ------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| CP-001 | `__tests__/services/sessionService.test.ts`                                            | Pasa la lógica. `todo`: consola y mandos en la transacción, y los 2 toques |
-| CP-002 | `__tests__/services/sessionService.test.ts`                                            | Pasa                                                                       |
-| CP-003 | `__tests__/services/sessionService.test.ts`                                            | Pasa                                                                       |
-| CP-004 | `__tests__/services/sessionTimer.test.ts`                                              | Pasa                                                                       |
-| CP-005 | `__tests__/qa/hu-002-cronometro.test.ts`, `__tests__/hooks/useActiveSessions.test.tsx` | Pasa. `todo`: reinicio real (T18)                                          |
-| CP-006 | `__tests__/qa/hu-002-cronometro.test.ts`                                               | `todo`: bloqueado por T11                                                  |
-| CP-007 | `__tests__/qa/hu-003-tarifas.test.ts`                                                  | Pasa                                                                       |
-| CP-008 | `__tests__/qa/hu-003-tarifas.test.ts`                                                  | Pasa                                                                       |
-| CP-009 | `__tests__/services/sessionAlerts.test.ts`, `__tests__/qa/hu-004-alertas.test.ts`      | Pasa la lógica. `todo`: ámbar y vibración, bloqueado por T16               |
-| CP-010 | `__tests__/services/sessionAlerts.test.ts`                                             | Pasa                                                                       |
-| CP-011 | `__tests__/qa/hu-001-inicio-sesion.test.ts`                                            | Pasa                                                                       |
-| CP-012 | No aplica                                                                              | Manual en dispositivo                                                      |
-| CP-013 | No aplica                                                                              | Manual en dispositivo                                                      |
+| Caso   | Archivo                                                                                                                | Estado                                                         |
+| ------ | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| CP-001 | `__tests__/services/sessionService.test.ts`, `__tests__/app/sesion.test.tsx`                                           | Pasa, incluidos los 2 toques. `todo`: transacción SQLite (T18) |
+| CP-002 | `__tests__/services/sessionService.test.ts`, `__tests__/app/sesion.test.tsx`                                           | Pasa                                                           |
+| CP-003 | `__tests__/services/sessionService.test.ts`, `__tests__/app/sesion.test.tsx`                                           | Pasa                                                           |
+| CP-004 | `__tests__/services/sessionTimer.test.ts`                                                                              | Pasa                                                           |
+| CP-005 | `__tests__/qa/hu-002-cronometro.test.ts`, `__tests__/hooks/useActiveSessions.test.tsx`                                 | Pasa. `todo`: reinicio real (T18)                              |
+| CP-006 | `__tests__/qa/hu-002-cronometro.test.ts`, `__tests__/components/ConsoleCard.test.tsx`                                  | Pasa                                                           |
+| CP-007 | `__tests__/qa/hu-003-tarifas.test.ts`                                                                                  | Pasa                                                           |
+| CP-008 | `__tests__/qa/hu-003-tarifas.test.ts`, `__tests__/app/sesion.test.tsx`                                                 | Pasa                                                           |
+| CP-009 | `__tests__/services/sessionAlerts.test.ts`, `__tests__/components/StatusBand.test.tsx`, `__tests__/app/index.test.tsx` | Pasa. `todo`: vibración real (T18)                             |
+| CP-010 | `__tests__/services/sessionAlerts.test.ts`, `__tests__/components/ConsoleCard.test.tsx`                                | Pasa                                                           |
+| CP-011 | `__tests__/qa/hu-001-inicio-sesion.test.ts`                                                                            | Pasa                                                           |
+| CP-012 | No aplica                                                                                                              | Manual en dispositivo                                          |
+| CP-013 | `__tests__/app/index.test.tsx` (4 cronómetros a la vez)                                                                | Pasa en Jest; carga real en dispositivo (T18)                  |
 
 Pasar en Jest no equivale a `Aprobó` en [`registro-resultados.md`](registro-resultados.md): ese registro es de la ejecución en el celular.
