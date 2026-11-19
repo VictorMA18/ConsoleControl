@@ -2,6 +2,7 @@ import {
   Banknote,
   CircleAlert,
   CircleCheck,
+  History,
   Lock,
   NotebookPen,
   Smartphone,
@@ -9,12 +10,12 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
+import { FormScrollView } from '../../src/components/FormScrollView';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { Section } from '../../src/components/Section';
-import { ThemeToggle } from '../../src/components/ThemeToggle';
 import { StateView } from '../../src/components/StateView';
 import { Button } from '../../src/components/ui/button';
 import { Icon } from '../../src/components/ui/icon';
@@ -34,48 +35,66 @@ const BALANCE_LABELS = {
 } as const;
 const BALANCE_LOOK = {
   conforme: {
-    box: 'border-available/40 bg-available-soft',
+    box: 'bg-available-soft',
     tone: 'text-available-tone',
     icon: CircleCheck,
   },
   faltante: {
-    box: 'border-playing/40 bg-playing-soft',
+    box: 'bg-playing-soft',
     tone: 'text-playing-tone',
     icon: TriangleAlert,
   },
   sobrante: {
-    box: 'border-warning/40 bg-warning-soft',
+    box: 'bg-warning-soft',
     tone: 'text-warning-tone',
     icon: CircleAlert,
   },
 } as const;
 
-function Stat({
+// Una fila por método de pago: icono, nombre, monto y qué parte del total representa.
+function MethodRow({
   icon,
   label,
-  value,
+  cents,
+  totalCents,
   testID,
 }: {
   icon: LucideIcon;
   label: string;
-  value: string;
+  cents: number;
+  totalCents: number;
   testID: string;
 }) {
+  const share = totalCents > 0 ? cents / totalCents : 0;
   return (
-    <View className="min-w-[30%] grow gap-2 rounded-2xl border border-border bg-raised p-3">
-      <Icon as={icon} size={18} className="text-muted-foreground" />
-      <Text
-        testID={testID}
-        className="text-xl font-extrabold"
-        style={{ fontVariant: ['tabular-nums'] }}
-      >
-        {value}
-      </Text>
-      <Text className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </Text>
+    <View className="gap-2">
+      <View className="flex-row items-center gap-3">
+        <View className="h-10 w-10 items-center justify-center rounded-xl bg-secondary">
+          <Icon as={icon} size={20} />
+        </View>
+        <Text className="flex-1 text-base font-bold">{label}</Text>
+        <Text
+          testID={testID}
+          className="text-lg font-extrabold"
+          style={{ fontVariant: ['tabular-nums'] }}
+        >
+          {formatMoney(cents)}
+        </Text>
+      </View>
+      <View className="ml-[52px] h-1.5 overflow-hidden rounded-full bg-secondary">
+        <View className="h-1.5 rounded-full bg-foreground" style={{ width: `${share * 100}%` }} />
+      </View>
     </View>
   );
+}
+
+function formatTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDateTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${date.toLocaleDateString([], { day: '2-digit', month: 'short' })} · ${formatTime(timestamp)}`;
 }
 
 // Caja y finanzas (HU-007, CU-003): lo cobrado en el turno separado por método, el efectivo
@@ -99,6 +118,7 @@ export default function CashScreen() {
   const balance = calculateBalance(payments, parseTendered(counted));
   const audit = typed && balance.needsAudit ? auditEntries(payments) : [];
   const look = BALANCE_LOOK[balance.status];
+  const sessionCount = new Set(payments.map((payment) => payment.sessionId)).size;
 
   async function close() {
     setConfirming(false);
@@ -115,8 +135,8 @@ export default function CashScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader title="Caja" subtitle="Cobros y cierre de turno" />
-      <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
+      <ScreenHeader title="Caja" subtitle="Turno, arqueo y cierre" />
+      <FormScrollView>
         {message ? (
           <View
             accessibilityLiveRegion="polite"
@@ -127,66 +147,98 @@ export default function CashScreen() {
           </View>
         ) : null}
 
-        <Section
-          title="Turno actual"
-          trailing={hasShift ? formatMoney(balance.totalCents) : undefined}
-        >
-          {hasShift ? (
-            <View className="flex-row flex-wrap gap-2">
-              <Stat
-                icon={Banknote}
-                label="Efectivo"
-                value={formatMoney(balance.cashCents)}
-                testID="total-efectivo"
-              />
-              <Stat
-                icon={Smartphone}
-                label="Yape y Plin"
-                value={formatMoney(balance.digitalCents)}
-                testID="total-digital"
-              />
-              <Stat
-                icon={NotebookPen}
-                label="Fiado"
-                value={formatMoney(balance.creditCents)}
-                testID="total-fiado"
-              />
+        {/* Lo cobrado en el turno abierto, en grande, y su reparto por método. */}
+        {hasShift && overview?.shift ? (
+          <View className="gap-5 rounded-3xl border border-border bg-card p-5">
+            <View className="gap-1">
+              <Text className="text-sm font-bold text-muted-foreground">Total del turno</Text>
+              <Text
+                testID="total-turno"
+                className="text-5xl font-extrabold tracking-tight"
+                style={{ fontVariant: ['tabular-nums'] }}
+              >
+                {formatMoney(balance.totalCents)}
+              </Text>
+              <Text className="text-sm font-semibold text-muted-foreground">
+                Abierto a las {formatTime(overview.shift.openedAt)} ·{' '}
+                {sessionCount === 1 ? '1 cobro' : `${sessionCount} cobros`}
+              </Text>
             </View>
-          ) : (
-            <Text className="text-base text-muted-foreground">
-              No hay cobros abiertos. El próximo cobro abre un turno nuevo.
+            <View className="h-px bg-border" />
+            <MethodRow
+              icon={Banknote}
+              label="Efectivo"
+              cents={balance.cashCents}
+              totalCents={balance.totalCents}
+              testID="total-efectivo"
+            />
+            <MethodRow
+              icon={Smartphone}
+              label="Yape y Plin"
+              cents={balance.digitalCents}
+              totalCents={balance.totalCents}
+              testID="total-digital"
+            />
+            <MethodRow
+              icon={NotebookPen}
+              label="Fiado"
+              cents={balance.creditCents}
+              totalCents={balance.totalCents}
+              testID="total-fiado"
+            />
+          </View>
+        ) : (
+          <View className="items-center gap-3 rounded-3xl border border-dashed border-border p-8">
+            <View className="h-12 w-12 items-center justify-center rounded-2xl bg-secondary">
+              <Icon as={Banknote} size={24} className="text-muted-foreground" />
+            </View>
+            <Text className="text-center text-lg font-extrabold">Sin turno abierto</Text>
+            <Text className="text-center text-sm text-muted-foreground">
+              El próximo cobro abre un turno nuevo.
             </Text>
-          )}
-        </Section>
+          </View>
+        )}
 
         {hasShift ? (
-          <Section title="Efectivo contado en caja">
-            <Input
-              testID="efectivo-contado"
-              accessibilityLabel="Efectivo contado en caja"
-              keyboardType="decimal-pad"
-              value={counted}
-              onChangeText={(text) => {
-                setCounted(text);
-                setMessage(null);
-              }}
-              placeholder="0.00"
-              className="h-16 text-3xl font-bold"
-            />
+          <Section
+            title="Arqueo de efectivo"
+            trailing={`Esperado ${formatMoney(balance.cashCents)}`}
+          >
+            <Text className="text-sm text-muted-foreground">
+              Cuenta el efectivo de la caja y escríbelo para compararlo con lo cobrado.
+            </Text>
+            <View className="flex-row items-center rounded-2xl border border-input bg-raised px-4">
+              <Text className="text-2xl font-bold text-muted-foreground">S/</Text>
+              <Input
+                testID="efectivo-contado"
+                accessibilityLabel="Efectivo contado en caja"
+                keyboardType="decimal-pad"
+                value={counted}
+                onChangeText={(text) => {
+                  setCounted(text);
+                  setMessage(null);
+                }}
+                placeholder="0.00"
+                maxLength={9}
+                className="h-16 flex-1 border-0 bg-transparent px-3 text-3xl font-extrabold"
+              />
+            </View>
             {typed ? (
               <View
                 accessibilityLiveRegion="polite"
-                className={cn('flex-row items-center gap-4 rounded-2xl border p-4', look.box)}
+                className={cn('flex-row items-center gap-3 rounded-2xl px-4 py-3', look.box)}
               >
-                <Icon as={look.icon} size={32} className={look.tone} />
-                <View>
-                  <Text testID="balance" className={cn('text-2xl font-extrabold', look.tone)}>
-                    {BALANCE_LABELS[balance.status]}
-                  </Text>
-                  <Text testID="diferencia" className={cn('text-lg font-bold', look.tone)}>
-                    {formatSignedMoney(balance.differenceCents)}
-                  </Text>
-                </View>
+                <Icon as={look.icon} size={26} className={look.tone} />
+                <Text testID="balance" className={cn('flex-1 text-xl font-extrabold', look.tone)}>
+                  {BALANCE_LABELS[balance.status]}
+                </Text>
+                <Text
+                  testID="diferencia"
+                  className={cn('text-xl font-extrabold', look.tone)}
+                  style={{ fontVariant: ['tabular-nums'] }}
+                >
+                  {formatSignedMoney(balance.differenceCents)}
+                </Text>
               </View>
             ) : null}
           </Section>
@@ -213,37 +265,49 @@ export default function CashScreen() {
           </Section>
         ) : null}
 
-        <Section title="Turnos cerrados">
+        <Section
+          title="Turnos cerrados"
+          trailing={closedShifts?.length ? `${closedShifts.length}` : undefined}
+        >
           {closedShifts && closedShifts.length > 0 ? (
-            closedShifts.map((shift) => {
+            closedShifts.map((shift, index) => {
               const shiftLook = BALANCE_LOOK[shift.balance ?? 'conforme'];
+              const total =
+                (shift.cashCents ?? 0) + (shift.digitalCents ?? 0) + (shift.creditCents ?? 0);
               return (
                 <View
                   key={shift.id}
-                  className="gap-2 rounded-2xl border border-border bg-raised p-4"
+                  className={cn('gap-1 pt-3', index > 0 && 'border-t border-border')}
                 >
-                  <View className="flex-row items-center justify-between">
-                    <Text className="text-base font-bold">
-                      {new Date(shift.closedAt ?? shift.openedAt).toLocaleString()}
+                  <View className="flex-row items-center gap-3">
+                    <Icon as={History} size={18} className="text-muted-foreground" />
+                    <Text className="flex-1 text-base font-bold">
+                      {formatDateTime(shift.closedAt ?? shift.openedAt)}
                     </Text>
-                    <View className="flex-row items-center gap-1.5">
-                      <Icon as={shiftLook.icon} size={14} className={shiftLook.tone} />
-                      <Text
-                        className={cn('text-xs font-bold uppercase tracking-wider', shiftLook.tone)}
-                      >
-                        {shift.balance ? BALANCE_LABELS[shift.balance] : ''}
+                    <Text
+                      className="text-base font-extrabold"
+                      style={{ fontVariant: ['tabular-nums'] }}
+                    >
+                      {formatMoney(total)}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center justify-between pl-[30px]">
+                    <Text className="text-sm text-muted-foreground">
+                      Contado {formatMoney(shift.countedCashCents ?? 0)}
+                    </Text>
+                    <View
+                      className={cn(
+                        'flex-row items-center gap-1.5 rounded-full px-2.5 py-1',
+                        shiftLook.box,
+                      )}
+                    >
+                      <Icon as={shiftLook.icon} size={13} className={shiftLook.tone} />
+                      <Text className={cn('text-xs font-bold', shiftLook.tone)}>
+                        {shift.balance ? BALANCE_LABELS[shift.balance] : ''}{' '}
+                        {formatSignedMoney(shift.differenceCents ?? 0)}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-sm text-muted-foreground">
-                    Efectivo {formatMoney(shift.cashCents ?? 0)} · Yape y Plin{' '}
-                    {formatMoney(shift.digitalCents ?? 0)} · Fiado{' '}
-                    {formatMoney(shift.creditCents ?? 0)}
-                  </Text>
-                  <Text className="text-sm text-muted-foreground">
-                    Contado {formatMoney(shift.countedCashCents ?? 0)} · Diferencia{' '}
-                    {formatSignedMoney(shift.differenceCents ?? 0)}
-                  </Text>
                 </View>
               );
             })
@@ -251,11 +315,7 @@ export default function CashScreen() {
             <Text className="text-base text-muted-foreground">Aún no hay turnos cerrados.</Text>
           )}
         </Section>
-
-        <Section title="Apariencia">
-          <ThemeToggle />
-        </Section>
-      </ScrollView>
+      </FormScrollView>
 
       {hasShift ? (
         <View className="border-t border-border bg-card px-4 py-3">
