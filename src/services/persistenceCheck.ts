@@ -22,6 +22,12 @@ export type PersistenceSnapshot = {
 export type SessionScenario = 'exito' | 'mandos_insuficientes' | 'consola_ocupada';
 
 const TEST_DURATION_MS = 30 * 60 * 1000;
+// Las sesiones de prueba quedan con 6 min restantes: la alerta de 5 min salta al minuto 1 y vence al 6.
+const TEST_REMAINING_MS = 6 * 60 * 1000;
+
+function testStartedAt(now: number): number {
+  return now - (TEST_DURATION_MS - TEST_REMAINING_MS);
+}
 
 export async function getPersistenceSnapshot(): Promise<PersistenceSnapshot> {
   const consoles = await getConsoles();
@@ -38,7 +44,7 @@ export async function getPersistenceSnapshot(): Promise<PersistenceSnapshot> {
 }
 
 // Crea una sesión directamente en el repositorio, sin ocupar la consola (prueba de TW-28).
-// durationMs permite sesiones cortas para ver las alertas de T15 sin esperar 25 minutos.
+// Empieza como si hubiera arrancado hace 24 min (quedan 6) para ver las alertas de T15 sin esperar.
 export async function createTestSession(
   now: number = Date.now(),
   durationMs: number = TEST_DURATION_MS,
@@ -61,12 +67,12 @@ export async function createTestSession(
       durationMs,
       totalCents: rate.priceCents,
     },
-    now,
+    testStartedAt(now),
   );
 }
 
 // Inicia con el servicio real una sesión de 30 min en la primera consola disponible, como si hubiera
-// empezado hace 24 min 50 s: entra en "Por terminar" a los 10 s y vence 5 min después. Sirve para
+// empezado hace 24 min: quedan 6 min, entra en "Por terminar" al minuto 1 y vence 5 min después. Sirve para
 // probar en el celular las alertas de T15 y T16 sin esperar media hora (T18).
 export async function startNearlyDueSession(now: number = Date.now()): Promise<StartSessionResult> {
   const target = (await getConsoles()).find((c) => c.status === 'disponible');
@@ -75,7 +81,7 @@ export async function startNearlyDueSession(now: number = Date.now()): Promise<S
   }
   return startSession(
     { consoleId: target.id, controllerCount: 1, mode: 'fijo_30' },
-    now - (24 * 60 + 50) * 1000,
+    testStartedAt(now),
   );
 }
 

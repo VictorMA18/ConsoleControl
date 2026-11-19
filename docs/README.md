@@ -6,7 +6,7 @@ Punto de entrada para agentes y personas: [`../AGENTS.md`](../AGENTS.md).
 |---|---|---|
 | [`architecture/`](architecture/arquitectura.md) | Capas, estructura de carpetas, decisión sobre el tiempo de sesiones y [modelo de datos](architecture/base-de-datos.md), [tarifario](architecture/tarifario.md) y [guía de estilo](architecture/guia-de-estilo.md) | Antes de crear o mover un archivo, o de tocar tablas y columnas |
 | [`adr/`](adr/0000-plantilla.md) | Registro de decisiones técnicas, una por archivo | Para saber por qué se eligió algo o proponer un cambio |
-| [`roadmap/`](roadmap/README.md) | Fases del proyecto hasta el MVP | Para saber qué toca ahora y qué viene |
+| [`roadmap/`](roadmap/README.md) | Fases del proyecto hasta el MVP, con los sprints 2 y 3 segmentados por partes y el [método de trabajo](roadmap/metodo-de-trabajo.md) | Para saber qué toca ahora y qué viene |
 | [`guides/`](guides/flujo-git.md) | Flujo de git, estilo, pruebas, CI y entorno | Al trabajar, revisar o preparar el equipo |
 | [`specs/`](specs/README.md) | Historias de usuario con criterios Given-When-Then | Al empezar o probar una historia |
 

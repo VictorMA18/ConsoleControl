@@ -43,3 +43,7 @@ yarn-error.*
 .agents/skills/expo-sqlite
 .claude/skills/expo-sqlite
 # @generated expo skills end
+
+# Skills de agentes: se restauran desde skills-lock.json (npx skills experimental_install)
+.claude/skills/
+.agents/skills/

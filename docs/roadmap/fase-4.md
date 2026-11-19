@@ -15,6 +15,7 @@ Corrección de errores, pruebas con el cliente y presentación del MVP el 11/12/
 
 ## Tareas principales
 
+- Evaluar las [ideas sin planificar](mejoras-pendientes.md) (React Native Reusables y colores HSL) y decidir si entran.
 - Corregir errores encontrados en las pruebas.
 - Probar con el cliente en el ciber.
 - Presentar el MVP el 11/12/2026.

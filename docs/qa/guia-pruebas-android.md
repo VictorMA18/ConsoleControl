@@ -40,7 +40,7 @@ Para CP-011 se usa PS5 #1, que tiene 6 mandos.
 2. Comparar con su resultado esperado.
 3. Registrar el resultado y la evidencia en `registro-resultados.md`.
 
-CP-009 y CP-010 se hacen con la sesión de prueba "4. Sesión que vence en 5 min" (solo en la app de desarrollo) y con la app abierta: el aviso con la app cerrada no está implementado (H-04 en [`revision-codigo.md`](revision-codigo.md)).
+CP-009 y CP-010 se hacen con la sesión de prueba "4. Sesión con 6 min restantes" (solo en la app de desarrollo) y con la app abierta: el aviso con la app cerrada no está implementado (H-04 en [`revision-codigo.md`](revision-codigo.md)).
 
 ### TW-124 · Segundo plano
 

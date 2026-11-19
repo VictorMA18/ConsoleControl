@@ -1,6 +1,6 @@
 ## Tarea
 
-Jira: TW-__ (T0__)
+Jira: TW-__ (T0__) o historia HU-0__ (tareas de Jira pendientes)
 
 ## Qué cambia
 
@@ -12,8 +12,8 @@ Jira: TW-__ (T0__)
 
 ## Lista de revisión
 
-- [ ] La rama tiene el formato `feature/T0X-nombre`.
-- [ ] Los commits tienen el formato `tipo(T0X): descripción`.
+- [ ] La rama tiene el formato `feature/T0X-nombre` o `feature/HU-0XX-nombre`.
+- [ ] Los commits tienen el formato `tipo(T0X): descripción` o `tipo(HU-0XX): descripción`.
 - [ ] Probado contra los criterios Given-When-Then.
 - [ ] Lint, tipos y pruebas sin errores.
 - [ ] La interfaz no importa `expo-sqlite` ni `drizzle-orm`.

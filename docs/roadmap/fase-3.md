@@ -1,8 +1,8 @@
-# Fase 3 · Respaldo con Supabase (Sprint 4)
+# Fase 3 · Sprint 4: fiados y parametrización
 
 ## Objetivo
 
-Respaldo unidireccional dispositivo → nube de los registros pendientes (HU-008).
+Gestión completa de fiados (HU-011) y tarifas, umbrales y reglas configurables (HU-013).
 
 ## Fechas
 
@@ -10,26 +10,17 @@ Respaldo unidireccional dispositivo → nube de los registros pendientes (HU-008
 
 ## Entregables
 
-- Servicio de sincronización en `src/sync/`.
-- Proyecto de Supabase con las tablas de respaldo (por definir).
-
-## Tareas principales
-
-- Subir los registros con `sync_status = 'pendiente'` y marcarlos `'sincronizado'`.
-- Revisar el efecto del cambio de hora del celular en la sincronización.
-- Tareas de Jira: por definir con el backlog.
+Por definir: VN entregará las instrucciones como las de los sprints 2 y 3. Detalle en [`sprint-4/README.md`](sprint-4/README.md).
 
 ## Criterio de salida
 
-- Un registro creado sin internet aparece en Supabase tras recuperar la conexión y queda marcado `'sincronizado'`.
-- Sin internet, la app sigue funcionando igual.
-- No hay claves de Supabase en el repositorio.
+- Las historias acordadas cumplen sus criterios Given-When-Then.
+- `pnpm lint`, `pnpm typecheck` y `pnpm test` pasan en `develop`.
 
 ## Riesgos
 
-- Cambio de hora del dispositivo: puede afectar los registros al sincronizar.
-- Ausencia de internet en el ciber: los pendientes se acumulan.
-- El cliente pide login (Observación O1): afectaría cómo se identifica el respaldo.
+- Los umbrales y reglas que hoy son constantes con nombre (gracia, fracción, umbral de arqueo, horas de mantenimiento) pasan a ser configurables.
+- El cliente pide login (Observación O1).
 
 ## Depende de
 

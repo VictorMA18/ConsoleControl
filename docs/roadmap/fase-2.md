@@ -1,8 +1,8 @@
-# Fase 2 · Sprint 3
+# Fase 2 · Sprint 3: sincronización, extensión de tiempo y mantenimiento
 
 ## Objetivo
 
-Historias por confirmar con el backlog (historias restantes del Product Backlog).
+Respaldar los datos en la nube sin afectar el uso sin conexión, extender el tiempo de una sesión, ver la salud de consolas y mandos y recibir alertas de mantenimiento.
 
 ## Fechas
 
@@ -10,22 +10,19 @@ Historias por confirmar con el backlog (historias restantes del Product Backlog)
 
 ## Entregables
 
-Por definir con el backlog.
-
-## Tareas principales
-
-Historias por confirmar con el backlog.
+HU-009, HU-012, HU-014 y HU-008 (19 puntos). Partes, orden y avance en [`sprint-3/README.md`](sprint-3/README.md).
 
 ## Criterio de salida
 
-- Las historias acordadas para el sprint cumplen sus criterios Given-When-Then (historias por definir).
-- `pnpm lint`, `pnpm typecheck` y `pnpm test` pasan en `develop`.
+- Cada historia cumple sus criterios Given-When-Then; el motor de sincronización funciona contra el cliente simulado y sin internet la app no se ve afectada.
+- No hay claves de Supabase en el repositorio.
+- `pnpm lint`, `pnpm typecheck` y `pnpm test` pasan en `develop`. Las comprobaciones con la nube real esperan a que VN cree el proyecto de Supabase.
 
 ## Riesgos
 
-- Cambio de hora del dispositivo.
-- Ausencia de internet en el ciber.
-- El cliente pide login (Observación O1).
+- Cambio de hora del dispositivo: puede afectar los registros al sincronizar.
+- Clave pública de Supabase sin login (O1): requiere decidir la política de seguridad por filas (ADR).
+- Ausencia de internet en el ciber: los pendientes se acumulan.
 
 ## Depende de
 

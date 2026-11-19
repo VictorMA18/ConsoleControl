@@ -64,7 +64,9 @@ export default function PersistenceScreen() {
   const onNearlyDue = () => {
     startNearlyDueSession()
       .then((result) =>
-        setMessage(result.ok ? 'Sesión iniciada: entra en alerta en 10 segundos' : result.message),
+        setMessage(
+          result.ok ? 'Sesión iniciada: quedan 6 min, la alerta salta en 1 min' : result.message,
+        ),
       )
       .catch((e: unknown) => setMessage(`Error: ${String(e)}`))
       .finally(reload);
@@ -96,7 +98,7 @@ export default function PersistenceScreen() {
       ))}
 
       <View style={styles.buttons}>
-        <Button title="Crear sesión de prueba" onPress={onCreate} />
+        <Button title="Crear sesión de prueba (6 min restantes)" onPress={onCreate} />
         <Text style={styles.heading}>Inicio de sesión (T09)</Text>
         <Button title="1. Iniciar sesión con 2 mandos" onPress={() => onScenario('exito')} />
         <Button
@@ -107,7 +109,7 @@ export default function PersistenceScreen() {
           title="3. Iniciar en consola ocupada"
           onPress={() => onScenario('consola_ocupada')}
         />
-        <Button title="4. Sesión que vence en 5 min (alertas)" onPress={onNearlyDue} />
+        <Button title="4. Sesión con 6 min restantes (alertas)" onPress={onNearlyDue} />
         <Button title="Finalizar sesiones activas" onPress={onFinish} />
         <Button title="Recargar" onPress={reload} />
       </View>

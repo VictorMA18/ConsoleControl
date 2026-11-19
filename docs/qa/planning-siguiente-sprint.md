@@ -1,32 +1,15 @@
-# Planning del Sprint 2
+# Planning de los sprints 2 y 3
 
-| Campo             | Valor                                                                   |
-| ----------------- | ----------------------------------------------------------------------- |
-| Tarea             | T21 (TW-21) · TW-146                                                    |
-| Fecha             | 18/11/2026                                                              |
-| Fechas del sprint | 23/11 al 04/12/2026                                                     |
-| Capacidad         | 40 h y unos 7 SP (ver [`velocidad-sprint-1.md`](velocidad-sprint-1.md)) |
+Este documento quedó reemplazado: los sprints 2 y 3 están definidos y segmentados en [`docs/roadmap/`](../roadmap/README.md) (partes, orden, avance y pruebas).
 
-Las fechas siguen el calendario del roadmap: el MVP sigue el 11/12/2026, después de este sprint y de la fase de pulido.
+## Tareas técnicas sin sprint asignado
 
-## Objetivo del sprint
+Salen de la revisión de código (T19) y de la evaluación de usabilidad (T20). Se hacen cuando haya holgura o se incorporan al Sprint 4.
 
-Que el administrador pueda cerrar una sesión y cobrarla (HU-005), y dejar el proceso de revisión protegido.
-
-## Compromiso
-
-| Elemento                                                                                     | Horas estimadas | Responsable |
-| -------------------------------------------------------------------------------------------- | --------------- | ----------- |
-| Redactar los criterios Given-When-Then de HU-005 en `docs/specs/`                            | 3 h             | JS          |
-| HU-005 · Lógica de liquidación (cierre, cobro con el motor de T13, liberar consola y mandos) | 10 h            | VM          |
-| HU-005 · Botón "Cerrar sesión" en la tarjeta y resumen del cobro                             | 10 h            | RF          |
-| HU-005 · Casos de prueba y pruebas automáticas                                               | 5 h             | VN          |
-| Proteger `develop` y `main` (CI obligatorio y 1 aprobación)                                  | 1 h             | VN          |
-| Pruebas de los repositorios con base SQLite real                                             | 6 h             | VM          |
-| Evaluar notificaciones locales con la app cerrada (ADR nuevo)                                | 5 h             | VM          |
-| **Total**                                                                                    | **40 h**        |             |
-
-## Fuera del sprint
-
-- HU-008 (respaldo con Supabase): pasa al siguiente sprint para no superar la capacidad.
-- Formato de los `.md` y el cambio de `pnpm-lock.yaml`: tareas menores para cuando haya holgura.
+| Elemento                                                       | Origen         |
+| -------------------------------------------------------------- | -------------- |
+| Proteger `develop` y `main` con CI obligatorio y 1 aprobación  | H-03           |
+| Pruebas de los repositorios con una base SQLite real           | H-01           |
+| Avisos con la app cerrada (`expo-notifications`)               | U-08, ADR 0011 |
+| Formatear los `.md` antiguos con Prettier o excluirlos         | H-08           |
+| Confirmar el cambio de `pnpm-lock.yaml` que agrega `@pnpm/exe` | H-09           |
