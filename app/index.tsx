@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 import { ConsoleCard } from '../src/components/ConsoleCard';
 import { TypeFilter } from '../src/components/TypeFilter';
+import { useActiveSessions } from '../src/hooks/useActiveSessions';
 import { useConsoles } from '../src/hooks/useConsoles';
 import type { ConsoleWithStock } from '../src/services/consoleService';
 import { useWallFilterStore } from '../src/stores/wallFilterStore';
@@ -11,6 +12,9 @@ import { useWallFilterStore } from '../src/stores/wallFilterStore';
 export default function ConsoleWallScreen() {
   const router = useRouter();
   const { data: consoles, isPending, error } = useConsoles();
+  // Las sesiones activas se restauran desde SQLite al abrir la app (T10).
+  const { data: sessions } = useActiveSessions();
+  const sessionByConsole = new Map(sessions?.map((s) => [s.consoleId, s]));
   const consoleType = useWallFilterStore((s) => s.consoleType);
   const visible = consoles?.filter((c) => consoleType === null || c.consoleType === consoleType);
 
@@ -37,7 +41,11 @@ export default function ConsoleWallScreen() {
           contentContainerClassName="gap-3 p-4"
           renderItem={({ item, index }) => (
             <>
-              <ConsoleCard console={item} onPress={openSession} />
+              <ConsoleCard
+                console={item}
+                session={sessionByConsole.get(item.id)}
+                onPress={openSession}
+              />
               {/* Con un número impar de consolas, la última no ocupa toda la fila. */}
               {visible && index === visible.length - 1 && visible.length % 2 === 1 ? (
                 <View className="flex-1" />

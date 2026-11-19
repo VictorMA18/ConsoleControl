@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import ConsoleWallScreen from '../../app/index';
 import { type ConsoleWithStock, listConsoles } from '../../src/services/consoleService';
+import { type ActiveSession, listActiveSessions } from '../../src/services/sessionService';
 import { useWallFilterStore } from '../../src/stores/wallFilterStore';
 
 const mockPush = jest.fn();
@@ -17,6 +18,7 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 jest.mock('../../src/services/consoleService', () => ({ listConsoles: jest.fn() }));
+jest.mock('../../src/services/sessionService', () => ({ listActiveSessions: jest.fn() }));
 
 const NOW = 1_760_000_000_000;
 
@@ -43,6 +45,7 @@ let client: QueryClient;
 beforeEach(() => {
   client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: Infinity } } });
   jest.mocked(listConsoles).mockResolvedValue(inventory);
+  jest.mocked(listActiveSessions).mockResolvedValue([]);
   useWallFilterStore.setState({ consoleType: null });
   mockPush.mockClear();
 });
@@ -84,5 +87,50 @@ describe('muro de consolas (T07)', () => {
       pathname: '/sesion/[consoleId]',
       params: { consoleId: '551f976b-9f52-4e32-9db4-a2c938431f4f' },
     });
+  });
+});
+
+describe('muro con varias sesiones (T11, TW-93)', () => {
+  it('muestra un cronómetro por consola con 4 sesiones simultáneas', async () => {
+    const ids = [
+      '9be9a615-3d18-4f92-a2fe-bfef68268278',
+      '551f976b-9f52-4e32-9db4-a2c938431f4f',
+      '95bce93b-3e0a-401d-b7a6-65ae769ece61',
+      'fb64a232-3044-4929-99c9-8a0c7203cdac',
+    ];
+    const busy = ids.map((id, i) => ({
+      ...consoleRow(id, `Consola ${i + 1}`, 'ps4'),
+      status: 'en_juego' as const,
+    }));
+    const sessions = ids.map((consoleId, i): ActiveSession => ({
+      id: `sesion-${i}`,
+      consoleId,
+      consoleName: `Consola ${i + 1}`,
+      consoleType: 'ps4',
+      rateSnapshot: [],
+      controllerCount: 1,
+      mode: 'libre',
+      durationMs: null,
+      startedAt: Date.now() - (i + 1) * 60_000,
+      endedAt: null,
+      status: 'activa',
+      totalCents: 0,
+      createdAt: NOW,
+      updatedAt: NOW,
+      syncStatus: 'pendiente',
+    }));
+    jest.mocked(listConsoles).mockResolvedValue(busy);
+    jest.mocked(listActiveSessions).mockResolvedValue(sessions);
+
+    await render(
+      <QueryClientProvider client={client}>
+        <ConsoleWallScreen />
+      </QueryClientProvider>,
+    );
+
+    for (const id of ids) {
+      expect(await screen.findByTestId(`cronometro-${id}`)).toBeTruthy();
+    }
+    expect(screen.getAllByText('En juego')).toHaveLength(4);
   });
 });
