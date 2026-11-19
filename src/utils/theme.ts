@@ -1,23 +1,41 @@
-// Mismos valores que las variables de global.css, para lo que no acepta className (barras de
-// navegación, iconos, indicadores de carga). Si cambias un color en global.css, cámbialo aquí.
-export const COLORS = {
-  background: 'hsl(228 16% 7%)',
-  card: 'hsl(228 14% 11%)',
-  raised: 'hsl(228 12% 15%)',
-  border: 'hsl(228 11% 20%)',
-  foreground: 'hsl(40 18% 94%)',
-  mutedForeground: 'hsl(228 9% 66%)',
-  primary: 'hsl(40 18% 94%)',
-  available: 'hsl(152 58% 52%)',
-  playing: 'hsl(5 82% 64%)',
-  warning: 'hsl(40 96% 56%)',
-  pending: 'hsl(199 88% 62%)',
+import { useColorScheme } from 'nativewind';
+
+// Mismos valores que las variables de global.css, para lo que no acepta className (barra de
+// pestañas, iconos fuera de <Icon>, indicadores de carga). Si cambias un color en global.css,
+// cámbialo aquí.
+const LIGHT = {
+  background: 'hsl(220 16% 95%)',
+  card: 'hsl(220 20% 99%)',
+  border: 'hsl(220 14% 86%)',
+  foreground: 'hsl(226 44% 14%)',
+  mutedForeground: 'hsl(222 12% 40%)',
 } as const;
 
-// Pesos de DM Sans que carga la app (app/_layout.tsx) y que usa la barra de navegación.
-export const FONTS = {
-  regular: 'DMSans_400Regular',
-  medium: 'DMSans_500Medium',
-  semibold: 'DMSans_600SemiBold',
-  bold: 'DMSans_700Bold',
+const DARK = {
+  background: 'hsl(224 22% 8%)',
+  card: 'hsl(224 18% 12%)',
+  border: 'hsl(224 14% 20%)',
+  foreground: 'hsl(220 20% 94%)',
+  mutedForeground: 'hsl(220 10% 66%)',
 } as const;
+
+export type ThemeColors = { [K in keyof typeof LIGHT]: string };
+
+export const COLORS: { light: ThemeColors; dark: ThemeColors } = { light: LIGHT, dark: DARK };
+
+// Colores del tema activo (claro u oscuro, según src/stores/themeStore.ts).
+export function useThemeColors(): ThemeColors {
+  const { colorScheme } = useColorScheme();
+  return colorScheme === 'dark' ? DARK : LIGHT;
+}
+
+// Pesos de Montserrat Alternates que carga la app (app/_layout.tsx).
+export const FONTS = {
+  medium: 'MontserratAlternates_500Medium',
+  semibold: 'MontserratAlternates_600SemiBold',
+  bold: 'MontserratAlternates_700Bold',
+  extrabold: 'MontserratAlternates_800ExtraBold',
+} as const;
+
+// Curva de salida para las transiciones de la interfaz (ADR 0014): arranca rápido y frena suave.
+export const EASE_OUT_BEZIER = [0.23, 1, 0.32, 1] as const;

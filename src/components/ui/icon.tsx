@@ -24,7 +24,7 @@ cssInterop(IconImpl, {
   },
 });
 
-// Icono de Lucide con color y tamaño por clases: <Icon as={Play} className="text-playing" />.
+// Icono de Lucide con color y tamaño por clases: <Icon as={Play} className="text-playing-tone" />.
 function Icon({ as: IconComponent, className, size = 16, ...props }: IconProps) {
   const textClass = React.useContext(TextClassContext);
   return (
