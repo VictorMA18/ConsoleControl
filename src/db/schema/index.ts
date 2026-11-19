@@ -4,4 +4,5 @@ export * from './controllers';
 export * from './enums';
 export * from './payments';
 export * from './rates';
+export * from './shifts';
 export * from './sessions';
