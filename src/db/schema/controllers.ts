@@ -1,4 +1,4 @@
-import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 import { consoles } from './consoles';
 import { controlColumns } from './controlColumns';
@@ -14,6 +14,8 @@ export const controllers = sqliteTable(
       .references(() => consoles.id),
     label: text('label').notNull(),
     status: text('status', { enum: CONTROLLER_STATUSES }).notNull().default('operativo'),
+    // Minutos jugados acumulados (HU-012); se suman al cobrar cada sesión.
+    usageMinutes: integer('usage_minutes').notNull().default(0),
     ...controlColumns,
   },
   (table) => [index('controllers_console_id_idx').on(table.consoleId)],

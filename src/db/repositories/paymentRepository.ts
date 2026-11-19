@@ -11,6 +11,7 @@ import {
   sessions,
   shifts,
 } from '../schema';
+import { addUsageMinutes } from '../usage';
 
 export class SessionNotPayableError extends Error {
   constructor() {
@@ -74,6 +75,27 @@ export async function registerPayments(
       )
       .run();
 
+    // HU-012: la consola y los mandos prestados suman los minutos jugados de la liquidación.
+    const played = session.playedMinutes ?? 0;
+    const console = tx.select().from(consoles).where(eq(consoles.id, session.consoleId)).get();
+    if (console) {
+      tx.update(consoles)
+        .set({ usageMinutes: addUsageMinutes(console.usageMinutes, played) })
+        .where(eq(consoles.id, console.id))
+        .run();
+    }
+    const lent = tx
+      .select()
+      .from(controllers)
+      .where(and(eq(controllers.consoleId, session.consoleId), eq(controllers.status, 'en_uso')))
+      .all();
+    for (const controller of lent) {
+      tx.update(controllers)
+        .set({ usageMinutes: addUsageMinutes(controller.usageMinutes, played) })
+        .where(eq(controllers.id, controller.id))
+        .run();
+    }
+
     tx.update(consoles)
       .set({ status: 'disponible' })
       .where(and(eq(consoles.id, session.consoleId), eq(consoles.status, 'en_juego')))
@@ -82,7 +104,6 @@ export async function registerPayments(
       .set({ status: 'operativo' })
       .where(and(eq(controllers.consoleId, session.consoleId), eq(controllers.status, 'en_uso')))
       .run();
-    // HU-012 acumulará aquí las horas de uso de la consola con los minutos jugados.
 
     return session;
   });

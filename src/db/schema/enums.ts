@@ -4,7 +4,9 @@
 export const CONSOLE_TYPES = ['ps3', 'ps4', 'ps5', 'xbox', 'switch'] as const;
 export type ConsoleType = (typeof CONSOLE_TYPES)[number];
 
-export const CONSOLE_STATUSES = ['disponible', 'en_juego', 'mantenimiento'] as const;
+// 'mantenimiento' y 'averiado' sacan la consola de la asignación (HU-012, RN-06). 'averiado' hace
+// de "defectuoso" en el semáforo (por confirmar con VN).
+export const CONSOLE_STATUSES = ['disponible', 'en_juego', 'mantenimiento', 'averiado'] as const;
 export type ConsoleStatus = (typeof CONSOLE_STATUSES)[number];
 
 export const SESSION_MODES = ['fijo_30', 'fijo_60', 'fijo_120', 'libre'] as const;
@@ -20,7 +22,8 @@ export const SESSION_STATUSES = ['activa', 'por_cobrar', 'cobrada', 'finalizada'
 export type SessionStatus = (typeof SESSION_STATUSES)[number];
 
 // 'en_uso' marca los mandos prestados en una sesión activa; vuelven a 'operativo' al cerrarla.
-export const CONTROLLER_STATUSES = ['operativo', 'en_uso', 'averiado'] as const;
+// 'mantenimiento' y 'averiado' los sacan del stock hasta volver a 'operativo' (HU-012).
+export const CONTROLLER_STATUSES = ['operativo', 'en_uso', 'mantenimiento', 'averiado'] as const;
 export type ControllerStatus = (typeof CONTROLLER_STATUSES)[number];
 
 // Cómo se pagó (HU-006). 'fiado' solo se registra como método; su gestión es HU-011.
