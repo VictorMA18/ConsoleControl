@@ -30,6 +30,10 @@ export const sessions = sqliteTable(
     status: text('status', { enum: SESSION_STATUSES }).notNull().default('activa'),
     // Estimado al abrir la sesión y definitivo al cerrarla.
     totalCents: integer('total_cents').notNull(),
+    // Liquidación al finalizar (HU-005); nulos mientras la sesión está activa.
+    playedMinutes: integer('played_minutes'),
+    chargedMinutes: integer('charged_minutes'),
+    penaltyCents: integer('penalty_cents'),
     ...controlColumns,
   },
   (table) => [

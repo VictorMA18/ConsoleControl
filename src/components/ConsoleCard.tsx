@@ -7,6 +7,7 @@ import type { ActiveSession } from '../services/sessionService';
 import { CARD_STATE_STYLES, cardState, type CardState } from '../utils/cardState';
 import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
 import { formatDuration } from '../utils/formatDuration';
+import { formatMoney } from '../utils/formatMoney';
 import { SESSION_MODE_LABELS } from '../utils/sessionLabels';
 import { StatusBand } from './StatusBand';
 import { Card } from './ui/card';
@@ -52,9 +53,11 @@ function BusyConsoleCard({ console, session, onPress }: Required<Props>) {
         {formatDuration(elapsedMs)}
       </Text>
       <Text className="text-base text-muted-foreground" style={{ fontVariant: ['tabular-nums'] }}>
-        {remainingMs === null
-          ? SESSION_MODE_LABELS[session.mode]
-          : `Quedan ${formatDuration(remainingMs)}`}
+        {session.status === 'por_cobrar'
+          ? `Total ${formatMoney(session.totalCents)}`
+          : remainingMs === null
+            ? SESSION_MODE_LABELS[session.mode]
+            : `Quedan ${formatDuration(remainingMs)}`}
       </Text>
       <Text className="text-base text-muted-foreground">
         {session.controllerCount} {session.controllerCount === 1 ? 'mando' : 'mandos'}

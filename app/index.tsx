@@ -11,6 +11,7 @@ import { Text } from '../src/components/ui/text';
 import { WallSummary } from '../src/components/WallSummary';
 import { useActiveSessions } from '../src/hooks/useActiveSessions';
 import { useConsoles } from '../src/hooks/useConsoles';
+import { usePendingSessions } from '../src/hooks/usePendingSessions';
 import { useSessionAlerts } from '../src/hooks/useSessionAlerts';
 import type { ConsoleWithStock } from '../src/services/consoleService';
 import type { SessionAlert } from '../src/services/sessionAlerts';
@@ -25,7 +26,11 @@ export default function ConsoleWallScreen() {
   const { data: consoles, isPending, error } = useConsoles();
   // Las sesiones activas se restauran desde SQLite al abrir la app (T10).
   const { data: sessions } = useActiveSessions();
-  const sessionByConsole = new Map(sessions?.map((s) => [s.consoleId, s]));
+  // Las finalizadas esperan su pago y siguen ocupando la consola (HU-005).
+  const { data: pending } = usePendingSessions();
+  const sessionByConsole = new Map(
+    [...(sessions ?? []), ...(pending ?? [])].map((s) => [s.consoleId, s]),
+  );
   const [lastAlert, setLastAlert] = useState<SessionAlert | null>(null);
 
   // HU-004 (T16): cada alerta llega una sola vez por sesión; el celular vibra y queda el aviso.
@@ -36,8 +41,14 @@ export default function ConsoleWallScreen() {
   const consoleType = useWallFilterStore((s) => s.consoleType);
   const visible = consoles?.filter((c) => consoleType === null || c.consoleType === consoleType);
 
-  function openSession(console: ConsoleWithStock) {
-    router.push({ pathname: '/sesion/[consoleId]', params: { consoleId: console.id } });
+  // Una consola con sesión abre su resumen de cobro (HU-005); una libre, el diálogo de inicio.
+  function openConsole(console: ConsoleWithStock) {
+    const session = sessionByConsole.get(console.id);
+    if (session) {
+      router.push({ pathname: '/cobro/[sessionId]', params: { sessionId: session.id } });
+    } else {
+      router.push({ pathname: '/sesion/[consoleId]', params: { consoleId: console.id } });
+    }
   }
 
   return (
@@ -64,7 +75,7 @@ export default function ConsoleWallScreen() {
               <ConsoleCard
                 console={item}
                 session={sessionByConsole.get(item.id)}
-                onPress={openSession}
+                onPress={openConsole}
               />
               {/* Con un número impar de consolas, la última no ocupa toda la fila. */}
               {visible && index === visible.length - 1 && visible.length % 2 === 1 ? (

@@ -5,7 +5,11 @@ import { Vibration } from 'react-native';
 
 import ConsoleWallScreen from '../../app/index';
 import { type ConsoleWithStock, listConsoles } from '../../src/services/consoleService';
-import { type ActiveSession, listActiveSessions } from '../../src/services/sessionService';
+import {
+  type ActiveSession,
+  listActiveSessions,
+  listPendingSessions,
+} from '../../src/services/sessionService';
 import { useWallFilterStore } from '../../src/stores/wallFilterStore';
 
 const mockPush = jest.fn();
@@ -19,7 +23,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 jest.mock('../../src/services/consoleService', () => ({ listConsoles: jest.fn() }));
-jest.mock('../../src/services/sessionService', () => ({ listActiveSessions: jest.fn() }));
+jest.mock('../../src/services/sessionService', () => ({
+  listActiveSessions: jest.fn(),
+  listPendingSessions: jest.fn(),
+}));
 
 const NOW = 1_760_000_000_000;
 
@@ -47,6 +54,7 @@ beforeEach(() => {
   client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: Infinity } } });
   jest.mocked(listConsoles).mockResolvedValue(inventory);
   jest.mocked(listActiveSessions).mockResolvedValue([]);
+  jest.mocked(listPendingSessions).mockResolvedValue([]);
   useWallFilterStore.setState({ consoleType: null });
   mockPush.mockClear();
 });
@@ -116,6 +124,9 @@ describe('muro con varias sesiones (T11, TW-93)', () => {
       endedAt: null,
       status: 'activa',
       totalCents: 0,
+      playedMinutes: null,
+      chargedMinutes: null,
+      penaltyCents: null,
       createdAt: NOW,
       updatedAt: NOW,
       syncStatus: 'pendiente',
@@ -160,6 +171,9 @@ describe('alerta de vencimiento en el muro (T16)', () => {
         endedAt: null,
         status: 'activa',
         totalCents: 500,
+        playedMinutes: null,
+        chargedMinutes: null,
+        penaltyCents: null,
         createdAt: NOW,
         updatedAt: NOW,
         syncStatus: 'pendiente',

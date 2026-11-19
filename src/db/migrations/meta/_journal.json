@@ -15,6 +15,13 @@
       "when": 1793209080451,
       "tag": "0001_rates_by_block",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795060988565,
+      "tag": "0002_settlement_columns",
+      "breakpoints": true
     }
   ]
 }

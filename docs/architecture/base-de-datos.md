@@ -49,8 +49,11 @@ erDiagram
         integer duration_ms "null en tiempo libre"
         integer started_at "ms Unix"
         integer ended_at "null mientras está activa"
-        text status "activa | finalizada"
+        text status "activa | por_cobrar | cobrada | finalizada"
         integer total_cents "monto en centavos"
+        integer played_minutes "liquidación (HU-005)"
+        integer charged_minutes "liquidación (HU-005)"
+        integer penalty_cents "liquidación (HU-005)"
         integer created_at "ms Unix"
         integer updated_at "ms Unix"
         text sync_status "pendiente | sincronizado"
@@ -108,8 +111,11 @@ Cada alquiler de una consola. Es la tabla central de HU-001 a HU-004.
 | `duration_ms` | INTEGER | Sí | Duración contratada. Nulo en tiempo libre. La usa `remainingMs` (HU-004) |
 | `started_at` | INTEGER | No | Hora de inicio en milisegundos Unix ([ADR 0003](../adr/0003-hora-de-inicio-persistida.md)) |
 | `ended_at` | INTEGER | Sí | Hora de cierre. Nulo mientras la sesión está activa |
-| `status` | TEXT | No | `activa` o `finalizada` |
+| `status` | TEXT | No | `activa`; `por_cobrar` al finalizarla (HU-005); `cobrada` al registrar el pago (HU-006). `finalizada` es el cierre sin cobro de las herramientas de desarrollo ([ADR 0013](../adr/0013-estados-de-sesion-y-cobro.md)) |
 | `total_cents` | INTEGER | No | Monto en céntimos. Al abrir se guarda el estimado del tiempo contratado con el motor de tarifas (0 en tiempo libre) y al cerrar, el definitivo |
+| `played_minutes` | INTEGER | Sí | Minutos jugados al finalizar (HU-005). Nulo mientras la sesión está activa |
+| `charged_minutes` | INTEGER | Sí | Minutos que se cobran, en bloques de 15 con 3 min de gracia (RN-03) |
+| `penalty_cents` | INTEGER | Sí | Cobro por el exceso sobre el tiempo contratado, en céntimos |
 | `created_at`, `updated_at`, `sync_status` | | | Columnas de control (sección 4) |
 
 ### 3.4. `rates`
