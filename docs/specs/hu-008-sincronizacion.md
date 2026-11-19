@@ -43,3 +43,11 @@
 - El upsert es por `id` (UUID), así que reenviar no duplica. Los reintentos esperan 5 s, 15 s y luego 60 s (`retryDelayMs`).
 - `markRecordsSynced` (`src/db/repositories/syncRepository.ts`) solo marca un registro si su `updated_at` sigue siendo el que se envió. Si cambió durante el envío, queda pendiente y se reenvía. Asigna `sync_status` de forma explícita, así `controlColumns` no lo vuelve a `pendiente`, y solo toca columnas de sincronización, lo que también vale para turnos cerrados (RN-05).
 - Los registros viajan con los nombres de columna de SQLite (snake_case), que son los mismos de la nube.
+
+### b. Conectividad e indicador
+
+- `expo-network` detecta la conexión ([ADR 0015](../adr/0015-expo-network-para-conectividad.md)).
+- `startSyncLoop` (`src/sync/connectivity.ts`) arranca en `app/_layout.tsx` cuando la base está lista. Sincroniza al arrancar, al recuperar la conexión, al volver a primer plano y cada minuto, y tras un fallo reintenta con espera creciente.
+- Corre aparte de la interfaz: nunca bloquea ni lanza, y sin internet solo espera (RN-09). El número de pendientes se refresca cada 10 s.
+- `useSyncStore` (`src/stores/syncStore.ts`) guarda el estado para la pantalla, e `indicatorState` decide qué mostrar.
+- El indicador `SyncIndicator`, en la cabecera del muro, muestra «Sin conexión», «Sin nube» (falta configurar Supabase), «Subiendo…», «Pendiente (N)» o «Nube al día».

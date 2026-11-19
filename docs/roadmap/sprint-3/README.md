@@ -21,7 +21,7 @@ Requiere el Sprint 2 fusionado en `develop`. HU-008 va al final porque sincroniz
 | [02](02-hu-012-salud-equipos.md)         | HU-012 · Semáforo de salud         | 5                     | `feature/HU-012-semaforo-salud` (sobre la 01)       | ✔      |
 | [03](03-hu-014-mantenimiento.md)         | HU-014 · Alerta de mantenimiento   | 3                     | `feature/HU-014-alerta-mantenimiento` (sobre la 02) | ✔      |
 | [04](04-hu-008a-motor-sync.md)           | HU-008a · Motor de sincronización  | 8 en total (a, b y c) | `feature/HU-008-motor-sync` (sobre la 03)           | ✔      |
-| [05](05-hu-008b-conectividad-ui.md)      | HU-008b · Conectividad e indicador |                       | `feature/HU-008-conectividad` (sobre la 04)         | ☐      |
+| [05](05-hu-008b-conectividad-ui.md)      | HU-008b · Conectividad e indicador |                       | `feature/HU-008-conectividad` (sobre la 04)         | ✔      |
 | [06](06-hu-008c-supabase-entregables.md) | HU-008c · Supabase y entregables   |                       | `feature/HU-008-supabase` (sobre la 05)             | ☐      |
 
 ## Al terminar el sprint
