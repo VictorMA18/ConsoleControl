@@ -9,6 +9,7 @@ import {
   type ActiveSession,
   ConsoleNotAvailableError,
   endSession,
+  extendSessionDuration,
   getActiveSessionsWithConsole,
   getPendingSessionsWithConsole,
   getSessionWithConsole,
@@ -18,6 +19,7 @@ import {
 import type { ConsoleStatus, ConsoleType } from '../db/schema/enums';
 import type { RateBlock, Session } from '../db/schema';
 import { startSessionSchema } from '../schemas/session';
+import { planExtension, type ExtensionPlan } from './extension';
 import { estimateTotalCents, MODE_DURATION_MS } from './sessionQuote';
 import { calculateSettlement } from './settlement';
 
@@ -197,6 +199,46 @@ export async function endSessionForPayment(
   );
   if (!session) {
     return { ok: false, reason: 'sesion_no_activa', message: 'La sesión ya fue finalizada' };
+  }
+  return { ok: true, session };
+}
+
+export type ExtendSessionResult =
+  | { ok: true; session: Session }
+  | {
+      ok: false;
+      reason: Extract<ExtensionPlan, { ok: false }>['reason'] | 'sesion_no_encontrada';
+      message: string;
+    };
+
+// Añade 15 o 30 minutos a una sesión de tiempo fijo en curso (HU-009). El cronómetro sigue desde
+// started_at; cambian el vencimiento y el monto estimado.
+export async function extendSession(
+  id: string,
+  minutes: number,
+  now: number = Date.now(),
+): Promise<ExtendSessionResult> {
+  const detail = await getSessionWithConsole(id);
+  if (!detail) {
+    return { ok: false, reason: 'sesion_no_encontrada', message: 'La sesión no existe' };
+  }
+  const plan = planExtension(detail, minutes, now);
+  if (!plan.ok) {
+    return plan;
+  }
+  const session = await extendSessionDuration(id, {
+    minutes: plan.minutes,
+    previousDurationMs: detail.durationMs as number,
+    previousTotalCents: detail.totalCents,
+    durationMs: plan.durationMs,
+    totalCents: plan.totalCents,
+  });
+  if (!session) {
+    return {
+      ok: false,
+      reason: 'sesion_no_activa',
+      message: 'La sesión cambió mientras tanto: vuelve a intentarlo',
+    };
   }
   return { ok: true, session };
 }
