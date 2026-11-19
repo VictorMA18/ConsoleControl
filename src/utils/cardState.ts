@@ -4,7 +4,7 @@ import type { SessionAlertState } from '../services/sessionAlerts';
 // Estado visible de una tarjeta del muro (HU-002 escenario 3, T11). Cada estado tiene un color y
 // una etiqueta, para no depender solo del color.
 export type CardState =
-  'disponible' | 'en_juego' | 'por_terminar' | 'tiempo_cumplido' | 'mantenimiento';
+  'disponible' | 'en_juego' | 'por_terminar' | 'tiempo_cumplido' | 'por_cobrar' | 'mantenimiento';
 
 export function cardState(
   consoleStatus: ConsoleStatus,
@@ -12,6 +12,10 @@ export function cardState(
 ): CardState {
   if (consoleStatus !== 'en_juego') {
     return consoleStatus;
+  }
+  // La sesión terminó y espera su pago (HU-005).
+  if (alertState === 'finalizada') {
+    return 'por_cobrar';
   }
   if (alertState === 'proxima_a_vencer') {
     return 'por_terminar';
@@ -32,6 +36,7 @@ export const CARD_STATE_STYLES: Record<CardState, { label: string; band: string;
     band: 'bg-warning',
     text: 'text-warning-foreground',
   },
+  por_cobrar: { label: 'Por cobrar', band: 'bg-primary', text: 'text-primary-foreground' },
   mantenimiento: {
     label: 'Mantenimiento',
     band: 'bg-muted-foreground',
