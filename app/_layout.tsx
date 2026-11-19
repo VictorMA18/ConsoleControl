@@ -1,33 +1,48 @@
 import '../global.css';
 
 import {
-  DMSans_400Regular,
-  DMSans_500Medium,
-  DMSans_600SemiBold,
-  DMSans_700Bold,
-  DMSans_800ExtraBold,
+  MontserratAlternates_500Medium,
+  MontserratAlternates_600SemiBold,
+  MontserratAlternates_700Bold,
+  MontserratAlternates_800ExtraBold,
   useFonts,
-} from '@expo-google-fonts/dm-sans';
+} from '@expo-google-fonts/montserrat-alternates';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { StateView } from '../src/components/StateView';
 import { useDatabaseSetup } from '../src/db/migrate';
 import { queryClient } from '../src/hooks/queryClient';
-import { COLORS } from '../src/utils/theme';
+import { applySavedTheme } from '../src/stores/themeStore';
+import { useThemeColors } from '../src/utils/theme';
+
+// La pantalla de carga nativa (ícono de la app, app.json) se queda hasta que la base de datos y la
+// fuente están listas, y se va con un fundido corto. Así no aparece un spinner intermedio.
+SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.setOptions({ fade: true, duration: 250 });
+applySavedTheme();
 
 export default function RootLayout() {
   const { ready, error } = useDatabaseSetup();
+  const colors = useThemeColors();
   // Si la fuente no carga, la app sigue con la del sistema en lugar de quedarse en blanco.
   const [fontsLoaded, fontError] = useFonts({
-    DMSans_400Regular,
-    DMSans_500Medium,
-    DMSans_600SemiBold,
-    DMSans_700Bold,
-    DMSans_800ExtraBold,
+    MontserratAlternates_500Medium,
+    MontserratAlternates_600SemiBold,
+    MontserratAlternates_700Bold,
+    MontserratAlternates_800ExtraBold,
   });
+  const fontsDone = fontsLoaded || Boolean(fontError);
+
+  useEffect(() => {
+    if ((ready && fontsDone) || error) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [ready, fontsDone, error]);
 
   if (error) {
     return (
@@ -40,24 +55,22 @@ export default function RootLayout() {
     );
   }
 
-  if (!ready || (!fontsLoaded && !fontError)) {
-    return (
-      <View className="flex-1 justify-center bg-background">
-        <StateView kind="loading" />
-      </View>
-    );
+  if (!ready || !fontsDone) {
+    // Detrás de la pantalla de carga nativa: mismo fondo para que el fundido no destelle.
+    return <View className="flex-1 bg-background" />;
   }
 
   // Las pantallas leen SQLite solo después de aplicar migraciones y datos iniciales. Cada pantalla
-  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta.
+  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Las transiciones entre
+  // pantallas son las nativas de la plataforma (ADR 0014).
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: COLORS.background },
-          animation: 'slide_from_right',
+          contentStyle: { backgroundColor: colors.background },
+          animation: 'default',
         }}
       >
         <Stack.Screen name="(tabs)" />
