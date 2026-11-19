@@ -34,7 +34,7 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 | Formularios | React Hook Form con `@hookform/resolvers/zod` | Formularios con el mismo esquema Zod |
 | Estado de interfaz | Zustand | Filtros, selección y estado de pantalla |
 | Estado de datos | TanStack Query | Leer y escribir SQLite y sincronizar |
-| Estilos | NativeWind | Estilos con clases de Tailwind |
+| Estilos | NativeWind y componentes de React Native Reusables (ADR 0012) | Clases de Tailwind; colores en HSL (`global.css`); componentes en `src/components/ui/` |
 | Respaldo en la nube | Supabase, solo dispositivo → nube (HU-008) | Copia de los registros pendientes |
 | Pruebas | Jest y React Native Testing Library | Cobertura de tiempo, tarifas y validaciones |
 | Calidad | ESLint, Prettier, `tsc --noEmit` y pruebas en GitHub Actions | Verificar cada pull request |

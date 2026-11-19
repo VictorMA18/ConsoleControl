@@ -8,4 +8,4 @@
 
 ## Ideas sin planificar
 
-Se evalúan al planificar este sprint: [`../mejoras-pendientes.md`](../mejoras-pendientes.md) (React Native Reusables y colores HSL).
+Se evalúan al planificar este sprint: [`../mejoras-pendientes.md`](../mejoras-pendientes.md) (hoy sin ideas abiertas).

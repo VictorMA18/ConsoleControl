@@ -31,9 +31,10 @@ Reglas comunes. Cada parte de `sprint-N/` las da por leídas y no las repite. Le
 
 ## Pantallas nuevas (para no rehacer el trabajo después)
 
-- Usa solo los tokens de `tailwind.config.js` (nada de colores sueltos): si luego se pasa a HSL, el cambio será en un solo sitio.
-- Haz componentes pequeños y aislados en `src/components/`, sin lógica de datos dentro: así se pueden reemplazar por React Native Reusables más adelante ([ideas pendientes](mejoras-pendientes.md)).
-- Reutiliza `ChoiceButton`, `ConsoleCard`, `formatMoney` y las clases del muro de consolas; no hay bocetos nuevos.
+- Usa los componentes de `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`; ver [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md)) y solo los tokens de color por nombre (`bg-primary`, `text-foreground`...). Nada de colores sueltos ni de hexadecimales.
+- Para cargando, error y vacío usa `StateView`. En diálogos con una acción principal, déjala fija abajo como en `app/sesion/[consoleId].tsx` (`useBottomInset` para la barra de gestos).
+- Si necesitas otro componente de Reusables, cópialo a `src/components/ui/` con el mismo criterio (sin `asChild`) y anótalo en el ADR 0012.
+- Reutiliza `ChoiceButton`, `ConsoleCard`, `formatMoney` y `WallSummary`; no hay bocetos nuevos.
 
 ## Git y PR
 

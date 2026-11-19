@@ -6,7 +6,7 @@
 | Fecha                 | 18/11/2026                                                                                                                |
 | Prototipo             | [Figma · ConsoleControl Mobile · Prototipo Sprint 1](https://www.figma.com/design/EtdgGoBGjWA9zN4lmK4wYU)                 |
 | Prototipo interactivo | [Flujo «Iniciar una sesión»](https://www.figma.com/proto/EtdgGoBGjWA9zN4lmK4wYU?node-id=3-2&starting-point-node-id=3%3A2) |
-| Implementación        | `tailwind.config.js`, `src/components/`                                                                                   |
+| Implementación        | `global.css`, `tailwind.config.js`, `src/components/`                                                                     |
 
 ## Principios
 
@@ -33,21 +33,31 @@ Flujo enlazado: 1 → 2 → 3 → 4 → 5 → 7; desde 1, tocar PS4 con 5 mandos
 
 ## Colores
 
-Los mismos valores están en las variables de Figma (`color/*`) y en `tailwind.config.js`.
+Desde el [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md) los colores son variables HSL en `global.css`, con los nombres de React Native Reusables. Los valores hexadecimales de abajo son los del prototipo de Figma (`color/*`) y equivalen a los HSL. Los componentes usan solo el nombre del token (`bg-primary`, `text-foreground`), nunca un color suelto.
 
-| Token          | Hex       | Uso                                                             |
-| -------------- | --------- | --------------------------------------------------------------- |
-| `canvas`       | `#F1F5F9` | Fondo del muro                                                  |
-| `surface`      | `#FFFFFF` | Tarjetas, diálogo                                               |
-| `ink`          | `#0F172A` | Texto principal                                                 |
-| `muted`        | `#475569` | Texto secundario                                                |
-| `line`         | `#CBD5E1` | Bordes                                                          |
-| `primary`      | `#0369A1` | Botón principal y opción elegida                                |
-| `available`    | `#15803D` | Franja "Disponible" (texto blanco, 5.02:1)                      |
-| `playing`      | `#B91C1C` | Franja "En juego" (texto blanco, 6.47:1)                        |
-| `warning`      | `#F59E0B` | Franja "Por terminar" y "Tiempo cumplido" (texto `warning-ink`) |
-| `warning-ink`  | `#451A03` | Texto sobre ámbar (6.97:1)                                      |
-| `playing-soft` | `#FEE2E2` | Fondo de mensajes de error                                      |
+| Token                | Hex (Figma) | HSL                 | Uso                                                     |
+| -------------------- | ----------- | ------------------- | ------------------------------------------------------- |
+| `background`         | `#F1F5F9`   | `210 40% 96.1%`     | Fondo de las pantallas                                  |
+| `card`               | `#FFFFFF`   | `0 0% 100%`         | Tarjetas, barras y diálogos                             |
+| `foreground`         | `#0F172A`   | `222.2 47.4% 11.2%` | Texto principal                                         |
+| `muted-foreground`   | `#475569`   | `215.3 19.3% 34.5%` | Texto secundario (6.92:1 sobre el fondo)                |
+| `border`             | `#CBD5E1`   | `212.7 26.8% 83.9%` | Bordes                                                  |
+| `primary`            | `#0369A1`   | `201.3 96.3% 32.2%` | Botón principal y opción elegida (texto blanco, 5.93:1) |
+| `secondary`          | `#E2E8F0`   | `214.3 31.8% 91.4%` | Fondos secundarios (total estimado)                     |
+| `available`          | `#15803D`   | `142.4 71.8% 29.2%` | Franja "Disponible" (texto blanco, 5.02:1)              |
+| `playing`            | `#B91C1C`   | `0 73.7% 41.8%`     | Franja "En juego" (texto blanco, 6.46:1)                |
+| `warning`            | `#F59E0B`   | `37.7 92.1% 50.2%`  | Franja "Por terminar" y "Tiempo cumplido"               |
+| `warning-foreground` | `#451A03`   | `20.9 91.7% 14.1%`  | Texto sobre ámbar (6.98:1)                              |
+| `playing-soft`       | `#FEE2E2`   | `0 93.3% 94.1%`     | Fondo de mensajes de error                              |
+
+Los equivalentes anteriores eran `canvas`, `surface`, `ink`, `muted`, `line` y `warning-ink`. Los mismos valores están en `src/utils/theme.ts` para lo que no acepta `className`.
+
+## Componentes y organización
+
+- Base común en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, copiados de React Native Reusables).
+- `StateView` muestra cargando, error y vacío con el mismo aspecto en todas las pantallas.
+- Muro: resumen de consolas libres y en juego (`WallSummary`), filtro por tipo y cuadrícula de tarjetas.
+- Diálogos con acción principal: el botón queda fijo abajo (con el margen de la barra de gestos) y las opciones van agrupadas en tarjetas.
 
 ## Medidas
 

@@ -1,10 +1,13 @@
 # Mejoras pendientes (ideas, sin planificar)
 
-Cambios que VN quiere hacer más adelante. Todavía no tienen tarea en Jira ni fecha: se evalúan al planificar los sprints 2 y 3.
+Cambios que VN quiere hacer más adelante. Todavía no tienen tarea en Jira ni fecha: se evalúan al planificar los sprints.
 
-| Idea                                                                      | Qué cambia                                                                                                                                      | Pendiente antes de hacerla                                                                                                                                         |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Biblioteca **React Native Reusables** para los componentes de la interfaz | Reemplazar total o parcialmente los componentes propios (`ChoiceButton`, `TypeFilter`, tarjetas, diálogos)                                      | Es una dependencia fuera del stack: hace falta un ADR aprobado ([AGENTS.md](../../AGENTS.md) §7). Comprobar que encaja con NativeWind (ADR 0006) y con Expo SDK 58 |
-| Colores en **HSL**                                                        | Definir los tokens de `tailwind.config.js` y de la guía de estilo en HSL en lugar de hexadecimal, para ajustar tono y luminosidad con facilidad | Repetir la comprobación de contraste de la [guía de estilo](../architecture/guia-de-estilo.md) (hoy 5.02, 6.47 y 6.97) y actualizar las variables de Figma         |
+Ninguna por ahora.
 
-Cuando una idea se acepte, se crea su tarea en Jira y se registra el ADR que corresponda.
+## Aplicadas
+
+| Idea                                                                                          | Cuándo                         | Dónde                                                                                   |
+| --------------------------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------- |
+| Biblioteca **React Native Reusables** para los componentes                                    | 18/11/2026, antes del Sprint 2 | `src/components/ui/`, [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md)   |
+| Colores en **HSL**                                                                            | 18/11/2026, antes del Sprint 2 | `global.css`, `tailwind.config.js`, [guía de estilo](../architecture/guia-de-estilo.md) |
+| Organización de la interfaz (resumen del muro, estados de pantalla, botón fijo en el diálogo) | 18/11/2026                     | `StateView`, `WallSummary`, `app/sesion/[consoleId].tsx`                                |

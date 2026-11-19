@@ -1,6 +1,7 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable } from 'react-native';
 
 import type { SessionAlert } from '../services/sessionAlerts';
+import { Text } from './ui/text';
 
 type Props = { alert: SessionAlert; onDismiss: () => void };
 
@@ -20,8 +21,8 @@ export function AlertBanner({ alert, onDismiss }: Props) {
       onPress={onDismiss}
       className="mx-4 mt-3 min-h-14 flex-row items-center justify-between rounded-xl bg-warning px-4"
     >
-      <Text className="flex-1 text-lg font-bold text-warning-ink">{message}</Text>
-      <Text className="text-base font-semibold text-warning-ink">Cerrar</Text>
+      <Text className="flex-1 text-lg font-bold text-warning-foreground">{message}</Text>
+      <Text className="text-base font-semibold text-warning-foreground">Cerrar</Text>
     </Pressable>
   );
 }
