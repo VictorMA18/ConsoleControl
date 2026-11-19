@@ -40,8 +40,9 @@ type StateStyle = { label: string; band: string; onBand: string; tone: string; s
 export const CARD_STATE_STYLES: Record<CardState, StateStyle> = {
   disponible: {
     label: 'Disponible',
-    band: 'bg-available',
-    onBand: 'text-available-foreground',
+    // Estado de reposo: franja suave, para que el color fuerte quede para lo que pide atención.
+    band: 'bg-available-soft',
+    onBand: 'text-available-tone',
     tone: 'text-available-tone',
     soft: 'bg-available-soft',
   },

@@ -12,11 +12,11 @@ const LIGHT = {
 } as const;
 
 const DARK = {
-  background: 'hsl(224 22% 8%)',
-  card: 'hsl(224 18% 12%)',
-  border: 'hsl(224 14% 20%)',
-  foreground: 'hsl(220 20% 94%)',
-  mutedForeground: 'hsl(220 10% 66%)',
+  background: 'hsl(225 8% 8%)',
+  card: 'hsl(225 7% 11.5%)',
+  border: 'hsl(225 6% 20%)',
+  foreground: 'hsl(220 12% 93%)',
+  mutedForeground: 'hsl(220 6% 64%)',
 } as const;
 
 export type ThemeColors = { [K in keyof typeof LIGHT]: string };

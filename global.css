@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sistema de diseño "tarjeta de estado" (ADR 0014). Nace de la tarjeta de consola de VN: franja
+/* Sistema de diseño "tarjeta de estado" (ADR 0014). Revisión del 19/11/2026: estados más sobrios
+   (Disponible usa una franja suave porque es el estado de reposo) y modo oscuro en grafito casi
+   neutro en lugar de azul marino. Nace de la tarjeta de consola de VN: franja
    de color con el estado, cuerpo claro y texto azul marino. Tema claro por defecto y oscuro
    opcional (clase .dark que pone NativeWind). Todo en HSL ("matiz saturación luminosidad"), sin
    blanco ni negro puros. Los mismos valores están en src/utils/theme.ts.
@@ -36,67 +38,67 @@
     --radius: 1.25rem;
 
     /* Estados de la consola (HU-002 y HU-005). */
-    --available: 146 70% 29%;
+    --available: 152 45% 32%;
     --available-foreground: 140 20% 98%;
-    --available-tone: 146 70% 27%;
-    --available-soft: 146 45% 92%;
-    --playing: 4 70% 45%;
+    --available-tone: 152 45% 28%;
+    --available-soft: 150 30% 92%;
+    --playing: 6 60% 45%;
     --playing-foreground: 140 20% 98%;
-    --playing-tone: 4 70% 45%;
-    --playing-soft: 4 70% 95%;
-    --warning: 36 92% 48%;
+    --playing-tone: 6 60% 44%;
+    --playing-soft: 6 60% 95%;
+    --warning: 36 88% 52%;
     --warning-foreground: 226 44% 12%;
     --warning-tone: 32 90% 32%;
-    --warning-soft: 40 90% 91%;
-    --pending: 206 78% 38%;
+    --warning-soft: 40 85% 91%;
+    --pending: 210 58% 40%;
     --pending-foreground: 140 20% 98%;
-    --pending-tone: 206 78% 38%;
-    --pending-soft: 206 70% 94%;
-    --maintenance: 222 10% 44%;
+    --pending-tone: 210 58% 38%;
+    --pending-soft: 210 55% 94%;
+    --maintenance: 220 9% 45%;
     --maintenance-foreground: 140 20% 98%;
     --maintenance-tone: 222 10% 40%;
     --maintenance-soft: 220 16% 92%;
   }
 
   .dark:root {
-    --background: 224 22% 8%;
-    --foreground: 220 20% 94%;
-    --card: 224 18% 12%;
-    --card-foreground: 220 20% 94%;
-    --raised: 224 16% 15%;
-    --primary: 220 20% 94%;
-    --primary-foreground: 226 44% 10%;
-    --secondary: 224 14% 18%;
-    --secondary-foreground: 220 20% 94%;
-    --muted: 224 14% 18%;
-    --muted-foreground: 220 10% 66%;
-    --accent: 224 14% 20%;
-    --accent-foreground: 220 20% 94%;
+    --background: 225 8% 8%;
+    --foreground: 220 12% 93%;
+    --card: 225 7% 11.5%;
+    --card-foreground: 220 12% 93%;
+    --raised: 225 6% 15%;
+    --primary: 220 12% 93%;
+    --primary-foreground: 225 10% 9%;
+    --secondary: 225 6% 17%;
+    --secondary-foreground: 220 12% 93%;
+    --muted: 225 6% 17%;
+    --muted-foreground: 220 6% 64%;
+    --accent: 225 6% 20%;
+    --accent-foreground: 220 12% 93%;
     --destructive: 4 80% 70%;
-    --destructive-foreground: 226 44% 10%;
-    --border: 224 14% 20%;
-    --input: 224 12% 26%;
-    --ring: 220 20% 94%;
+    --destructive-foreground: 225 10% 9%;
+    --border: 225 6% 20%;
+    --input: 225 6% 26%;
+    --ring: 220 12% 93%;
 
-    --available: 146 58% 30%;
+    --available: 152 30% 30%;
     --available-foreground: 140 20% 98%;
-    --available-tone: 146 55% 58%;
-    --available-soft: 146 35% 14%;
-    --playing: 4 62% 46%;
+    --available-tone: 150 38% 62%;
+    --available-soft: 152 18% 16%;
+    --playing: 6 48% 42%;
     --playing-foreground: 140 20% 98%;
-    --playing-tone: 4 80% 70%;
-    --playing-soft: 4 40% 16%;
-    --warning: 38 88% 54%;
+    --playing-tone: 6 70% 70%;
+    --playing-soft: 6 30% 16%;
+    --warning: 38 78% 54%;
     --warning-foreground: 226 44% 10%;
-    --warning-tone: 38 88% 58%;
-    --warning-soft: 38 50% 14%;
-    --pending: 206 72% 38%;
+    --warning-tone: 38 80% 62%;
+    --warning-soft: 38 35% 15%;
+    --pending: 210 42% 38%;
     --pending-foreground: 140 20% 98%;
-    --pending-tone: 206 80% 68%;
-    --pending-soft: 206 45% 15%;
-    --maintenance: 222 8% 38%;
+    --pending-tone: 210 60% 70%;
+    --pending-soft: 210 30% 16%;
+    --maintenance: 225 6% 34%;
     --maintenance-foreground: 140 20% 98%;
-    --maintenance-tone: 222 10% 64%;
-    --maintenance-soft: 224 14% 18%;
+    --maintenance-tone: 220 6% 62%;
+    --maintenance-soft: 225 6% 17%;
   }
 }

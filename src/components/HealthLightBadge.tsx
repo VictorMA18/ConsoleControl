@@ -7,7 +7,7 @@ import { Text } from './ui/text';
 // Colores del semáforo: verde operativo, ámbar mantenimiento y rojo averiado (HU-012). Siempre con
 // texto además del color.
 export const HEALTH_LOOK: Record<HealthLight, { dot: string; soft: string; tone: string }> = {
-  verde: { dot: 'bg-available', soft: 'bg-available-soft', tone: 'text-available-tone' },
+  verde: { dot: 'bg-available-tone', soft: 'bg-available-soft', tone: 'text-available-tone' },
   ambar: { dot: 'bg-warning', soft: 'bg-warning-soft', tone: 'text-warning-tone' },
   rojo: { dot: 'bg-destructive', soft: 'bg-playing-soft', tone: 'text-destructive' },
 };
