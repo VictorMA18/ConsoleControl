@@ -36,7 +36,7 @@ export function ChoiceButton({
       accessibilityState={{ checked: selected }}
       onPress={onPress}
       className={cn(
-        'min-h-14 w-full items-center justify-center gap-1 rounded-2xl border px-2 py-3 active:opacity-80',
+        'min-h-14 w-full justify-center gap-1 rounded-2xl border px-2 py-3 active:opacity-80',
         selected ? 'border-primary bg-primary' : 'border-border bg-raised',
       )}
     >
@@ -44,7 +44,10 @@ export function ChoiceButton({
         <Icon
           as={icon}
           size={22}
-          className={selected ? 'text-primary-foreground' : 'text-muted-foreground'}
+          className={cn(
+            'self-center',
+            selected ? 'text-primary-foreground' : 'text-muted-foreground',
+          )}
         />
       ) : null}
       <Text
