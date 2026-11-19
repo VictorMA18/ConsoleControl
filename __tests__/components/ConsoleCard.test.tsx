@@ -13,6 +13,7 @@ const ps5: ConsoleWithStock = {
   name: 'PS5 #1',
   consoleType: 'ps5',
   status: 'disponible',
+  usageMinutes: 0,
   createdAt: NOW,
   updatedAt: NOW,
   syncStatus: 'pendiente',

@@ -30,6 +30,7 @@ function consoleRow(overrides: Partial<ConsoleWithStock>): ConsoleWithStock {
     name: 'PS5 #1',
     consoleType: 'ps5',
     status: 'disponible',
+    usageMinutes: 0,
     createdAt: NOW,
     updatedAt: NOW,
     syncStatus: 'pendiente',

@@ -36,6 +36,7 @@ function consoleRow(id: string, name: string, consoleType: ConsoleWithStock['con
     name,
     consoleType,
     status: 'disponible',
+    usageMinutes: 0,
     createdAt: NOW,
     updatedAt: NOW,
     syncStatus: 'pendiente',
