@@ -16,11 +16,11 @@ export const CONTROLLERS_BY_CONSOLE_TYPE: Record<ConsoleType, number> = {
 };
 
 export const seedConsoles: NewConsole[] = [
-  { id: '2c26a7b0-b208-44c7-b905-8de14c44db65', name: 'PS3 #1', consoleType: 'ps3' },
-  { id: '9be9a615-3d18-4f92-a2fe-bfef68268278', name: 'PS4 #1', consoleType: 'ps4' },
-  { id: '551f976b-9f52-4e32-9db4-a2c938431f4f', name: 'PS5 #1', consoleType: 'ps5' },
-  { id: '95bce93b-3e0a-401d-b7a6-65ae769ece61', name: 'Xbox #1', consoleType: 'xbox' },
-  { id: 'fb64a232-3044-4929-99c9-8a0c7203cdac', name: 'Switch #1', consoleType: 'switch' },
+  { id: '2c26a7b0-b208-44c7-b905-8de14c44db65', name: 'MAQ #1', consoleType: 'ps3' },
+  { id: '9be9a615-3d18-4f92-a2fe-bfef68268278', name: 'MAQ #2', consoleType: 'ps4' },
+  { id: '551f976b-9f52-4e32-9db4-a2c938431f4f', name: 'MAQ #3', consoleType: 'ps5' },
+  { id: '95bce93b-3e0a-401d-b7a6-65ae769ece61', name: 'MAQ #4', consoleType: 'xbox' },
+  { id: 'fb64a232-3044-4929-99c9-8a0c7203cdac', name: 'MAQ #5', consoleType: 'switch' },
 ];
 
 export const seedControllers: NewController[] = [

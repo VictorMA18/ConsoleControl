@@ -4,14 +4,20 @@ import Svg, { Path } from 'react-native-svg';
 import type { ConsoleType } from '../db/schema/enums';
 import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
 import { useThemeColors } from '../utils/theme';
-import { PLAYSTATION_SYMBOL, PLAYSTATION_WORDMARKS, type LogoPath } from './platformLogos';
+import {
+  PLAYSTATION_SYMBOL,
+  PLAYSTATION_WORDMARKS,
+  SWITCH_SYMBOL,
+  XBOX_SYMBOL,
+  type LogoPath,
+} from './platformLogos';
 import { Text } from './ui/text';
 
 type Props = { consoleType: ConsoleType };
 
 // Pastilla con la plataforma de la consola, como en la tarjeta de VN: borde fino, esquinas
 // completas y el logo de marca. Para PlayStation se dibujan el símbolo y el modelo (PS3, PS4,
-// PS5); Xbox y Switch muestran el nombre en texto.
+// PS5); Xbox y Switch, su símbolo y el nombre en texto.
 export function PlatformBadge({ consoleType }: Props) {
   const { foreground } = useThemeColors();
   const label = CONSOLE_TYPE_LABELS[consoleType];
@@ -31,7 +37,14 @@ export function PlatformBadge({ consoleType }: Props) {
           <Logo logo={wordmark} height={11} color={foreground} />
         </>
       ) : (
-        <Text className="text-sm font-bold tracking-wide">{label}</Text>
+        <>
+          <Logo
+            logo={consoleType === 'xbox' ? XBOX_SYMBOL : SWITCH_SYMBOL}
+            height={18}
+            color={foreground}
+          />
+          <Text className="text-sm font-bold tracking-wide">{label}</Text>
+        </>
       )}
     </View>
   );
