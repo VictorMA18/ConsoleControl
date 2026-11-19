@@ -6,6 +6,7 @@ import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { AlertBanner } from '../../src/components/AlertBanner';
 import { ConsoleCard } from '../../src/components/ConsoleCard';
 import { ConsoleSearch } from '../../src/components/ConsoleSearch';
+import { MaintenanceNotice } from '../../src/components/MaintenanceNotice';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { StateView } from '../../src/components/StateView';
 import { TypeFilter } from '../../src/components/TypeFilter';
@@ -14,6 +15,7 @@ import { WallSummary } from '../../src/components/WallSummary';
 import { useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useConsoles } from '../../src/hooks/useConsoles';
 import { useHourlyPrices } from '../../src/hooks/useHourlyPrices';
+import { useMaintenanceStatus } from '../../src/hooks/useMaintenance';
 import { useNow } from '../../src/hooks/useNow';
 import { usePendingSessions } from '../../src/hooks/usePendingSessions';
 import { useSessionAlerts } from '../../src/hooks/useSessionAlerts';
@@ -35,6 +37,7 @@ export default function ConsoleWallScreen() {
   // Las finalizadas esperan su pago y siguen ocupando la consola (HU-005).
   const { data: pending } = usePendingSessions();
   const { data: hourlyPrices } = useHourlyPrices();
+  const maintenanceDue = useMaintenanceStatus().filter((m) => m.due).length;
   const sessionByConsole = new Map(
     [...(sessions ?? []), ...(pending ?? [])].map((s) => [s.consoleId, s]),
   );
@@ -76,6 +79,9 @@ export default function ConsoleWallScreen() {
         }
       />
       {lastAlert ? <AlertBanner alert={lastAlert} onDismiss={() => setLastAlert(null)} /> : null}
+      {maintenanceDue > 0 ? (
+        <MaintenanceNotice count={maintenanceDue} onPress={() => router.push('/salud')} />
+      ) : null}
       {isPending ? (
         <StateView kind="loading" message="Cargando consolas…" />
       ) : error ? (

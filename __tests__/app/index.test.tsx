@@ -23,6 +23,11 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 jest.mock('../../src/services/consoleService', () => ({ listConsoles: jest.fn() }));
+// El aviso de mantenimiento (HU-014) lee el semáforo; en estas pruebas no hay alertas.
+jest.mock('../../src/services/healthService', () => ({ listEquipment: jest.fn(async () => []) }));
+jest.mock('../../src/services/maintenanceService', () => ({
+  listMaintenances: jest.fn(async () => []),
+}));
 jest.mock('../../src/services/sessionService', () => ({
   listActiveSessions: jest.fn(),
   listPendingSessions: jest.fn(),

@@ -1,9 +1,10 @@
-import { Clock3, Gamepad2, Wrench, type LucideIcon } from 'lucide-react-native';
+import { BellRing, Clock3, Gamepad2, Sparkles, Wrench, type LucideIcon } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { HEALTH_LOOK, HealthLightBadge } from '../../src/components/HealthLightBadge';
+import { MaintenancePanel } from '../../src/components/MaintenancePanel';
 import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { StateView } from '../../src/components/StateView';
@@ -11,6 +12,7 @@ import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import type { ConsoleStatus, ControllerStatus } from '../../src/db/schema/enums';
 import { useChangeHealth, useEquipment } from '../../src/hooks/useEquipment';
+import { useMaintenanceStatus, useRegisterMaintenance } from '../../src/hooks/useMaintenance';
 import {
   canChangeConsoleHealth,
   canChangeControllerHealth,
@@ -24,6 +26,7 @@ import {
   type HealthLight,
 } from '../../src/services/health';
 import type { EquipmentConsole } from '../../src/services/healthService';
+import { MAINTENANCE_LABELS, type MaintenanceStatus } from '../../src/services/maintenanceAlerts';
 import { cn } from '../../src/utils/cn';
 
 const CONSOLE_LABELS: Record<ConsoleStatus, string> = {
@@ -53,12 +56,17 @@ type PendingChange = {
 };
 
 // Semáforo de salud (HU-012, CU-004): estado y horas de uso de cada consola y mando. Lo que está
-// en mantenimiento o averiado queda fuera de la asignación al iniciar una sesión (RN-06).
+// en mantenimiento o averiado queda fuera de la asignación al iniciar una sesión (RN-06). Debajo de
+// cada consola, el mantenimiento preventivo con sus alertas (HU-014).
 export default function HealthScreen() {
   const { data: equipment, isPending, error } = useEquipment();
   const changeHealth = useChangeHealth();
   const [pending, setPending] = useState<PendingChange | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const maintenance = useMaintenanceStatus();
+  const registerMaintenance = useRegisterMaintenance();
+  const [servicing, setServicing] = useState<MaintenanceStatus | null>(null);
+  const dueCount = maintenance.filter((m) => m.due).length;
 
   async function apply(
     change:
@@ -115,6 +123,21 @@ export default function HealthScreen() {
               total={lights.filter((l) => l === 'rojo').length}
             />
           </View>
+
+          {dueCount > 0 ? (
+            <View
+              testID="alertas-mantenimiento"
+              accessibilityRole="alert"
+              className="flex-row items-center gap-3 rounded-2xl bg-warning-soft p-4"
+            >
+              <Icon as={BellRing} size={22} className="text-warning-tone" />
+              <Text className="flex-1 text-base font-bold text-warning-tone">
+                {dueCount === 1
+                  ? '1 mantenimiento preventivo pendiente'
+                  : `${dueCount} mantenimientos preventivos pendientes`}
+              </Text>
+            </View>
+          ) : null}
 
           {message ? (
             <View accessibilityRole="alert" className="rounded-2xl bg-playing-soft p-4">
@@ -200,6 +223,12 @@ export default function HealthScreen() {
                     );
                   })}
                 </View>
+
+                <MaintenancePanel
+                  statuses={maintenance.filter((m) => m.consoleId === console.id)}
+                  disabled={registerMaintenance.isPending}
+                  onRegister={setServicing}
+                />
               </View>
             );
           })}
@@ -219,6 +248,23 @@ export default function HealthScreen() {
           setPending(null);
         }}
         onCancel={() => setPending(null)}
+      />
+
+      <ConfirmDialog
+        visible={servicing !== null}
+        icon={Sparkles}
+        title="Registrar mantenimiento"
+        message={`¿Se hizo la ${servicing ? MAINTENANCE_LABELS[servicing.kind].toLowerCase() : ''} de ${servicing?.consoleName ?? ''}? El contador de este mantenimiento vuelve a cero; las horas de uso totales se conservan.`}
+        confirmLabel="Registrar"
+        onConfirm={() => {
+          if (servicing) {
+            void registerMaintenance
+              .mutateAsync({ consoleId: servicing.consoleId, kind: servicing.kind })
+              .then((result) => setMessage(result.ok ? null : result.message));
+          }
+          setServicing(null);
+        }}
+        onCancel={() => setServicing(null)}
       />
     </View>
   );
