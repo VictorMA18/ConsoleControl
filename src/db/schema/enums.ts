@@ -23,6 +23,10 @@ export type SessionStatus = (typeof SESSION_STATUSES)[number];
 export const CONTROLLER_STATUSES = ['operativo', 'en_uso', 'averiado'] as const;
 export type ControllerStatus = (typeof CONTROLLER_STATUSES)[number];
 
+// Cómo se pagó (HU-006). 'fiado' solo se registra como método; su gestión es HU-011.
+export const PAYMENT_METHODS = ['efectivo', 'yape', 'plin', 'fiado'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
 export const SYNC_STATUSES = ['pendiente', 'sincronizado'] as const;
 export type SyncStatus = (typeof SYNC_STATUSES)[number];
 
