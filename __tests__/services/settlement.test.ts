@@ -34,27 +34,38 @@ function settle(overrides: Partial<SettlementInput> & { playedMs: number }) {
   });
 }
 
-describe('calculateSettlement (HU-005)', () => {
-  it('sin exceso, el total es el monto base y no hay penalidad', () => {
-    const result = settle({ playedMs: 55 * MINUTE });
-    expect(result).toMatchObject({ playedMinutes: 55, extraMinutes: 0, penaltyCents: 0 });
-    expect(result.totalCents).toBe(600);
-  });
-
-  it('con un exceso de hasta 3 minutos no cobra penalidad', () => {
-    const result = settle({ playedMs: 63 * MINUTE });
+describe('calculateSettlement (HU-005) · tiempo fijo cobrado por tiempo jugado', () => {
+  // Precio por hora con 1 mando: S/ 6.00. Regla de VN: hora × minutos jugados ÷ 60, redondeado
+  // hacia arriba a S/ 0.10.
+  it('si se corta antes, cobra solo lo jugado', () => {
+    const result = settle({ playedMs: 20 * MINUTE });
+    expect(result).toMatchObject({ playedMinutes: 20, chargedMinutes: 20, extraMinutes: 0 });
+    expect(result.totalCents).toBe(200);
     expect(result.penaltyCents).toBe(0);
-    expect(result.totalCents).toBe(600);
   });
 
-  it('con un exceso de más de 3 minutos cobra la fracción de 15 minutos', () => {
+  it('redondea hacia arriba a S/ 0.10, sin céntimos sueltos', () => {
+    // 3 mandos: 6.00 + 2 × 1.00 = S/ 8.00 la hora; 37 min = 4.9333 → S/ 5.00.
+    const result = settle({ controllerCount: 3, playedMs: 37 * MINUTE });
+    expect(result.totalCents).toBe(500);
+    expect(result.totalCents % 10).toBe(0);
+  });
+
+  it('un segundo más ya cuenta como minuto', () => {
+    expect(settle({ playedMs: 30 * MINUTE + 1000 }).playedMinutes).toBe(31);
+  });
+
+  it('si se pasa de lo contratado, cobra el tiempo extra a la misma tarifa', () => {
     const result = settle({ playedMs: 64 * MINUTE });
-    expect(result.extraMinutes).toBe(15);
-    expect(result.totalCents).toBe(800);
-    expect(result.penaltyCents).toBe(200);
+    expect(result.extraMinutes).toBe(4);
+    expect(result.baseCents).toBe(600);
+    expect(result.penaltyCents).toBe(40);
+    expect(result.totalCents).toBe(640);
   });
+});
 
-  it('en tiempo libre cobra el tiempo real jugado', () => {
+describe('calculateSettlement (HU-005) · tiempo libre', () => {
+  it('cobra en bloques de 15 minutos con 3 de gracia', () => {
     const result = settle({ durationMs: null, playedMs: 40 * MINUTE });
     expect(result.contractedMinutes).toBeNull();
     expect(result.extraMinutes).toBe(0);

@@ -86,3 +86,12 @@ export function calculateRate(input: CalculateRateInput): RateCalculation {
 
   return { chargedMinutes: charged, blocks, totalCents };
 }
+
+// Cobro por tiempo jugado en las sesiones de tiempo fijo (regla de VN, 19/11/2026): el precio de
+// una hora con sus mandos, proporcional a los minutos jugados y redondeado hacia arriba a S/ 0.10,
+// para que no queden céntimos sueltos (nada de S/ 4.35). Aritmética entera.
+export function proRatedCents(hourCents: number, minutes: number): number {
+  const exact = hourCents * Math.max(0, minutes);
+  const tenths = 60 * 10;
+  return Math.ceil(exact / tenths) * 10;
+}
