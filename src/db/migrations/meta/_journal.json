@@ -43,6 +43,13 @@
       "when": 1795097927498,
       "tag": "0005_console_names",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795100692803,
+      "tag": "0006_session_extensions",
+      "breakpoints": true
     }
   ]
 }
