@@ -49,3 +49,4 @@ Estos hallazgos no se corrigieron: son código de otros integrantes.
 
 - H-01: sigue sin prueba automática; la transacción se comprobó en el emulador (`prueba-integracion.md`, pasos 1 a 4).
 - H-03, H-07, H-08, H-09, H-11 y H-12 siguen abiertos y no bloquean el cierre del sprint.
+- H-13 (observación de T18): con 4 cronómetros en pantalla la memoria del proceso pasó de 92.6 a 101.8 MB en 2 minutos, sin cierres ni bloqueos. Conviene repetir la medición durante 30 minutos en el Sprint 2 para descartar una fuga.

@@ -129,6 +129,26 @@ describe('diálogo de sesión (T08)', () => {
     expect(mockBack).not.toHaveBeenCalled();
   });
 
+  it('TW-148 borra el aviso de mandos insuficientes al cambiar los mandos', async () => {
+    mockConsoleId = ps4.id;
+    jest.mocked(startSession).mockResolvedValue({
+      ok: false,
+      reason: 'mandos_insuficientes',
+      available: 4,
+      alternatives: [consoleRow({})],
+      message: 'PS4 #1 solo tiene 4 mandos operativos',
+    });
+    await renderDialog();
+
+    await fireEvent.press(await screen.findByTestId('mandos-5'));
+    await fireEvent.press(screen.getByTestId('iniciar-sesion'));
+    expect(await screen.findByText('PS4 #1 solo tiene 4 mandos operativos')).toBeTruthy();
+
+    await fireEvent.press(screen.getByTestId('mandos-3'));
+
+    expect(screen.queryByText('PS4 #1 solo tiene 4 mandos operativos')).toBeNull();
+  });
+
   it('CP-003 bloquea una consola en juego e informa el motivo', async () => {
     jest.mocked(listConsoles).mockResolvedValue([consoleRow({ status: 'en_juego' })]);
     await renderDialog();
