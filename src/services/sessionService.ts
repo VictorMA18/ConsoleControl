@@ -12,17 +12,12 @@ import {
   InsufficientControllersError,
   openSession,
 } from '../db/repositories/sessionRepository';
-import type { ConsoleStatus, ConsoleType, SessionMode } from '../db/schema/enums';
+import type { ConsoleStatus, ConsoleType } from '../db/schema/enums';
 import type { RateBlock, Session } from '../db/schema';
 import { startSessionSchema } from '../schemas/session';
-import { calculateRate } from './tariff';
+import { estimateTotalCents, MODE_DURATION_MS } from './sessionQuote';
 
-export const MODE_DURATION_MS: Record<SessionMode, number | null> = {
-  fijo_30: 30 * 60 * 1000,
-  fijo_60: 60 * 60 * 1000,
-  fijo_120: 120 * 60 * 1000,
-  libre: null,
-};
+export { estimateTotalCents, MODE_DURATION_MS };
 
 export type StartSessionResult =
   | { ok: true; session: Session }
@@ -42,27 +37,6 @@ const STATUS_LABELS: Record<ConsoleStatus, string> = {
   en_juego: 'en juego',
   mantenimiento: 'en mantenimiento',
 };
-
-// Monto estimado al abrir la sesión con el motor de tarifas (HU-003): en tiempo fijo, el precio
-// del tiempo contratado con sus mandos. En tiempo libre se calcula al cerrar.
-function estimateTotalCents(
-  consoleType: ConsoleType,
-  mode: SessionMode,
-  controllerCount: number,
-  rates: RateBlock[],
-): number {
-  const durationMs = MODE_DURATION_MS[mode];
-  if (durationMs === null) {
-    return 0;
-  }
-  return calculateRate({
-    consoleType,
-    controllerCount,
-    playedMinutes: 0,
-    contractedMinutes: durationMs / 60_000,
-    rates,
-  }).totalCents;
-}
 
 // Alternativas con mandos operativos suficientes; primero las del mismo tipo (HU-001, escenario 2).
 async function findAlternatives(
@@ -148,6 +122,11 @@ export async function startSession(
 }
 
 export type { ActiveSession };
+
+// Tarifario de un tipo de consola, para que el diálogo calcule el total en vivo (T14).
+export async function listRateBlocks(consoleType: ConsoleType): Promise<RateBlock[]> {
+  return getRateBlocks(consoleType);
+}
 
 // Sesiones activas guardadas en SQLite (HU-002, TW-86). Se leen al abrir la app, así después de
 // cerrarla o reiniciar el celular cada consola vuelve a mostrar su sesión con el tiempo real,
