@@ -163,7 +163,8 @@ describe('total estimado (T14)', () => {
   it('muestra el total del tarifario y lo actualiza al cambiar mandos y modalidad', async () => {
     await renderDialog();
 
-    expect(await screen.findByText('S/ 10.00')).toBeTruthy();
+    // El desglose también muestra S/ 10.00 en la línea de la consola: se lee el total por su testID.
+    expect(await screen.findByTestId('total-estimado')).toHaveTextContent('S/ 10.00');
 
     await fireEvent.press(screen.getByTestId('mandos-6'));
     expect(screen.getByTestId('total-estimado')).toHaveTextContent('S/ 28.30');
