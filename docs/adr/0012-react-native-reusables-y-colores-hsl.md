@@ -2,7 +2,7 @@
 
 ## Estado
 
-Aceptada
+Aceptada. Los colores y la tipografía los reemplaza el [ADR 0014](0014-sistema-de-diseno-sala-de-control.md).
 
 ## Fecha
 

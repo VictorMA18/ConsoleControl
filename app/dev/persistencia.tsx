@@ -1,6 +1,13 @@
-import { Redirect, Stack } from 'expo-router';
+import { Database, Play, RefreshCw, Square, TriangleAlert, Users, Zap } from 'lucide-react-native';
+import { Redirect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { Section } from '../../src/components/Section';
+import { Button } from '../../src/components/ui/button';
+import { Icon } from '../../src/components/ui/icon';
+import { Text } from '../../src/components/ui/text';
 
 import { queryClient } from '../../src/hooks/queryClient';
 import {
@@ -17,6 +24,7 @@ import {
 // sesión de T09. Solo existe en desarrollo.
 // Usa estado local en lugar de TanStack Query porque no forma parte del producto.
 export default function PersistenceScreen() {
+  const router = useRouter();
   const [snapshot, setSnapshot] = useState<PersistenceSnapshot>();
   const [loadedAt, setLoadedAt] = useState(0);
   const [message, setMessage] = useState('');
@@ -80,60 +88,118 @@ export default function PersistenceScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Stack.Screen options={{ title: 'Prueba de persistencia' }} />
+    <View className="flex-1 bg-background">
+      <ScreenHeader
+        title="Prueba de persistencia"
+        subtitle="Solo desarrollo"
+        onBack={() => router.back()}
+      />
+      <ScrollView contentContainerClassName="gap-4 p-4 pb-10">
+        <Section
+          title="Datos guardados"
+          trailing={loadedAt ? new Date(loadedAt).toLocaleTimeString() : undefined}
+        >
+          <View className="flex-row flex-wrap gap-2">
+            <Stat label="Consolas" value={snapshot?.consoles} />
+            <Stat label="En juego" value={snapshot?.consolesInPlay} />
+            <Stat label="Mandos operativos" value={snapshot?.operationalControllers} />
+            <Stat label="Tarifas" value={snapshot?.rates} />
+          </View>
+        </Section>
 
-      <Text style={styles.heading}>Datos guardados</Text>
-      <Text>Consolas: {snapshot?.consoles ?? '…'}</Text>
-      <Text>Consolas en juego: {snapshot?.consolesInPlay ?? '…'}</Text>
-      <Text>Mandos operativos: {snapshot?.operationalControllers ?? '…'}</Text>
-      <Text>Tarifas: {snapshot?.rates ?? '…'}</Text>
+        <Section title="Sesiones activas" trailing={String(snapshot?.activeSessions.length ?? '…')}>
+          {snapshot?.activeSessions.length === 0 ? (
+            <Text className="text-base text-muted-foreground">Ninguna sesión activa</Text>
+          ) : null}
+          {snapshot?.activeSessions.map((session) => (
+            <View
+              key={session.id}
+              className="flex-row items-center justify-between border-t border-border pt-3"
+            >
+              <Text className="text-base font-semibold">{session.id.slice(0, 8)}</Text>
+              <Text className="text-sm text-muted-foreground">
+                inicio {new Date(session.startedAt).toLocaleTimeString()} · hace{' '}
+                {Math.floor((loadedAt - session.startedAt) / 60000)} min
+              </Text>
+            </View>
+          ))}
+        </Section>
 
-      <Text style={styles.heading}>Sesiones activas: {snapshot?.activeSessions.length ?? '…'}</Text>
-      {snapshot?.activeSessions.map((session) => (
-        <Text key={session.id}>
-          {session.id.slice(0, 8)} · inicio {new Date(session.startedAt).toLocaleTimeString()} ·
-          hace {Math.floor((loadedAt - session.startedAt) / 60000)} min
-        </Text>
-      ))}
+        <Section title="Inicio de sesión (T09)">
+          <Action
+            icon={Play}
+            label="1. Iniciar sesión con 2 mandos"
+            onPress={() => onScenario('exito')}
+          />
+          <Action
+            icon={Users}
+            label="2. Pedir 6 mandos (insuficientes)"
+            onPress={() => onScenario('mandos_insuficientes')}
+          />
+          <Action
+            icon={TriangleAlert}
+            label="3. Iniciar en consola ocupada"
+            onPress={() => onScenario('consola_ocupada')}
+          />
+        </Section>
 
-      <View style={styles.buttons}>
-        <Button title="Crear sesión de prueba (6 min restantes)" onPress={onCreate} />
-        <Text style={styles.heading}>Inicio de sesión (T09)</Text>
-        <Button title="1. Iniciar sesión con 2 mandos" onPress={() => onScenario('exito')} />
-        <Button
-          title="2. Pedir 6 mandos (insuficientes)"
-          onPress={() => onScenario('mandos_insuficientes')}
-        />
-        <Button
-          title="3. Iniciar en consola ocupada"
-          onPress={() => onScenario('consola_ocupada')}
-        />
-        <Button title="4. Sesión con 6 min restantes (alertas)" onPress={onNearlyDue} />
-        <Button title="Finalizar sesiones activas" onPress={onFinish} />
-        <Button title="Recargar" onPress={reload} />
-      </View>
+        <Section title="Alertas y datos de prueba">
+          <Action
+            icon={Zap}
+            label="4. Sesión con 6 min restantes (alertas)"
+            onPress={onNearlyDue}
+          />
+          <Action
+            icon={Database}
+            label="Crear sesión de prueba (6 min restantes)"
+            onPress={onCreate}
+          />
+        </Section>
 
-      {message ? <Text style={styles.message}>{message}</Text> : null}
-    </ScrollView>
+        <View className="gap-2">
+          <Action icon={Square} label="Finalizar sesiones activas" onPress={onFinish} />
+          <Action icon={RefreshCw} label="Recargar" onPress={reload} />
+        </View>
+
+        {message ? (
+          <View
+            accessibilityLiveRegion="polite"
+            className="rounded-2xl border border-border bg-card p-4"
+          >
+            <Text className="text-base font-semibold">{message}</Text>
+          </View>
+        ) : null}
+      </ScrollView>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    gap: 6,
-  },
-  heading: {
-    marginTop: 12,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  buttons: {
-    marginTop: 16,
-    gap: 12,
-  },
-  message: {
-    marginTop: 12,
-  },
-});
+function Stat({ label, value }: { label: string; value: number | undefined }) {
+  return (
+    <View className="min-w-[45%] grow gap-1 rounded-2xl border border-border bg-raised p-3">
+      <Text className="text-2xl font-extrabold" style={{ fontVariant: ['tabular-nums'] }}>
+        {value ?? '…'}
+      </Text>
+      <Text className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function Action({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: Parameters<typeof Icon>[0]['as'];
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Button variant="secondary" onPress={onPress} className="h-12 justify-start gap-3 px-4">
+      <Icon as={icon} size={18} className="text-muted-foreground" />
+      <Text className="text-base font-semibold">{label}</Text>
+    </Button>
+  );
+}

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const color = (name) => `hsl(var(--${name}))`;
 const pair = (name) => ({ DEFAULT: color(name), foreground: color(`${name}-foreground`) });
+const state = (name) => ({ ...pair(name), soft: color(`${name}-soft`) });
 
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
@@ -14,15 +15,17 @@ module.exports = {
         ring: color('ring'),
         background: color('background'),
         foreground: color('foreground'),
+        raised: color('raised'),
         primary: pair('primary'),
         secondary: pair('secondary'),
         destructive: pair('destructive'),
         muted: pair('muted'),
         accent: pair('accent'),
         card: pair('card'),
-        available: { ...pair('available'), soft: color('available-soft') },
-        playing: { ...pair('playing'), soft: color('playing-soft') },
-        warning: { ...pair('warning'), soft: color('warning-soft') },
+        available: state('available'),
+        playing: state('playing'),
+        warning: state('warning'),
+        pending: state('pending'),
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -31,5 +34,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('./plugins/dmSansPlugin')],
 };

@@ -1,13 +1,24 @@
+import {
+  Banknote,
+  Check,
+  NotebookPen,
+  QrCode,
+  Smartphone,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { View } from 'react-native';
 
 import { PAYMENT_METHODS, type PaymentMethod } from '../db/schema/enums';
 import { type PaymentLineInput, paymentLinesSchemaFor } from '../schemas/payment';
 import { parseTendered } from '../services/change';
 import { PAYMENT_METHOD_LABELS } from '../utils/paymentLabels';
 import { ChangeCalculator } from './ChangeCalculator';
+import { ChoiceButton } from './ChoiceButton';
+import { Section } from './Section';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { Icon } from './ui/icon';
+import { Input } from './ui/input';
 import { Text } from './ui/text';
 
 type Props = {
@@ -17,7 +28,12 @@ type Props = {
   onSubmit: (lines: PaymentLineInput[]) => void;
 };
 
-const INPUT_CLASS = 'h-12 rounded-xl border border-input bg-card px-3 text-xl text-foreground';
+const METHOD_ICONS: Record<PaymentMethod, LucideIcon> = {
+  efectivo: Banknote,
+  yape: Smartphone,
+  plin: QrCode,
+  fiado: NotebookPen,
+};
 
 // Formulario de cobro (HU-006): uno o varios métodos con su monto. "Cobrar y Liberar" solo se
 // habilita cuando el pago está clasificado y suma exactamente el total (RN-04). Con un solo método
@@ -61,74 +77,74 @@ export function PaymentForm({ totalCents, isPending, error, onSubmit }: Props) {
 
   return (
     <View className="gap-4">
-      <Card className="gap-3 px-4 py-4">
-        <Text variant="large">Método de pago</Text>
+      <Section title="Método de pago">
         <View className="flex-row flex-wrap gap-2">
           {PAYMENT_METHODS.map((method) => (
-            <Button
-              key={method}
-              testID={`metodo-${method}`}
-              role="checkbox"
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: selected.includes(method) }}
-              variant={selected.includes(method) ? 'default' : 'outline'}
-              onPress={() => toggle(method)}
-              className="h-14 basis-[48%] grow rounded-xl"
-            >
-              <Text className="text-lg font-bold">{PAYMENT_METHOD_LABELS[method]}</Text>
-            </Button>
+            <View key={method} className="basis-[48%] grow">
+              <ChoiceButton
+                testID={`metodo-${method}`}
+                role="checkbox"
+                icon={METHOD_ICONS[method]}
+                label={PAYMENT_METHOD_LABELS[method]}
+                selected={selected.includes(method)}
+                onPress={() => toggle(method)}
+              />
+            </View>
           ))}
         </View>
-        <Text className="text-base text-muted-foreground">
+        <Text className="text-sm text-muted-foreground">
           Elige uno para cobrar todo con ese método, o varios para dividir el pago.
         </Text>
-      </Card>
+      </Section>
 
       {selected.length > 1 ? (
-        <Card className="gap-3 px-4 py-4">
-          <Text variant="large">Monto por método</Text>
+        <Section title="Monto por método">
           {selected.map((method) => (
             <View key={method} className="flex-row items-center justify-between gap-3">
-              <Text className="text-lg font-semibold">{PAYMENT_METHOD_LABELS[method]}</Text>
-              <TextInput
+              <View className="flex-row items-center gap-2.5">
+                <Icon as={METHOD_ICONS[method]} size={20} className="text-muted-foreground" />
+                <Text className="text-lg font-semibold">{PAYMENT_METHOD_LABELS[method]}</Text>
+              </View>
+              <Input
                 testID={`monto-${method}`}
                 accessibilityLabel={`Monto en ${PAYMENT_METHOD_LABELS[method]}`}
                 keyboardType="decimal-pad"
                 value={amounts[method] ?? ''}
                 onChangeText={(text) => setAmount(method, text)}
                 placeholder="0.00"
-                className={`${INPUT_CLASS} w-40 text-right`}
+                className="w-40 text-right"
               />
             </View>
           ))}
           {problem ? (
-            <Text accessibilityLiveRegion="polite" className="text-lg font-bold text-destructive">
+            <Text accessibilityLiveRegion="polite" className="text-base font-bold text-playing">
               {problem}
             </Text>
           ) : null}
-        </Card>
+        </Section>
       ) : null}
 
       {selected.includes('fiado') ? (
-        <Card className="gap-2 px-4 py-4">
-          <Text variant="large">Cliente (opcional)</Text>
-          <TextInput
+        <Section title="Cliente (opcional)">
+          <Input
             testID="nombre-fiado"
             accessibilityLabel="Nombre o apodo del cliente"
             value={customerName}
             onChangeText={setCustomerName}
             placeholder="Nombre o apodo"
             maxLength={60}
-            className={INPUT_CLASS}
           />
-        </Card>
+        </Section>
       ) : null}
 
       {cashCents > 0 ? <ChangeCalculator cashCents={cashCents} /> : null}
 
       {error ? (
-        <View accessibilityRole="alert" className="rounded-xl bg-playing-soft p-4">
-          <Text className="font-bold">{error}</Text>
+        <View
+          accessibilityRole="alert"
+          className="rounded-2xl border border-playing/40 bg-playing-soft p-4"
+        >
+          <Text className="font-bold text-playing">{error}</Text>
         </View>
       ) : null}
 
@@ -137,8 +153,9 @@ export function PaymentForm({ totalCents, isPending, error, onSubmit }: Props) {
         size="lg"
         disabled={!check.success || isPending}
         onPress={() => onSubmit(lines)}
-        className="h-16 rounded-xl"
+        className="h-16 rounded-2xl"
       >
+        <Icon as={Check} size={22} className="text-primary-foreground" />
         <Text className="text-xl font-bold">Cobrar y Liberar</Text>
       </Button>
     </View>

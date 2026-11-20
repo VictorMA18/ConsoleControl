@@ -26,5 +26,7 @@ Decisiones técnicas registradas:
 | [0010](adr/0010-expo-crypto-uuid.md)                     | expo-crypto para generar UUID             |
 | [0011](adr/0011-alertas-con-la-app-abierta.md)           | Alertas de vencimiento con la app abierta |
 | [0012](adr/0012-react-native-reusables-y-colores-hsl.md) | React Native Reusables y colores en HSL   |
+| [0013](adr/0013-estados-de-sesion-y-cobro.md)            | Estados de sesión y cobro                 |
+| [0014](adr/0014-sistema-de-diseno-sala-de-control.md)    | Sistema de diseño «sala de control»       |
 
 Regla: una decisión por ADR, una fase por archivo de roadmap, una historia de usuario por archivo de `specs/`.

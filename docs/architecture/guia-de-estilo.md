@@ -14,8 +14,8 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 - Cada estado se indica con color **y** etiqueta, nunca solo con color.
 - Áreas táctiles de al menos 48 dp; las opciones del diálogo, 56 dp; el botón principal, 64 dp.
-- Texto base de 16 sp; títulos de tarjeta de 24 sp; cronómetro de 30 sp con números tabulares.
-- Fuente del sistema (Roboto en Android).
+- Texto base de 16 sp; nombre de consola de 24 sp; cronómetro de 36 sp con números tabulares.
+- Fuente DM Sans y iconos de Lucide ([ADR 0014](../adr/0014-sistema-de-diseno-sala-de-control.md)).
 
 ## Pantallas del prototipo
 
@@ -31,45 +31,65 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 Flujo enlazado: 1 → 2 → 3 → 4 → 5 → 7; desde 1, tocar PS4 con 5 mandos lleva a 6, y una alternativa vuelve a 2.
 
-## Colores
+## Sistema de diseño «sala de control»
 
-Desde el [ADR 0012](../adr/0012-react-native-reusables-y-colores-hsl.md) los colores son variables HSL en `global.css`, con los nombres de React Native Reusables. Los valores hexadecimales de abajo son los del prototipo de Figma (`color/*`) y equivalen a los HSL. Los componentes usan solo el nombre del token (`bg-primary`, `text-foreground`), nunca un color suelto.
+Tema oscuro único, sin gradientes ni sombras de adorno (ADR 0014). El color se reserva para los estados de la consola; la acción principal es el botón marfil.
 
-| Token                | Hex (Figma) | HSL                 | Uso                                                     |
-| -------------------- | ----------- | ------------------- | ------------------------------------------------------- |
-| `background`         | `#F1F5F9`   | `210 40% 96.1%`     | Fondo de las pantallas                                  |
-| `card`               | `#FFFFFF`   | `0 0% 100%`         | Tarjetas, barras y diálogos                             |
-| `foreground`         | `#0F172A`   | `222.2 47.4% 11.2%` | Texto principal                                         |
-| `muted-foreground`   | `#475569`   | `215.3 19.3% 34.5%` | Texto secundario (6.92:1 sobre el fondo)                |
-| `border`             | `#CBD5E1`   | `212.7 26.8% 83.9%` | Bordes                                                  |
-| `primary`            | `#0369A1`   | `201.3 96.3% 32.2%` | Botón principal y opción elegida (texto blanco, 5.93:1) |
-| `secondary`          | `#E2E8F0`   | `214.3 31.8% 91.4%` | Fondos secundarios (total estimado)                     |
-| `available`          | `#15803D`   | `142.4 71.8% 29.2%` | Franja "Disponible" (texto blanco, 5.02:1)              |
-| `playing`            | `#B91C1C`   | `0 73.7% 41.8%`     | Franja "En juego" (texto blanco, 6.46:1)                |
-| `warning`            | `#F59E0B`   | `37.7 92.1% 50.2%`  | Franja "Por terminar" y "Tiempo cumplido"               |
-| `warning-foreground` | `#451A03`   | `20.9 91.7% 14.1%`  | Texto sobre ámbar (6.98:1)                              |
-| `playing-soft`       | `#FEE2E2`   | `0 93.3% 94.1%`     | Fondo de mensajes de error                              |
+### Colores
 
-Los equivalentes anteriores eran `canvas`, `surface`, `ink`, `muted`, `line` y `warning-ink`. Los mismos valores están en `src/utils/theme.ts` para lo que no acepta `className`.
+Variables HSL en `global.css`, con los nombres de React Native Reusables, y los mismos valores en `src/utils/theme.ts`. Los componentes usan solo el nombre (`bg-card`, `text-muted-foreground`), nunca un color suelto.
 
-## Componentes y organización
+| Token              | HSL           | Uso                                                     |
+| ------------------ | ------------- | ------------------------------------------------------- |
+| `background`       | `228 16% 7%`  | Fondo de las pantallas                                  |
+| `card`             | `228 14% 11%` | Tarjetas y barras                                       |
+| `raised`           | `228 12% 15%` | Superficie elevada dentro de una tarjeta                |
+| `border`           | `228 11% 20%` | Bordes                                                  |
+| `foreground`       | `40 18% 94%`  | Texto principal (16.8:1 sobre el fondo)                 |
+| `muted-foreground` | `228 9% 66%`  | Texto atenuado (7.0:1 sobre la tarjeta)                 |
+| `primary`          | `40 18% 94%`  | Botón principal y opción elegida (texto oscuro, 16.5:1) |
+| `available`        | `152 58% 52%` | Disponible (8.4:1 sobre la tarjeta)                     |
+| `playing`          | `5 82% 64%`   | En juego (5.5:1)                                        |
+| `warning`          | `40 96% 56%`  | Por terminar y tiempo cumplido (9.6:1)                  |
+| `pending`          | `199 88% 62%` | Por cobrar (8.2:1)                                      |
 
-- Base común en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, copiados de React Native Reusables).
-- `StateView` muestra cargando, error y vacío con el mismo aspecto en todas las pantallas.
-- Muro: resumen de consolas libres y en juego (`WallSummary`), filtro por tipo y cuadrícula de tarjetas.
-- Diálogos con acción principal: el botón queda fijo abajo (con el margen de la barra de gestos) y las opciones van agrupadas en tarjetas.
+Cada estado tiene también su fondo suave (`available-soft`, `playing-soft`, `warning-soft`, `pending-soft`).
+
+### Estados de la consola
+
+| Estado          | Color | Icono         | Detalle                      |
+| --------------- | ----- | ------------- | ---------------------------- |
+| Disponible      | verde | `CircleCheck` | Mandos libres                |
+| En juego        | coral | `Play`        | Cronómetro y avance          |
+| Por terminar    | ámbar | `BellRing`    | Titila los últimos 5 minutos |
+| Tiempo cumplido | ámbar | `TimerOff`    | Fijo hasta finalizar         |
+| Por cobrar      | cian  | `Receipt`     | Tiempo detenido y total      |
+| Mantenimiento   | gris  | `Wrench`      | Atenuada                     |
+
+### Tipografía
+
+DM Sans: 400 (texto), 500 (apoyo), 600 (botones), 700 y 800 (títulos, cifras). Etiquetas pequeñas en mayúsculas con 8 a 12 % de espaciado. Cronómetros e importes con números tabulares.
+
+### Componentes y organización
+
+- Base en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`, copiados de React Native Reusables).
+- `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado y `Logo` para la marca.
+- Navegación: pestañas Consolas y Caja (Salud en el Sprint 3). Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
+- Muro: logo y hora, resumen por estado, filtro por tipo y cuadrícula de dos columnas.
+- Diálogos con acción principal: el botón queda fijo abajo con el margen de la barra de gestos.
 
 ## Medidas
 
-| Elemento                  | Medida                                               |
-| ------------------------- | ---------------------------------------------------- |
-| Pantalla de referencia    | 360 × 800 dp                                         |
-| Margen lateral            | 16 dp                                                |
-| Separación entre tarjetas | 12 dp                                                |
-| Radio de tarjeta          | 16 dp                                                |
-| Radio de opción y botón   | 12 dp                                                |
-| Franja de estado          | 8 dp vertical, 16 dp horizontal, texto 16 sp negrita |
-| Chip de filtro            | 48 dp de alto, radio 24 dp                           |
+| Elemento                      | Medida                                              |
+| ----------------------------- | --------------------------------------------------- |
+| Pantalla de referencia        | 360 × 800 dp                                        |
+| Margen lateral                | 16 dp                                               |
+| Separación entre tarjetas     | 12 dp                                               |
+| Radio de tarjeta de consola   | 24 dp                                               |
+| Radio de opciones y secciones | 16 y 24 dp                                          |
+| Radio de botón                | 12 dp                                               |
+| Zona táctil                   | 44 dp mínimo; opciones 56 dp; botón principal 64 dp |
+| Barra de pestañas             | 68 dp                                               |
 
 ## Movimiento
 

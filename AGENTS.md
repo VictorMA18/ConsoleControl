@@ -15,30 +15,30 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 
 ## 3. Equipo y áreas
 
-| Sigla | Rol | Áreas |
-|---|---|---|
-| JS | UI/UX y análisis | Diseño y criterios de aceptación |
-| RF | Frontend | `app/`, `src/components/`, `src/hooks/` |
-| VM | Backend y base de datos | `src/db/`, `src/services/`, `src/sync/` |
-| VN | Arquitectura y jefe de proyecto | `docs/`, `.github/` y la configuración de la raíz |
+| Sigla | Rol                             | Áreas                                             |
+| ----- | ------------------------------- | ------------------------------------------------- |
+| JS    | UI/UX y análisis                | Diseño y criterios de aceptación                  |
+| RF    | Frontend                        | `app/`, `src/components/`, `src/hooks/`           |
+| VM    | Backend y base de datos         | `src/db/`, `src/services/`, `src/sync/`           |
+| VN    | Arquitectura y jefe de proyecto | `docs/`, `.github/` y la configuración de la raíz |
 
 ## 4. Tecnologías
 
-| Área | Decisión | Para qué se usa en este proyecto |
-|---|---|---|
-| Framework | React Native con Expo y TypeScript estricto; Expo Router | App móvil y navegación entre pantallas |
-| Gestor de paquetes | pnpm (`node-linker=hoisted` en `.npmrc`) | Instalar dependencias; el ajuste lo exige Expo |
-| Base de datos local | SQLite con `expo-sqlite` | Guardar sesiones, consolas, mandos y tarifas |
-| Acceso a datos | Drizzle ORM y `drizzle-kit` | Consultas tipadas, esquema y migraciones |
-| Validación | Zod | Validar formularios y datos antes de guardar |
-| Formularios | React Hook Form con `@hookform/resolvers/zod` | Formularios con el mismo esquema Zod |
-| Estado de interfaz | Zustand | Filtros, selección y estado de pantalla |
-| Estado de datos | TanStack Query | Leer y escribir SQLite y sincronizar |
-| Estilos | NativeWind y componentes de React Native Reusables (ADR 0012) | Clases de Tailwind; colores en HSL (`global.css`); componentes en `src/components/ui/` |
-| Respaldo en la nube | Supabase, solo dispositivo → nube (HU-008) | Copia de los registros pendientes |
-| Pruebas | Jest y React Native Testing Library | Cobertura de tiempo, tarifas y validaciones |
-| Calidad | ESLint, Prettier, `tsc --noEmit` y pruebas en GitHub Actions | Verificar cada pull request |
-| Usuarios | Sin login en el MVP | Un operador por dispositivo (O1) |
+| Área                | Decisión                                                      | Para qué se usa en este proyecto                                                       |
+| ------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Framework           | React Native con Expo y TypeScript estricto; Expo Router      | App móvil y navegación entre pantallas                                                 |
+| Gestor de paquetes  | pnpm (`node-linker=hoisted` en `.npmrc`)                      | Instalar dependencias; el ajuste lo exige Expo                                         |
+| Base de datos local | SQLite con `expo-sqlite`                                      | Guardar sesiones, consolas, mandos y tarifas                                           |
+| Acceso a datos      | Drizzle ORM y `drizzle-kit`                                   | Consultas tipadas, esquema y migraciones                                               |
+| Validación          | Zod                                                           | Validar formularios y datos antes de guardar                                           |
+| Formularios         | React Hook Form con `@hookform/resolvers/zod`                 | Formularios con el mismo esquema Zod                                                   |
+| Estado de interfaz  | Zustand                                                       | Filtros, selección y estado de pantalla                                                |
+| Estado de datos     | TanStack Query                                                | Leer y escribir SQLite y sincronizar                                                   |
+| Estilos             | NativeWind, componentes de React Native Reusables (ADR 0012) y sistema de diseño «sala de control» (ADR 0014) | Clases de Tailwind; tokens HSL en `global.css`; DM Sans; iconos de Lucide; componentes en `src/components/ui/` |
+| Respaldo en la nube | Supabase, solo dispositivo → nube (HU-008)                    | Copia de los registros pendientes                                                      |
+| Pruebas             | Jest y React Native Testing Library                           | Cobertura de tiempo, tarifas y validaciones                                            |
+| Calidad             | ESLint, Prettier, `tsc --noEmit` y pruebas en GitHub Actions  | Verificar cada pull request                                                            |
+| Usuarios            | Sin login en el MVP                                           | Un operador por dispositivo (O1)                                                       |
 
 ## 5. Arquitectura en pocas líneas
 
@@ -90,33 +90,33 @@ Regla de dependencias: la Interfaz usa la Lógica, la Lógica usa el Acceso a da
 
 ## 8. Comandos
 
-| Comando | Para qué |
-|---|---|
-| `pnpm install` | Instalar dependencias |
-| `pnpm start` | Iniciar Expo |
-| `pnpm lint` | ESLint |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm test` | Jest |
-| `pnpm format` | Aplicar Prettier |
+| Comando            | Para qué                                                    |
+| ------------------ | ----------------------------------------------------------- |
+| `pnpm install`     | Instalar dependencias                                       |
+| `pnpm start`       | Iniciar Expo                                                |
+| `pnpm lint`        | ESLint                                                      |
+| `pnpm typecheck`   | `tsc --noEmit`                                              |
+| `pnpm test`        | Jest                                                        |
+| `pnpm format`      | Aplicar Prettier                                            |
 | `pnpm db:generate` | Generar migraciones con drizzle-kit en `src/db/migrations/` |
 
 **Cómo se verifica mientras se desarrolla.** El agente solo ejecuta `pnpm lint` y `pnpm typecheck`. No ejecuta el emulador, `adb` ni builds de EAS, y `pnpm test` solo una vez al final de cada sprint, porque consumen mucho tiempo y uso. Las pruebas en el celular las hace VN al final de cada bloque de desarrollo y reporta los errores; en la app de desarrollo (`app/dev/persistencia.tsx`) los botones de sesión de prueba dejan 6 min restantes para ver la alerta y el cambio de color.
 
 ## 9. Dónde buscar
 
-| Si te piden | Lee |
-|---|---|
-| Entender la arquitectura o dónde va un archivo | [`docs/architecture/arquitectura.md`](docs/architecture/arquitectura.md) |
-| Tablas, columnas o relaciones de la base de datos | [`docs/architecture/base-de-datos.md`](docs/architecture/base-de-datos.md) |
-| Saber por qué se eligió una tecnología | [`docs/adr/`](docs/adr/) (un archivo por decisión) |
-| Saber qué toca hacer ahora o qué viene | [`docs/roadmap/README.md`](docs/roadmap/README.md): abre el sprint vigente y la primera parte sin ✔ |
-| Ramas, commits o pull requests | [`docs/guides/flujo-git.md`](docs/guides/flujo-git.md) y [`CONTRIBUTING.md`](CONTRIBUTING.md) |
-| Estilo de código, ESLint, Prettier | [`docs/guides/estilo-codigo.md`](docs/guides/estilo-codigo.md) |
-| Escribir o ejecutar pruebas | [`docs/guides/pruebas.md`](docs/guides/pruebas.md) |
-| Verificaciones automáticas | [`docs/guides/ci.md`](docs/guides/ci.md) |
-| Preparar el entorno de trabajo | [`docs/guides/entorno.md`](docs/guides/entorno.md) |
-| Requisitos o criterios de una historia | [`docs/specs/`](docs/specs/) |
-| Una tarea concreta | Jira, proyecto TW: la tarea Tn es TW-n (T01 = TW-1, …, T21 = TW-21) |
+| Si te piden                                       | Lee                                                                                                 |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Entender la arquitectura o dónde va un archivo    | [`docs/architecture/arquitectura.md`](docs/architecture/arquitectura.md)                            |
+| Tablas, columnas o relaciones de la base de datos | [`docs/architecture/base-de-datos.md`](docs/architecture/base-de-datos.md)                          |
+| Saber por qué se eligió una tecnología            | [`docs/adr/`](docs/adr/) (un archivo por decisión)                                                  |
+| Saber qué toca hacer ahora o qué viene            | [`docs/roadmap/README.md`](docs/roadmap/README.md): abre el sprint vigente y la primera parte sin ✔ |
+| Ramas, commits o pull requests                    | [`docs/guides/flujo-git.md`](docs/guides/flujo-git.md) y [`CONTRIBUTING.md`](CONTRIBUTING.md)       |
+| Estilo de código, ESLint, Prettier                | [`docs/guides/estilo-codigo.md`](docs/guides/estilo-codigo.md)                                      |
+| Escribir o ejecutar pruebas                       | [`docs/guides/pruebas.md`](docs/guides/pruebas.md)                                                  |
+| Verificaciones automáticas                        | [`docs/guides/ci.md`](docs/guides/ci.md)                                                            |
+| Preparar el entorno de trabajo                    | [`docs/guides/entorno.md`](docs/guides/entorno.md)                                                  |
+| Requisitos o criterios de una historia            | [`docs/specs/`](docs/specs/)                                                                        |
+| Una tarea concreta                                | Jira, proyecto TW: la tarea Tn es TW-n (T01 = TW-1, …, T21 = TW-21)                                 |
 
 **Cuando se te pida explorar o modificar un archivo o una parte del código, primero consulta esta tabla y lee el documento correspondiente antes de abrir el código.**
 
