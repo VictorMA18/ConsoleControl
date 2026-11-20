@@ -80,7 +80,8 @@ describe('CP-005 · reinicio del teléfono', () => {
 
 describe('CP-006 · código cromático', () => {
   it.each([
-    ['disponible', null, 'disponible', 'bg-available'],
+    // Disponible es el estado de reposo: verde suave (ADR 0014, revisión del 19/11/2026).
+    ['disponible', null, 'disponible', 'bg-available-soft'],
     ['en_juego', 'en_curso', 'en_juego', 'bg-playing'],
     ['en_juego', 'libre', 'en_juego', 'bg-playing'],
     ['en_juego', 'proxima_a_vencer', 'por_terminar', 'bg-warning'],

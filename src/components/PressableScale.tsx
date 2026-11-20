@@ -4,7 +4,7 @@ import Animated, { cubicBezier, useReducedMotion } from 'react-native-reanimated
 
 import { EASE_OUT_BEZIER } from '../utils/theme';
 
-// Al presionar, el elemento se hunde a 0.97 en 120 ms y vuelve al soltar (ADR 0014): la respuesta
+// Al presionar, el elemento se hunde a 0.96 en 120 ms y vuelve al soltar (ADR 0014): la respuesta
 // aparece al tocar, no al terminar el toque. Con movimiento reducido solo baja la opacidad.
 const PRESS_TRANSITION = {
   transitionProperty: ['transform', 'opacity'] as ('transform' | 'opacity')[],
@@ -38,7 +38,7 @@ export function PressableScale({ children, className, onPressIn, onPressOut, ...
           PRESS_TRANSITION,
           reducedMotion
             ? { opacity: pressed ? 0.85 : 1 }
-            : { transform: [{ scale: pressed ? 0.97 : 1 }] },
+            : { transform: [{ scale: pressed ? 0.96 : 1 }] },
         ]}
       >
         {children}

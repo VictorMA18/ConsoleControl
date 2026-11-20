@@ -29,6 +29,14 @@ VN diseñó la tarjeta de consola que quiere ver en el muro: una franja de color
 - **Bordes del sistema y teclado.** La app se dibuja de borde a borde: la barra de pestañas, los botones fijos abajo y el final de las pantallas sin barra suman el margen inferior del sistema (`useInsets`). Los formularios usan `react-native-keyboard-controller` (`KeyboardProvider` y `FormScrollView`), incluido en Expo Go, para que el campo enfocado quede encima del teclado.
 - **Identificadores.** Las máquinas se llaman «MAQ #n» (migración 0005) y el muro tiene un buscador por número.
 
+## Revisión del 19/11/2026
+
+- **Estados más sobrios.** «Disponible» pasa a una franja suave porque es el estado de reposo; los colores fuertes quedan para lo que pide atención.
+- **Modo oscuro.** El fondo deja el azul marino saturado (`224 22% 8%`) y pasa a un grafito casi neutro (`225 8% 8%`), con escalones de superficie más claros.
+- **Resúmenes.** Las fichas con cuadrito de color de cada estado se reemplazan por una tarjeta con barra de proporción y columnas.
+- **Salud.** Pasa de tarjetas desplegables a una lista compacta con filtros y una pantalla de detalle por máquina.
+- **Pantalla de carga.** Se agrega la pantalla de marca `BrandSplash`.
+
 ## Consecuencias
 
 - Cambiar un color es cambiar una variable en `global.css` y su copia en `src/utils/theme.ts` (para lo que no acepta className).

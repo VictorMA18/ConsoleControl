@@ -1,137 +1,67 @@
-import {
-  BellRing,
-  ChevronDown,
-  Clock3,
-  Gamepad2,
-  Sparkles,
-  Wrench,
-  type LucideIcon,
-} from 'lucide-react-native';
+import { BellRing, ChevronRight, Gamepad2, Wrench } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import Animated, { cubicBezier, FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { ConfirmDialog } from '../../src/components/ConfirmDialog';
-import { HEALTH_LOOK, HealthLightBadge } from '../../src/components/HealthLightBadge';
-import { MaintenancePanel } from '../../src/components/MaintenancePanel';
-import { PlatformBadge } from '../../src/components/PlatformBadge';
+import { CONSOLE_HEALTH_LABELS } from '../../src/components/HealthControls';
+import { HEALTH_LOOK } from '../../src/components/HealthLightBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SearchField } from '../../src/components/SearchField';
 import { StateView } from '../../src/components/StateView';
 import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
-import type { ConsoleStatus, ControllerStatus } from '../../src/db/schema/enums';
-import { useChangeHealth, useEquipment } from '../../src/hooks/useEquipment';
-import { useMaintenanceStatus, useRegisterMaintenance } from '../../src/hooks/useMaintenance';
+import { useEquipment } from '../../src/hooks/useEquipment';
+import { useMaintenanceStatus } from '../../src/hooks/useMaintenance';
 import {
-  canChangeConsoleHealth,
-  canChangeControllerHealth,
-  CONSOLE_HEALTH_STATUSES,
-  type ConsoleHealthStatus,
   consoleLight,
-  CONTROLLER_HEALTH_STATUSES,
-  type ControllerHealthStatus,
   controllerLight,
   formatUsage,
   type HealthLight,
 } from '../../src/services/health';
 import type { EquipmentConsole } from '../../src/services/healthService';
-import { MAINTENANCE_LABELS, type MaintenanceStatus } from '../../src/services/maintenanceAlerts';
 import { matchesQuery } from '../../src/stores/wallFilterStore';
 import { cn } from '../../src/utils/cn';
-import { EASE_OUT_BEZIER } from '../../src/utils/theme';
+import { CONSOLE_TYPE_LABELS } from '../../src/utils/consoleLabels';
 
-const CONSOLE_LABELS: Record<ConsoleStatus, string> = {
-  disponible: 'Operativa',
-  en_juego: 'En juego',
-  mantenimiento: 'Mantenimiento',
-  averiado: 'Averiada',
-};
+type Filter = 'todas' | 'alertas' | 'ambar' | 'rojo';
 
-const CONTROLLER_LABELS: Record<ControllerStatus, string> = {
-  operativo: 'Operativo',
-  en_uso: 'En uso',
-  mantenimiento: 'Mantenimiento',
-  averiado: 'Averiado',
-};
+const FILTERS: { value: Filter; label: string }[] = [
+  { value: 'todas', label: 'Todas' },
+  { value: 'alertas', label: 'Con avisos' },
+  { value: 'ambar', label: 'Mantenimiento' },
+  { value: 'rojo', label: 'Averiadas' },
+];
 
-const LIGHT_OF_OPTION: Record<ConsoleHealthStatus | ControllerHealthStatus, HealthLight> = {
-  disponible: 'verde',
-  operativo: 'verde',
-  mantenimiento: 'ambar',
-  averiado: 'rojo',
-};
-
-// La flecha gira al abrir o cerrar una tarjeta.
-const CHEVRON_TRANSITION = {
-  transitionProperty: 'transform',
-  transitionDuration: 200,
-  transitionTimingFunction: cubicBezier(...EASE_OUT_BEZIER),
-} as const;
-
-type PendingChange = {
-  console: EquipmentConsole;
-  status: Exclude<ConsoleHealthStatus, 'disponible'>;
-};
-
-// Semáforo de salud (HU-012, CU-004): estado y horas de uso de cada consola y mando. Lo que está
-// en mantenimiento o averiado queda fuera de la asignación al iniciar una sesión (RN-06). Debajo de
-// cada consola, el mantenimiento preventivo con sus alertas (HU-014). Las tarjetas se pliegan y se
-// filtran con el buscador por número de máquina.
+// Semáforo de salud (HU-012, CU-004) y mantenimiento preventivo (HU-014). La lista es compacta:
+// una fila por máquina con su estado y sus avisos, filtros y buscador. Tocar una fila abre su
+// detalle (app/salud/[consoleId].tsx), donde se cambia el estado y se registra el mantenimiento.
 export default function HealthScreen() {
+  const router = useRouter();
   const { data: equipment, isPending, error } = useEquipment();
-  const changeHealth = useChangeHealth();
-  const [pending, setPending] = useState<PendingChange | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const maintenance = useMaintenanceStatus();
-  const registerMaintenance = useRegisterMaintenance();
-  const [servicing, setServicing] = useState<MaintenanceStatus | null>(null);
-  const dueCount = maintenance.filter((m) => m.due).length;
   const [query, setQuery] = useState('');
-  // Tarjetas abiertas; todas empiezan plegadas para ver el inventario de un vistazo.
-  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
-  const visible = (equipment ?? []).filter((c) => matchesQuery(c.name, query));
+  const [filter, setFilter] = useState<Filter>('todas');
 
-  function toggle(id: string) {
-    setOpen((current) => {
-      const next = new Set(current);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }
-
-  async function apply(
-    change:
-      | { kind: 'console'; id: string; status: ConsoleHealthStatus }
-      | { kind: 'controller'; id: string; status: ControllerHealthStatus },
-  ) {
-    setMessage(null);
-    const result = await changeHealth.mutateAsync(change);
-    if (!result.ok) {
-      setMessage(result.message);
-    }
-  }
-
-  // Sacar una consola de servicio pide confirmación; devolverla a operativa no.
-  function chooseConsole(console: EquipmentConsole, status: ConsoleHealthStatus) {
-    if (status === console.status) {
-      return;
-    }
-    if (status === 'disponible') {
-      void apply({ kind: 'console', id: console.id, status });
-    } else {
-      setPending({ console, status });
-    }
-  }
-
+  const rows = (equipment ?? []).map((console) => {
+    const out = console.controllers.filter(
+      (m) => m.status === 'mantenimiento' || m.status === 'averiado',
+    ).length;
+    const due = maintenance.some((m) => m.consoleId === console.id && m.due);
+    return { console, out, due, light: consoleLight(console.status) };
+  });
+  const visible = rows.filter(
+    (row) =>
+      matchesQuery(row.console.name, query) &&
+      (filter === 'todas' ||
+        (filter === 'alertas' && (row.due || row.out > 0 || row.light !== 'verde')) ||
+        row.light === filter),
+  );
   const lights = (equipment ?? []).flatMap((c) => [
     consoleLight(c.status),
     ...c.controllers.map((m) => controllerLight(m.status)),
   ]);
+  const dueCount = maintenance.filter((m) => m.due).length;
 
   return (
     <View className="flex-1 bg-background">
@@ -146,306 +76,195 @@ export default function HealthScreen() {
           keyboardDismissMode="on-drag"
           contentContainerClassName="gap-4 p-4 pb-8"
         >
-          <View className="flex-row gap-2">
-            <Count
-              light="verde"
-              label="Operativos"
-              total={lights.filter((l) => l === 'verde').length}
-            />
-            <Count
-              light="ambar"
-              label="Mantenimiento"
-              total={lights.filter((l) => l === 'ambar').length}
-            />
-            <Count
-              light="rojo"
-              label="Averiados"
-              total={lights.filter((l) => l === 'rojo').length}
-            />
-          </View>
+          <HealthOverview lights={lights} />
 
           {dueCount > 0 ? (
-            <View
+            <Pressable
               testID="alertas-mantenimiento"
-              accessibilityRole="alert"
-              className="flex-row items-center gap-3 rounded-2xl bg-warning-soft p-4"
+              accessibilityRole="button"
+              onPress={() => setFilter('alertas')}
+              className="flex-row items-center gap-3 rounded-2xl bg-warning-soft px-4 py-3 active:opacity-80"
             >
-              <Icon as={BellRing} size={22} className="text-warning-tone" />
-              <Text className="flex-1 text-base font-bold text-warning-tone">
+              <Icon as={BellRing} size={20} className="text-warning-tone" />
+              <Text className="flex-1 text-sm font-bold text-warning-tone">
                 {dueCount === 1
                   ? '1 mantenimiento preventivo pendiente'
                   : `${dueCount} mantenimientos preventivos pendientes`}
               </Text>
-            </View>
+              <Text className="text-sm font-semibold text-warning-tone">Ver</Text>
+            </Pressable>
           ) : null}
 
-          {message ? (
-            <View accessibilityRole="alert" className="rounded-2xl bg-playing-soft p-4">
-              <Text className="font-bold text-playing-tone">{message}</Text>
-            </View>
-          ) : null}
-
-          <SearchField
-            testID="buscar-salud"
-            accessibilityLabel="Buscar máquina en Salud"
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Buscar máquina, por ejemplo 3"
-          />
+          <View className="gap-3">
+            <SearchField
+              testID="buscar-salud"
+              accessibilityLabel="Buscar máquina en Salud"
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Buscar máquina, por ejemplo 3"
+            />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerClassName="gap-2"
+            >
+              {FILTERS.map((option) => {
+                const active = option.value === filter;
+                return (
+                  <Pressable
+                    key={option.value}
+                    testID={`filtro-salud-${option.value}`}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    onPress={() => setFilter(option.value)}
+                    className={cn(
+                      'h-10 justify-center rounded-full border px-4 active:opacity-80',
+                      active ? 'border-primary bg-primary' : 'border-border bg-card',
+                    )}
+                  >
+                    <Text
+                      className={cn(
+                        'text-sm font-bold',
+                        active ? 'text-primary-foreground' : 'text-foreground',
+                      )}
+                    >
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
 
           {visible.length === 0 ? (
-            <StateView kind="empty" message={`No hay ninguna máquina «${query}».`} />
-          ) : null}
-
-          {visible.map((console) => {
-            const editable = canChangeConsoleHealth(console.status);
-            // Con una sola máquina encontrada se abre sola.
-            const expanded = open.has(console.id) || (query.trim() !== '' && visible.length === 1);
-            const statuses = maintenance.filter((m) => m.consoleId === console.id);
-            const due = statuses.some((m) => m.due);
-            const brokenControllers = console.controllers.filter(
-              (m) => m.status === 'averiado' || m.status === 'mantenimiento',
-            ).length;
-            return (
-              <Animated.View
-                key={console.id}
-                testID={`salud-${console.id}`}
-                layout={LinearTransition.duration(220)}
-                className="overflow-hidden rounded-3xl border border-border bg-card"
-              >
-                <Pressable
-                  testID={`plegar-${console.id}`}
-                  accessibilityRole="button"
-                  accessibilityState={{ expanded }}
-                  accessibilityLabel={`${console.name}, ${CONSOLE_LABELS[console.status]}. ${expanded ? 'Plegar' : 'Desplegar'}`}
-                  onPress={() => toggle(console.id)}
-                  className="gap-3 p-5 active:bg-accent"
-                >
-                  <View className="flex-row items-center gap-3">
-                    <PlatformBadge consoleType={console.consoleType} />
-                    <Text className="flex-1 text-xl font-extrabold" numberOfLines={1}>
-                      {console.name}
-                    </Text>
-                    <Animated.View
-                      style={[
-                        CHEVRON_TRANSITION,
-                        { transform: [{ rotate: expanded ? '180deg' : '0deg' }] },
-                      ]}
-                    >
-                      <Icon as={ChevronDown} size={22} className="text-muted-foreground" />
-                    </Animated.View>
-                  </View>
-                  <View className="flex-row flex-wrap items-center gap-2">
-                    <HealthLightBadge
-                      testID={`semaforo-${console.id}`}
-                      light={consoleLight(console.status)}
-                      label={CONSOLE_LABELS[console.status]}
-                    />
-                    {brokenControllers > 0 ? (
-                      <HealthLightBadge
-                        light="ambar"
-                        label={`${brokenControllers} ${brokenControllers === 1 ? 'mando' : 'mandos'} fuera`}
-                      />
-                    ) : null}
-                    {due ? (
-                      <HealthLightBadge light="ambar" label="Mantenimiento pendiente" />
-                    ) : null}
-                  </View>
-                  <UsageRow icon={Clock3} minutes={console.usageMinutes} />
-                </Pressable>
-
-                {expanded ? (
-                  <Animated.View
-                    entering={FadeIn.duration(180)}
-                    exiting={FadeOut.duration(120)}
-                    className="gap-4 border-t border-border p-5"
-                  >
-                    <Segmented
-                      options={CONSOLE_HEALTH_STATUSES.map((status) => ({
-                        value: status,
-                        label: CONSOLE_LABELS[status],
-                      }))}
-                      selected={console.status}
-                      disabled={!editable || changeHealth.isPending}
-                      onChange={(status) => chooseConsole(console, status)}
-                      testID={`estado-consola-${console.id}`}
-                    />
-                    {!editable ? (
-                      <Text className="text-sm text-muted-foreground">
-                        En juego: finaliza y cobra la sesión para cambiar su estado.
-                      </Text>
-                    ) : null}
-
-                    <View className="gap-3 border-t border-border pt-4">
-                      <Text className="text-sm font-bold text-muted-foreground">
-                        Mandos ({console.controllers.length})
-                      </Text>
-                      {console.controllers.map((controller) => {
-                        const light = controllerLight(controller.status);
-                        return (
-                          <View key={controller.id} className="gap-2">
-                            <View className="flex-row items-center gap-2">
-                              <View
-                                className={cn('h-2.5 w-2.5 rounded-full', HEALTH_LOOK[light].dot)}
-                              />
-                              <Icon as={Gamepad2} size={18} />
-                              <Text className="flex-1 text-base font-bold">{controller.label}</Text>
-                              <Text className="text-sm text-muted-foreground">
-                                {formatUsage(controller.usageMinutes)}
-                              </Text>
-                            </View>
-                            {canChangeControllerHealth(controller.status) ? (
-                              <Segmented
-                                compact
-                                options={CONTROLLER_HEALTH_STATUSES.map((status) => ({
-                                  value: status,
-                                  label: CONTROLLER_LABELS[status],
-                                }))}
-                                selected={controller.status}
-                                disabled={changeHealth.isPending}
-                                onChange={(status) =>
-                                  void apply({ kind: 'controller', id: controller.id, status })
-                                }
-                                testID={`estado-mando-${controller.id}`}
-                              />
-                            ) : (
-                              <Text className="text-sm text-muted-foreground">
-                                En uso en una sesión.
-                              </Text>
-                            )}
-                          </View>
-                        );
-                      })}
-                    </View>
-
-                    <MaintenancePanel
-                      statuses={statuses}
-                      disabled={registerMaintenance.isPending}
-                      onRegister={setServicing}
-                    />
-                  </Animated.View>
-                ) : null}
-              </Animated.View>
-            );
-          })}
+            <StateView
+              kind="empty"
+              message={query ? `No hay ninguna máquina «${query}».` : 'Nada en este filtro.'}
+            />
+          ) : (
+            <View className="overflow-hidden rounded-3xl border border-border bg-card">
+              {visible.map((row, index) => (
+                <Animated.View key={row.console.id} layout={LinearTransition.duration(200)}>
+                  <HealthRow
+                    {...row}
+                    first={index === 0}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/salud/[consoleId]',
+                        params: { consoleId: row.console.id },
+                      })
+                    }
+                  />
+                </Animated.View>
+              ))}
+            </View>
+          )}
         </ScrollView>
       )}
-
-      <ConfirmDialog
-        visible={pending !== null}
-        icon={Wrench}
-        title={pending?.status === 'averiado' ? 'Reportar falla' : 'Poner en mantenimiento'}
-        message={`${pending?.console.name ?? ''} quedará fuera de servicio y no se podrá iniciar una sesión en ella hasta volver a operativa.`}
-        confirmLabel={pending?.status === 'averiado' ? 'Reportar' : 'Confirmar'}
-        onConfirm={() => {
-          if (pending) {
-            void apply({ kind: 'console', id: pending.console.id, status: pending.status });
-          }
-          setPending(null);
-        }}
-        onCancel={() => setPending(null)}
-      />
-
-      <ConfirmDialog
-        visible={servicing !== null}
-        icon={Sparkles}
-        title="Registrar mantenimiento"
-        message={`¿Se hizo la ${servicing ? MAINTENANCE_LABELS[servicing.kind].toLowerCase() : ''} de ${servicing?.consoleName ?? ''}? El contador de este mantenimiento vuelve a cero; las horas de uso totales se conservan.`}
-        confirmLabel="Registrar"
-        onConfirm={() => {
-          if (servicing) {
-            void registerMaintenance
-              .mutateAsync({ consoleId: servicing.consoleId, kind: servicing.kind })
-              .then((result) => setMessage(result.ok ? null : result.message));
-          }
-          setServicing(null);
-        }}
-        onCancel={() => setServicing(null)}
-      />
     </View>
   );
 }
 
-function Count({ light, label, total }: { light: HealthLight; label: string; total: number }) {
-  const look = HEALTH_LOOK[light];
-  return (
-    <View
-      accessibilityLabel={`${total} ${label}`}
-      className="flex-1 gap-1 rounded-2xl border border-border bg-card p-3"
-    >
-      <View className="flex-row items-center gap-1.5">
-        <View className={cn('h-2.5 w-2.5 rounded-full', look.dot)} />
-        <Text className="text-2xl font-extrabold" style={{ fontVariant: ['tabular-nums'] }}>
-          {total}
-        </Text>
-      </View>
-      <Text numberOfLines={1} className="text-xs font-bold text-muted-foreground">
-        {label}
-      </Text>
-    </View>
-  );
-}
-
-function UsageRow({ icon, minutes }: { icon: LucideIcon; minutes: number }) {
-  return (
-    <View className="flex-row items-center gap-2">
-      <Icon as={icon} size={18} className="text-muted-foreground" />
-      <Text className="text-base font-semibold">{formatUsage(minutes)} de uso</Text>
-    </View>
-  );
-}
-
-function Segmented<T extends ConsoleHealthStatus | ControllerHealthStatus>({
-  options,
-  selected,
-  disabled,
-  onChange,
-  compact,
-  testID,
+// Una fila por máquina: estado, tipo y horas a la izquierda; avisos y flecha a la derecha.
+function HealthRow({
+  console,
+  out,
+  due,
+  light,
+  first,
+  onPress,
 }: {
-  options: { value: T; label: string }[];
-  selected: string;
-  disabled?: boolean;
-  onChange: (value: T) => void;
-  compact?: boolean;
-  testID?: string;
+  console: EquipmentConsole;
+  out: number;
+  due: boolean;
+  light: HealthLight;
+  first: boolean;
+  onPress: () => void;
 }) {
   return (
-    <View
-      testID={testID}
-      accessibilityRole="radiogroup"
-      className={cn('flex-row gap-1 rounded-2xl bg-secondary p-1', disabled && 'opacity-50')}
+    <Pressable
+      testID={`salud-${console.id}`}
+      accessibilityRole="button"
+      accessibilityLabel={`${console.name}, ${CONSOLE_HEALTH_LABELS[console.status]}${due ? ', mantenimiento pendiente' : ''}${out > 0 ? `, ${out} mandos fuera de servicio` : ''}`}
+      onPress={onPress}
+      className={cn(
+        'flex-row items-center gap-3 px-4 py-3.5 active:bg-accent',
+        !first && 'border-t border-border',
+      )}
     >
-      {options.map(({ value, label }) => {
-        const active = value === selected;
-        const look = HEALTH_LOOK[LIGHT_OF_OPTION[value]];
-        return (
-          <Pressable
-            key={value}
-            accessibilityRole="radio"
-            accessibilityState={{ checked: active, disabled }}
-            disabled={disabled}
-            onPress={() => onChange(value)}
-            className={cn(
-              'flex-1 flex-row items-center justify-center gap-1.5 rounded-xl',
-              compact ? 'h-9' : 'h-11',
-              active ? 'border border-border bg-card' : 'active:bg-accent',
-            )}
+      <View className={cn('h-2.5 w-2.5 rounded-full', HEALTH_LOOK[light].dot)} />
+      <View className="flex-1 gap-0.5">
+        <Text className="text-base font-extrabold">{console.name}</Text>
+        <Text
+          className="text-xs font-semibold text-muted-foreground"
+          style={{ fontVariant: ['tabular-nums'] }}
+        >
+          {CONSOLE_TYPE_LABELS[console.consoleType]} · {CONSOLE_HEALTH_LABELS[console.status]} ·{' '}
+          {formatUsage(console.usageMinutes)}
+        </Text>
+      </View>
+      {out > 0 ? (
+        <View className="flex-row items-center gap-1 rounded-full bg-warning-soft px-2 py-1">
+          <Icon as={Gamepad2} size={13} className="text-warning-tone" />
+          <Text className="text-xs font-bold text-warning-tone">{out}</Text>
+        </View>
+      ) : null}
+      {due ? (
+        <View className="rounded-full bg-warning-soft p-1.5">
+          <Icon as={Wrench} size={13} className="text-warning-tone" />
+        </View>
+      ) : null}
+      <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
+    </Pressable>
+  );
+}
+
+// Conteo de equipos (consolas y mandos) por color del semáforo, con el mismo lenguaje que el
+// resumen del muro: una tarjeta, una barra de proporción y columnas separadas por líneas finas.
+function HealthOverview({ lights }: { lights: HealthLight[] }) {
+  const columns: { light: HealthLight; label: string }[] = [
+    { light: 'verde', label: 'Operativos' },
+    { light: 'ambar', label: 'Mantenimiento' },
+    { light: 'rojo', label: 'Averiados' },
+  ];
+  const totals = columns.map((c) => ({ ...c, total: lights.filter((l) => l === c.light).length }));
+  return (
+    <View
+      accessibilityRole="summary"
+      className="overflow-hidden rounded-3xl border border-border bg-card"
+    >
+      <View className="h-1.5 flex-row bg-secondary">
+        {totals.map((c) =>
+          c.total > 0 ? (
+            <View key={c.light} className={HEALTH_LOOK[c.light].dot} style={{ flex: c.total }} />
+          ) : null,
+        )}
+      </View>
+      <View className="flex-row">
+        {totals.map((c, index) => (
+          <View
+            key={c.light}
+            accessibilityLabel={`${c.total} ${c.label}`}
+            className={cn('flex-1 gap-1 px-3 py-3', index > 0 && 'border-l border-border')}
           >
-            {active ? <View className={cn('h-2 w-2 rounded-full', look.dot)} /> : null}
             <Text
-              numberOfLines={1}
-              className={cn(
-                compact ? 'text-xs' : 'text-sm',
-                'font-bold',
-                active ? 'text-foreground' : 'text-muted-foreground',
-              )}
+              className={cn('text-2xl font-extrabold', c.total === 0 && 'text-muted-foreground')}
+              style={{ fontVariant: ['tabular-nums'] }}
             >
-              {label}
+              {c.total}
             </Text>
-          </Pressable>
-        );
-      })}
+            <View className="flex-row items-center gap-1.5">
+              <View className={cn('h-1.5 w-1.5 rounded-full', HEALTH_LOOK[c.light].dot)} />
+              <Text
+                numberOfLines={1}
+                className="flex-1 text-[11px] font-bold text-muted-foreground"
+              >
+                {c.label}
+              </Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }

@@ -57,33 +57,33 @@ Columna derecha: mandos en uso sobre el total (libres si no hay sesión); tiempo
 
 Variables HSL en `global.css` (`:root` claro, `.dark:root` oscuro) con los nombres de React Native Reusables, y los mismos valores en `src/utils/theme.ts`. Los componentes usan solo el nombre (`bg-card`, `text-muted-foreground`), nunca un color suelto. Ningún token es blanco o negro puro.
 
-| Token              | Claro         | Oscuro        | Uso                                   |
-| ------------------ | ------------- | ------------- | ------------------------------------- |
-| `background`       | `220 16% 95%` | `224 22% 8%`  | Fondo de las pantallas                |
-| `card`             | `220 20% 99%` | `224 18% 12%` | Tarjetas y barras                     |
-| `raised`           | `220 18% 96%` | `224 16% 15%` | Superficie dentro de una tarjeta      |
-| `border`           | `220 14% 86%` | `224 14% 20%` | Bordes y divisores                    |
-| `foreground`       | `226 44% 14%` | `220 20% 94%` | Texto principal (15:1 y 16:1)         |
-| `muted-foreground` | `222 12% 40%` | `220 10% 66%` | Texto atenuado (6:1 y 7:1)            |
-| `primary`          | `226 44% 14%` | `220 20% 94%` | Botón principal y opción elegida      |
-| `available`        | `146 70% 29%` | `146 58% 30%` | Franja Disponible                     |
-| `playing`          | `4 70% 45%`   | `4 62% 46%`   | Franja En juego                       |
-| `warning`          | `36 92% 48%`  | `38 88% 54%`  | Franja Por terminar y Tiempo cumplido |
-| `pending`          | `206 78% 38%` | `206 72% 38%` | Franja Por cobrar                     |
-| `maintenance`      | `222 10% 44%` | `222 8% 38%`  | Franja Mantenimiento                  |
+| Token              | Claro         | Oscuro         | Uso                                   |
+| ------------------ | ------------- | -------------- | ------------------------------------- |
+| `background`       | `220 16% 95%` | `225 8% 8%`    | Fondo de las pantallas                |
+| `card`             | `220 20% 99%` | `225 7% 11.5%` | Tarjetas y barras                     |
+| `raised`           | `220 18% 96%` | `225 6% 15%`   | Superficie dentro de una tarjeta      |
+| `border`           | `220 14% 86%` | `225 6% 20%`   | Bordes y divisores                    |
+| `foreground`       | `226 44% 14%` | `220 12% 93%`  | Texto principal (15:1 y 16:1)         |
+| `muted-foreground` | `222 12% 40%` | `220 6% 64%`   | Texto atenuado (6:1 y 7:1)            |
+| `primary`          | `226 44% 14%` | `220 12% 93%`  | Botón principal y opción elegida      |
+| `available`        | `152 45% 32%` | `152 30% 30%`  | Franja Disponible                     |
+| `playing`          | `6 60% 45%`   | `6 48% 42%`    | Franja En juego                       |
+| `warning`          | `36 88% 52%`  | `38 78% 54%`   | Franja Por terminar y Tiempo cumplido |
+| `pending`          | `210 58% 40%` | `210 42% 38%`  | Franja Por cobrar                     |
+| `maintenance`      | `220 9% 45%`  | `225 6% 34%`   | Franja Mantenimiento                  |
 
 Cada estado tiene además `-foreground` (texto sobre la franja: marfil, o marino en ámbar), `-tone` (texto del estado sobre la tarjeta) y `-soft` (fondo de avisos). Todos los pares cumplen 4.5:1 como mínimo.
 
 ### Estados de la consola
 
-| Estado          | Franja | Icono         | Detalle                      |
-| --------------- | ------ | ------------- | ---------------------------- |
-| Disponible      | verde  | `CircleCheck` | Mandos libres y tarifa       |
-| En juego        | rojo   | `Play`        | Cronómetro y avance          |
-| Por terminar    | ámbar  | `BellRing`    | Titila los últimos 5 minutos |
-| Tiempo cumplido | ámbar  | `TimerOff`    | Fijo hasta finalizar         |
-| Por cobrar      | azul   | `Receipt`     | Tiempo detenido y total      |
-| Mantenimiento   | gris   | `Wrench`      | Atenuada                     |
+| Estado          | Franja      | Icono         | Detalle                      |
+| --------------- | ----------- | ------------- | ---------------------------- |
+| Disponible      | verde suave | `CircleCheck` | Mandos libres y tarifa       |
+| En juego        | rojo        | `Play`        | Cronómetro y avance          |
+| Por terminar    | ámbar       | `BellRing`    | Titila los últimos 5 minutos |
+| Tiempo cumplido | ámbar       | `TimerOff`    | Fijo hasta finalizar         |
+| Por cobrar      | azul        | `Receipt`     | Tiempo detenido y total      |
+| Mantenimiento   | gris        | `Wrench`      | Atenuada                     |
 
 ### Tipografía
 
@@ -93,16 +93,19 @@ Montserrat Alternates: 500 (texto), 600 (pestañas), 700 (datos y botones) y 800
 
 - Base en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`, copiados de React Native Reusables).
 - Patrón de tarjeta: `ConsoleCard`, `PlatformBadge`, `InfoRow` y `PressableScale`. La franja de estado se usa solo en las tarjetas grandes (consola y resumen de cobro).
-- Resumen del muro (`WallSummary`): cuadrícula de 2 × 2 con Disponible, En juego, Por terminar (suma tiempo cumplido) y Por cobrar; sin franja, el color va en el icono sobre su fondo suave.
+- Resumen del muro (`WallSummary`): una sola tarjeta con una barra fina de proporción por estado y cuatro columnas (Disponible, En juego, Por terminar —suma tiempo cumplido— y Por cobrar) separadas por líneas finas. El color solo va en la barra y en un punto junto a cada etiqueta; los números van en el color del texto, y en gris cuando son cero. Salud usa el mismo patrón con tres columnas (operativos, mantenimiento, averiados).
+- Franjas: «Disponible» usa la franja suave (`available-soft` con texto `available-tone`) porque es el estado de reposo. Los colores fuertes quedan para lo que pide atención: en juego, por terminar, tiempo cumplido y por cobrar.
 - Vuelto (`ChangeCalculator`): un campo «Recibido» con el teclado numérico del celular y, debajo, el vuelto o lo que falta. En pago mixto usa solo la parte en efectivo.
 - Formularios dentro de `FormScrollView`: al enfocar un campo, la pantalla se desplaza para dejarlo encima del teclado (`react-native-keyboard-controller`).
 - `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado en línea, `Logo` y `BrandMark` para la marca, `ThemeToggle` para el tema y `ConsoleSearch` para buscar máquinas.
-- Navegación: pestañas Consolas, Caja y Sistema (Salud en el Sprint 3). Sistema reúne la apariencia y, en desarrollo, las herramientas de prueba como botones. Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
+- Navegación: pestañas Consolas, Caja, Salud y Sistema. Salud es una lista compacta (una fila por máquina con su punto de color, tipo, estado, horas y avisos), con buscador y filtros (Todas, Con avisos, Mantenimiento, Averiadas). Cada fila abre `app/salud/[consoleId].tsx`, donde se cambia el estado de la consola y sus mandos y se registra el mantenimiento. Sistema reúne la apariencia y, en desarrollo, las herramientas de prueba como botones. Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
 - Muro: logo y hora; resumen 2 × 2; buscador; filtro por tipo; una columna de tarjetas anchas.
 - Caja: total del turno en grande con el reparto por método (barra de proporción), arqueo con el efectivo esperado y el resultado, cobros a revisar e historial compacto de turnos.
 - Diálogos con acción principal: el botón queda fijo abajo y suma el margen de la barra del sistema.
 
 ### Ícono y pantalla de carga
+
+Al abrir, la pantalla nativa muestra solo el ícono. Cuando la base y la fuente están listas, `BrandSplash` la reemplaza sin salto: mismo ícono, mismo tamaño (100 dp) y mismo lugar. Debajo aparece «ConsoleControl · Panel del local» con un fundido (320 ms), y a los 900 ms todo se desvanece hacia el muro (260 ms).
 
 En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. Fuentes en `assets/brand/*.svg`; los PNG de `assets/` se exportan de ahí (ícono, adaptativo de Android con su monocromo, pantalla de carga y favicon). La pantalla de carga usa fondo `#F0F2F4` (claro) o `#101219` (oscuro), que son `--background` en hexadecimal; en oscuro el recuadro del ícono es un grafito más claro (`splash-icon-dark.png`) para que se distinga del fondo.
 
