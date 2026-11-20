@@ -31,6 +31,8 @@ jest.mock('../../src/services/maintenanceService', () => ({
 jest.mock('../../src/services/sessionService', () => ({
   listActiveSessions: jest.fn(),
   listPendingSessions: jest.fn(),
+  // Tarifa por hora de las tarjetas libres; sin esta función TanStack Query avisa en cada render.
+  listHourlyPrices: jest.fn(async () => ({})),
 }));
 
 const NOW = 1_760_000_000_000;
