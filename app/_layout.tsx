@@ -11,6 +11,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { isRunningInExpoGo } from 'expo';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SystemUI from 'expo-system-ui';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
@@ -49,6 +50,13 @@ export default function RootLayout() {
   const [brandVisible, setBrandVisible] = useState(true);
   const hideBrand = useCallback(() => setBrandVisible(false), []);
 
+  // Fondo de la ventana nativa con el color del tema. Al volver atrás, Android quita la pantalla
+  // que sale antes de terminar la transición y detrás se veía la ventana en blanco; con el mismo
+  // fondo que la app, la pantalla anterior entra deslizándose sin destello.
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(colors.background).catch(() => {});
+  }, [colors.background]);
+
   // Respaldo en la nube (HU-008): arranca cuando la base está lista y corre aparte de la interfaz.
   useEffect(() => (ready ? startSyncLoop() : undefined), [ready]);
 
@@ -76,10 +84,10 @@ export default function RootLayout() {
   }
 
   // Las pantallas leen SQLite solo después de aplicar migraciones y datos iniciales. Cada pantalla
-  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Abrir una pantalla la
-  // desliza desde la derecha con un leve parallax de la anterior, y volver la devuelve; el diálogo
-  // de sesión sube un poco con un fundido y baja al cerrarlo. Animaciones nativas del stack
-  // (ADR 0014).
+  // dibuja su propia cabecera (ScreenHeader), así que la nativa se oculta. Todas las pantallas
+  // (también el diálogo de sesión) entran y salen igual: deslizándose desde la derecha con un leve
+  // parallax de la anterior (ADR 0014). El diálogo dejó 'fade_from_bottom' + 'modal' porque en
+  // Android su salida pasaba por un cuadro en blanco.
   return (
     // KeyboardProvider permite que los formularios se desplacen hasta el campo enfocado
     // (FormScrollView). La app va de borde a borde, por eso las barras del sistema son translúcidas.
@@ -95,14 +103,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen
-            name="sesion/[consoleId]"
-            options={{
-              presentation: 'modal',
-              animation: 'fade_from_bottom',
-              gestureDirection: 'vertical',
-            }}
-          />
+          <Stack.Screen name="sesion/[consoleId]" />
           <Stack.Screen name="cobro/[sessionId]" />
           <Stack.Screen name="dev/persistencia" />
           <Stack.Screen name="dev/spike-cronometro" />
