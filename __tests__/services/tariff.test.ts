@@ -5,6 +5,7 @@ import {
   chargedMinutes,
   discountedExtraCents,
   type RateBlock,
+  proRatedCents,
   splitIntoPricedBlocks,
 } from '../../src/services/tariff';
 
@@ -248,5 +249,18 @@ describe('calculateRate · rendimiento (TW-103, RNF-01)', () => {
       });
     }
     expect(performance.now() - start).toBeLessThan(100);
+  });
+});
+
+describe('proRatedCents · cobro por tiempo jugado en tiempo fijo', () => {
+  it('PS4 a S/ 7.00 la hora: 37 min = 4.316 → S/ 4.40', () => {
+    expect(proRatedCents(700, 37)).toBe(440);
+  });
+
+  it('una hora exacta cuesta la hora y nunca deja céntimos sueltos', () => {
+    expect(proRatedCents(700, 60)).toBe(700);
+    for (let minutes = 1; minutes <= 180; minutes++) {
+      expect(proRatedCents(2830, minutes) % 10).toBe(0);
+    }
   });
 });

@@ -32,4 +32,4 @@
 - Los minutos jugados son `fin − started_at`, redondeados hacia arriba (ADR 0003). En tiempo libre no hay exceso: se cobra el tiempo real.
 - Al finalizar, la sesión pasa a `por_cobrar` con su liquidación guardada (`played_minutes`, `charged_minutes`, `penalty_cents`, `total_cents`). La consola sigue ocupada hasta el cobro (HU-006). Ver [ADR 0013](../adr/0013-estados-de-sesion-y-cobro.md).
 - Pantalla `app/cobro/[sessionId].tsx`, a la que se llega al tocar una consola ocupada del muro.
-- Por confirmar con VN: la penalidad pasada la gracia se cobra por fracciones de 15 minutos redondeando hacia arriba.
+- **Cambio de regla de VN (19/11/2026).** En tiempo fijo se cobra el tiempo jugado: el precio por hora con sus mandos, proporcional a los minutos y redondeado hacia arriba a S/ 0.10. Vale aunque la sesión se corte antes o se pase de lo contratado. Lo que se pasa se muestra como «Exceso», a la misma tarifa. La gracia de 3 minutos y los bloques de 15 (escenario 2) siguen aplicando solo al tiempo libre. Ver la regla 5 en [`../architecture/tarifario.md`](../architecture/tarifario.md).
