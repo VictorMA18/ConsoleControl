@@ -121,17 +121,17 @@ En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. 
 
 ## Movimiento
 
-| Dónde                   | Movimiento                                                  |
-| ----------------------- | ----------------------------------------------------------- |
-| Cambio de pantalla      | Transición nativa de la plataforma                          |
-| Diálogo de sesión       | Modal que sube desde abajo (nativo)                         |
-| Pestañas                | Sin animación                                               |
-| Tarjeta presionada      | Escala 0.97 en 120 ms                                       |
-| Cambio de estado        | Color de la franja en 200 ms                                |
-| Muro al filtrar         | Reacomodo en 220 ms y fundido de entrada en 200 ms          |
-| Diálogo de confirmación | Entra de 0.96 a 1 con opacidad en 200 ms                    |
-| Por terminar            | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada) |
-| Pantalla de carga       | Sale con un fundido de 250 ms                               |
+| Dónde                             | Movimiento                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| Cambio de pantalla                | Entra deslizando desde la derecha; al volver sale hacia la derecha (nativo)  |
+| Diálogo de sesión                 | Sube desde abajo y al cerrarlo baja (nativo)                                 |
+| Pestañas                          | Desplazamiento corto con fundido hacia la pestaña elegida (`shift`)          |
+| Tarjeta presionada                | Escala 0.97 en 120 ms                                                        |
+| Cambio de estado                  | Color de la franja en 200 ms                                                 |
+| Muro al filtrar y Salud al plegar | Reacomodo en 220 ms y fundido de entrada en 200 ms                           |
+| Diálogo de confirmación           | Entra de 0.96 a 1 con opacidad en 200 ms; sale encogiéndose a 0.97 en 150 ms |
+| Por terminar                      | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada)                  |
+| Pantalla de carga                 | Sale con un fundido de 250 ms                                                |
 
 Curva `cubicBezier(0.23, 1, 0.32, 1)`. Solo se animan `transform`, `opacity` y color. Con movimiento reducido no hay escala ni titileo: queda el cambio de opacidad o de color.
 

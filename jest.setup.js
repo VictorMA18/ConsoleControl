@@ -17,6 +17,7 @@ jest.mock('react-native-reanimated', () => {
     Easing: { bezier: () => () => 0 },
     ReduceMotion: { System: 'system' },
     FadeIn: chainable(),
+    FadeOut: chainable(),
     LinearTransition: chainable(),
     Keyframe: function Keyframe() {
       return chainable();

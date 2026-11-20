@@ -1,12 +1,22 @@
-import { BellRing, Clock3, Gamepad2, Sparkles, Wrench, type LucideIcon } from 'lucide-react-native';
+import {
+  BellRing,
+  ChevronDown,
+  Clock3,
+  Gamepad2,
+  Sparkles,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
+import Animated, { cubicBezier, FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { HEALTH_LOOK, HealthLightBadge } from '../../src/components/HealthLightBadge';
 import { MaintenancePanel } from '../../src/components/MaintenancePanel';
 import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { SearchField } from '../../src/components/SearchField';
 import { StateView } from '../../src/components/StateView';
 import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
@@ -27,7 +37,9 @@ import {
 } from '../../src/services/health';
 import type { EquipmentConsole } from '../../src/services/healthService';
 import { MAINTENANCE_LABELS, type MaintenanceStatus } from '../../src/services/maintenanceAlerts';
+import { matchesQuery } from '../../src/stores/wallFilterStore';
 import { cn } from '../../src/utils/cn';
+import { EASE_OUT_BEZIER } from '../../src/utils/theme';
 
 const CONSOLE_LABELS: Record<ConsoleStatus, string> = {
   disponible: 'Operativa',
@@ -50,6 +62,13 @@ const LIGHT_OF_OPTION: Record<ConsoleHealthStatus | ControllerHealthStatus, Heal
   averiado: 'rojo',
 };
 
+// La flecha gira al abrir o cerrar una tarjeta.
+const CHEVRON_TRANSITION = {
+  transitionProperty: 'transform',
+  transitionDuration: 200,
+  transitionTimingFunction: cubicBezier(...EASE_OUT_BEZIER),
+} as const;
+
 type PendingChange = {
   console: EquipmentConsole;
   status: Exclude<ConsoleHealthStatus, 'disponible'>;
@@ -57,7 +76,8 @@ type PendingChange = {
 
 // Semáforo de salud (HU-012, CU-004): estado y horas de uso de cada consola y mando. Lo que está
 // en mantenimiento o averiado queda fuera de la asignación al iniciar una sesión (RN-06). Debajo de
-// cada consola, el mantenimiento preventivo con sus alertas (HU-014).
+// cada consola, el mantenimiento preventivo con sus alertas (HU-014). Las tarjetas se pliegan y se
+// filtran con el buscador por número de máquina.
 export default function HealthScreen() {
   const { data: equipment, isPending, error } = useEquipment();
   const changeHealth = useChangeHealth();
@@ -67,6 +87,22 @@ export default function HealthScreen() {
   const registerMaintenance = useRegisterMaintenance();
   const [servicing, setServicing] = useState<MaintenanceStatus | null>(null);
   const dueCount = maintenance.filter((m) => m.due).length;
+  const [query, setQuery] = useState('');
+  // Tarjetas abiertas; todas empiezan plegadas para ver el inventario de un vistazo.
+  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
+  const visible = (equipment ?? []).filter((c) => matchesQuery(c.name, query));
+
+  function toggle(id: string) {
+    setOpen((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
   async function apply(
     change:
@@ -105,7 +141,11 @@ export default function HealthScreen() {
       ) : error ? (
         <StateView kind="error" message="No se pudo leer el inventario." />
       ) : (
-        <ScrollView contentContainerClassName="gap-4 p-4 pb-8">
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          contentContainerClassName="gap-4 p-4 pb-8"
+        >
           <View className="flex-row gap-2">
             <Count
               light="verde"
@@ -145,91 +185,147 @@ export default function HealthScreen() {
             </View>
           ) : null}
 
-          {(equipment ?? []).map((console) => {
+          <SearchField
+            testID="buscar-salud"
+            accessibilityLabel="Buscar máquina en Salud"
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Buscar máquina, por ejemplo 3"
+          />
+
+          {visible.length === 0 ? (
+            <StateView kind="empty" message={`No hay ninguna máquina «${query}».`} />
+          ) : null}
+
+          {visible.map((console) => {
             const editable = canChangeConsoleHealth(console.status);
+            // Con una sola máquina encontrada se abre sola.
+            const expanded = open.has(console.id) || (query.trim() !== '' && visible.length === 1);
+            const statuses = maintenance.filter((m) => m.consoleId === console.id);
+            const due = statuses.some((m) => m.due);
+            const brokenControllers = console.controllers.filter(
+              (m) => m.status === 'averiado' || m.status === 'mantenimiento',
+            ).length;
             return (
-              <View
+              <Animated.View
                 key={console.id}
                 testID={`salud-${console.id}`}
-                className="gap-4 rounded-3xl border border-border bg-card p-5"
+                layout={LinearTransition.duration(220)}
+                className="overflow-hidden rounded-3xl border border-border bg-card"
               >
-                <View className="flex-row items-center gap-3">
-                  <PlatformBadge consoleType={console.consoleType} />
-                  <Text className="flex-1 text-xl font-extrabold" numberOfLines={1}>
-                    {console.name}
-                  </Text>
-                  <HealthLightBadge
-                    testID={`semaforo-${console.id}`}
-                    light={consoleLight(console.status)}
-                    label={CONSOLE_LABELS[console.status]}
-                  />
-                </View>
-                <UsageRow icon={Clock3} minutes={console.usageMinutes} />
+                <Pressable
+                  testID={`plegar-${console.id}`}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded }}
+                  accessibilityLabel={`${console.name}, ${CONSOLE_LABELS[console.status]}. ${expanded ? 'Plegar' : 'Desplegar'}`}
+                  onPress={() => toggle(console.id)}
+                  className="gap-3 p-5 active:bg-accent"
+                >
+                  <View className="flex-row items-center gap-3">
+                    <PlatformBadge consoleType={console.consoleType} />
+                    <Text className="flex-1 text-xl font-extrabold" numberOfLines={1}>
+                      {console.name}
+                    </Text>
+                    <Animated.View
+                      style={[
+                        CHEVRON_TRANSITION,
+                        { transform: [{ rotate: expanded ? '180deg' : '0deg' }] },
+                      ]}
+                    >
+                      <Icon as={ChevronDown} size={22} className="text-muted-foreground" />
+                    </Animated.View>
+                  </View>
+                  <View className="flex-row flex-wrap items-center gap-2">
+                    <HealthLightBadge
+                      testID={`semaforo-${console.id}`}
+                      light={consoleLight(console.status)}
+                      label={CONSOLE_LABELS[console.status]}
+                    />
+                    {brokenControllers > 0 ? (
+                      <HealthLightBadge
+                        light="ambar"
+                        label={`${brokenControllers} ${brokenControllers === 1 ? 'mando' : 'mandos'} fuera`}
+                      />
+                    ) : null}
+                    {due ? (
+                      <HealthLightBadge light="ambar" label="Mantenimiento pendiente" />
+                    ) : null}
+                  </View>
+                  <UsageRow icon={Clock3} minutes={console.usageMinutes} />
+                </Pressable>
 
-                <Segmented
-                  options={CONSOLE_HEALTH_STATUSES.map((status) => ({
-                    value: status,
-                    label: CONSOLE_LABELS[status],
-                  }))}
-                  selected={console.status}
-                  disabled={!editable || changeHealth.isPending}
-                  onChange={(status) => chooseConsole(console, status)}
-                  testID={`estado-consola-${console.id}`}
-                />
-                {!editable ? (
-                  <Text className="text-sm text-muted-foreground">
-                    En juego: finaliza y cobra la sesión para cambiar su estado.
-                  </Text>
+                {expanded ? (
+                  <Animated.View
+                    entering={FadeIn.duration(180)}
+                    exiting={FadeOut.duration(120)}
+                    className="gap-4 border-t border-border p-5"
+                  >
+                    <Segmented
+                      options={CONSOLE_HEALTH_STATUSES.map((status) => ({
+                        value: status,
+                        label: CONSOLE_LABELS[status],
+                      }))}
+                      selected={console.status}
+                      disabled={!editable || changeHealth.isPending}
+                      onChange={(status) => chooseConsole(console, status)}
+                      testID={`estado-consola-${console.id}`}
+                    />
+                    {!editable ? (
+                      <Text className="text-sm text-muted-foreground">
+                        En juego: finaliza y cobra la sesión para cambiar su estado.
+                      </Text>
+                    ) : null}
+
+                    <View className="gap-3 border-t border-border pt-4">
+                      <Text className="text-sm font-bold text-muted-foreground">
+                        Mandos ({console.controllers.length})
+                      </Text>
+                      {console.controllers.map((controller) => {
+                        const light = controllerLight(controller.status);
+                        return (
+                          <View key={controller.id} className="gap-2">
+                            <View className="flex-row items-center gap-2">
+                              <View
+                                className={cn('h-2.5 w-2.5 rounded-full', HEALTH_LOOK[light].dot)}
+                              />
+                              <Icon as={Gamepad2} size={18} />
+                              <Text className="flex-1 text-base font-bold">{controller.label}</Text>
+                              <Text className="text-sm text-muted-foreground">
+                                {formatUsage(controller.usageMinutes)}
+                              </Text>
+                            </View>
+                            {canChangeControllerHealth(controller.status) ? (
+                              <Segmented
+                                compact
+                                options={CONTROLLER_HEALTH_STATUSES.map((status) => ({
+                                  value: status,
+                                  label: CONTROLLER_LABELS[status],
+                                }))}
+                                selected={controller.status}
+                                disabled={changeHealth.isPending}
+                                onChange={(status) =>
+                                  void apply({ kind: 'controller', id: controller.id, status })
+                                }
+                                testID={`estado-mando-${controller.id}`}
+                              />
+                            ) : (
+                              <Text className="text-sm text-muted-foreground">
+                                En uso en una sesión.
+                              </Text>
+                            )}
+                          </View>
+                        );
+                      })}
+                    </View>
+
+                    <MaintenancePanel
+                      statuses={statuses}
+                      disabled={registerMaintenance.isPending}
+                      onRegister={setServicing}
+                    />
+                  </Animated.View>
                 ) : null}
-
-                <View className="gap-3 border-t border-border pt-4">
-                  <Text className="text-sm font-bold text-muted-foreground">
-                    Mandos ({console.controllers.length})
-                  </Text>
-                  {console.controllers.map((controller) => {
-                    const light = controllerLight(controller.status);
-                    return (
-                      <View key={controller.id} className="gap-2">
-                        <View className="flex-row items-center gap-2">
-                          <View
-                            className={cn('h-2.5 w-2.5 rounded-full', HEALTH_LOOK[light].dot)}
-                          />
-                          <Icon as={Gamepad2} size={18} />
-                          <Text className="flex-1 text-base font-bold">{controller.label}</Text>
-                          <Text className="text-sm text-muted-foreground">
-                            {formatUsage(controller.usageMinutes)}
-                          </Text>
-                        </View>
-                        {canChangeControllerHealth(controller.status) ? (
-                          <Segmented
-                            compact
-                            options={CONTROLLER_HEALTH_STATUSES.map((status) => ({
-                              value: status,
-                              label: CONTROLLER_LABELS[status],
-                            }))}
-                            selected={controller.status}
-                            disabled={changeHealth.isPending}
-                            onChange={(status) =>
-                              void apply({ kind: 'controller', id: controller.id, status })
-                            }
-                            testID={`estado-mando-${controller.id}`}
-                          />
-                        ) : (
-                          <Text className="text-sm text-muted-foreground">
-                            En uso en una sesión.
-                          </Text>
-                        )}
-                      </View>
-                    );
-                  })}
-                </View>
-
-                <MaintenancePanel
-                  statuses={maintenance.filter((m) => m.consoleId === console.id)}
-                  disabled={registerMaintenance.isPending}
-                  onRegister={setServicing}
-                />
-              </View>
+              </Animated.View>
             );
           })}
         </ScrollView>
