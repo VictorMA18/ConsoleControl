@@ -185,9 +185,7 @@ function Stat({ label, value }: { label: string; value: number | undefined }) {
       <Text className="text-2xl font-extrabold" style={{ fontVariant: ['tabular-nums'] }}>
         {value ?? '…'}
       </Text>
-      <Text className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </Text>
+      <Text className="text-xs font-bold text-muted-foreground">{label}</Text>
     </View>
   );
 }

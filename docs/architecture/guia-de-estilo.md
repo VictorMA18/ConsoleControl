@@ -19,15 +19,15 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 ## Pantallas del prototipo
 
-| #   | Pantalla                 | Qué muestra                                                                               |
-| --- | ------------------------ | ----------------------------------------------------------------------------------------- |
-| 1   | Muro de consolas         | Cuadrícula de 2 columnas con una tarjeta por consola y filtro por tipo                    |
-| 2   | Diálogo de sesión        | Mandos 1 a 6, modalidad, total estimado y "Iniciar sesión" (1 mando y 1 hora por defecto) |
-| 3   | Muro con sesión en juego | Tarjeta roja con cronómetro y tiempo restante                                             |
-| 4   | Alerta: por terminar     | Tarjeta en ámbar titilante y aviso "faltan 5 minutos"                                     |
-| 5   | Tiempo cumplido          | Tarjeta en ámbar fijo hasta la liquidación                                                |
-| 6   | Mandos insuficientes     | Motivo y consolas alternativas con stock                                                  |
-| 7   | Consola ocupada          | Motivo del bloqueo y "Volver al muro"                                                     |
+| #   | Pantalla                 | Qué muestra                                                            |
+| --- | ------------------------ | ---------------------------------------------------------------------- |
+| 1   | Muro de consolas         | Cuadrícula de 2 columnas con una tarjeta por consola y filtro por tipo |
+| 2   | Diálogo de sesión        | Sube un poco con un fundido y baja al cerrarlo (`fade_from_bottom`)    |
+| 3   | Muro con sesión en juego | Tarjeta roja con cronómetro y tiempo restante                          |
+| 4   | Alerta: por terminar     | Tarjeta en ámbar titilante y aviso "faltan 5 minutos"                  |
+| 5   | Tiempo cumplido          | Tarjeta en ámbar fijo hasta la liquidación                             |
+| 6   | Mandos insuficientes     | Motivo y consolas alternativas con stock                               |
+| 7   | Consola ocupada          | Motivo del bloqueo y "Volver al muro"                                  |
 
 Flujo enlazado: 1 → 2 → 3 → 4 → 5 → 7; desde 1, tocar PS4 con 5 mandos lleva a 6, y una alternativa vuelve a 2.
 
@@ -93,8 +93,12 @@ Montserrat Alternates: 500 (texto), 600 (pestañas), 700 (datos y botones) y 800
 
 - Base en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`, copiados de React Native Reusables).
 - Patrón de tarjeta: `ConsoleCard`, `PlatformBadge`, `InfoRow` y `PressableScale`. La franja de estado se usa solo en las tarjetas grandes (consola y resumen de cobro).
-- Resumen del muro (`WallSummary`): una sola tarjeta con una barra fina de proporción por estado y cuatro columnas (Disponible, En juego, Por terminar —suma tiempo cumplido— y Por cobrar) separadas por líneas finas. El color solo va en la barra y en un punto junto a cada etiqueta; los números van en el color del texto, y en gris cuando son cero. Salud usa el mismo patrón con tres columnas (operativos, mantenimiento, averiados).
-- Franjas: «Disponible» usa la franja suave (`available-soft` con texto `available-tone`) porque es el estado de reposo. Los colores fuertes quedan para lo que pide atención: en juego, por terminar, tiempo cumplido y por cobrar.
+- Resumen del muro (`WallSummary`): cuatro tarjetas en 2 × 2 (Disponible, En juego, Por terminar —suma tiempo cumplido— y Por cobrar). Cada una lleva arriba la etiqueta con un ícono pequeño del color del estado y abajo el número grande, sin fondos de color ni barras. Por terminar y Por cobrar llevan el borde de su color cuando son mayores que cero, y los ceros van en gris. Salud usa el mismo patrón con tres tarjetas (Operativos, Revisión y Averiados).
+- Franjas: «Disponible», «Por terminar» y «Tiempo cumplido» usan franjas suaves (`*-soft` con texto `*-tone`). Los colores fuertes quedan para «En juego» y «Por cobrar». No hay barras de progreso en las tarjetas: el tiempo restante va en la fila del reloj de arena.
+- Avisos (`AlertBanner`): tarjeta ámbar suave con el ícono en un círculo, la máquina como título y el mensaje debajo. Se cierra tocándola, entra bajando con un fundido y sale con un fundido.
+- Barra inferior (`TabBar`, estilo Material 3): el ícono va dentro de una pastilla de 56 × 32 dp que se resalta en la pestaña activa (transición de 200 ms), con la etiqueta en negrita.
+- Cabeceras (`ScreenHeader`): título grande de 28 sp con una línea de contexto debajo («Turno abierto desde las 7:14», «5 máquinas · 24 mandos»). Las pantallas de detalle llevan un título de 20 sp y la flecha de volver en un botón circular.
+- Textos: nada en mayúsculas forzadas, porque las mayúsculas alternativas de Montserrat Alternates se leen mal. Cuando un texto va dentro de un contenedor centrado, se le da `w-full` y `text-center`: Android mide corto el ancho con esta fuente y corta la última letra.
 - Vuelto (`ChangeCalculator`): un campo «Recibido» con el teclado numérico del celular y, debajo, el vuelto o lo que falta. En pago mixto usa solo la parte en efectivo.
 - Formularios dentro de `FormScrollView`: al enfocar un campo, la pantalla se desplaza para dejarlo encima del teclado (`react-native-keyboard-controller`).
 - `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado en línea, `Logo` y `BrandMark` para la marca, `ThemeToggle` para el tema y `ConsoleSearch` para buscar máquinas.
@@ -124,17 +128,17 @@ En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. 
 
 ## Movimiento
 
-| Dónde                             | Movimiento                                                                   |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| Cambio de pantalla                | Entra deslizando desde la derecha; al volver sale hacia la derecha (nativo)  |
-| Diálogo de sesión                 | Sube desde abajo y al cerrarlo baja (nativo)                                 |
-| Pestañas                          | Desplazamiento corto con fundido hacia la pestaña elegida (`shift`)          |
-| Tarjeta presionada                | Escala 0.97 en 120 ms                                                        |
-| Cambio de estado                  | Color de la franja en 200 ms                                                 |
-| Muro al filtrar y Salud al plegar | Reacomodo en 220 ms y fundido de entrada en 200 ms                           |
-| Diálogo de confirmación           | Entra de 0.96 a 1 con opacidad en 200 ms; sale encogiéndose a 0.97 en 150 ms |
-| Por terminar                      | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada)                  |
-| Pantalla de carga                 | Sale con un fundido de 250 ms                                                |
+| Dónde                             | Movimiento                                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Cambio de pantalla                | Entra deslizando desde la derecha con un leve parallax; al volver sale igual (`ios_from_right`)  |
+| Diálogo de sesión                 | Sube un poco con un fundido y baja al cerrarlo (`fade_from_bottom`)                              |
+| Pestañas                          | Desplazamiento corto con fundido (`shift`, 220 ms); la pastilla de la barra se resalta en 200 ms |
+| Tarjeta presionada                | Escala 0.97 en 120 ms                                                                            |
+| Cambio de estado                  | Color de la franja en 200 ms                                                                     |
+| Muro al filtrar y Salud al plegar | Reacomodo en 220 ms y fundido de entrada en 200 ms                                               |
+| Diálogo de confirmación           | Entra de 0.96 a 1 con opacidad en 200 ms; sale encogiéndose a 0.97 en 150 ms                     |
+| Por terminar                      | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada)                                      |
+| Pantalla de carga                 | Sale con un fundido de 250 ms                                                                    |
 
 Curva `cubicBezier(0.23, 1, 0.32, 1)`. Solo se animan `transform`, `opacity` y color. Con movimiento reducido no hay escala ni titileo: queda el cambio de opacidad o de color.
 

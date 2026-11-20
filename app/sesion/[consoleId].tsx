@@ -21,7 +21,6 @@ import { useRateBlocks } from '../../src/hooks/useRateBlocks';
 import { useStartSession } from '../../src/hooks/useStartSession';
 import { type StartSessionInput, startSessionSchema } from '../../src/schemas/session';
 import type { ConsoleWithStock } from '../../src/services/consoleService';
-import { CONSOLE_TYPE_LABELS } from '../../src/utils/consoleLabels';
 import { SESSION_MODE_LABELS } from '../../src/utils/sessionLabels';
 
 const CONTROLLER_OPTIONS = Array.from({ length: MAX_CONTROLLERS }, (_, i) => i + 1);
@@ -111,7 +110,7 @@ export default function SessionDialogScreen() {
     <View className="flex-1 bg-background">
       <ScreenHeader
         title="Nueva sesión"
-        subtitle={`${console.name} · ${CONSOLE_TYPE_LABELS[console.consoleType]}`}
+        subtitle="Elige los mandos y la modalidad"
         onClose={() => router.back()}
       />
       <FormScrollView>

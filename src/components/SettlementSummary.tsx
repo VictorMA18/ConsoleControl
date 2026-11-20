@@ -59,9 +59,7 @@ export function SettlementSummary({ settlement, state = 'por_cobrar' }: Props) {
         <Text className={cn('text-xl font-extrabold', style.onBand)}>{style.label}</Text>
       </View>
       <View className="gap-1 p-5">
-        <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Total a cobrar
-        </Text>
+        <Text className="text-sm font-bold text-muted-foreground">Total a cobrar</Text>
         <Text
           testID="total-cobro"
           className="text-6xl font-extrabold tracking-tight"

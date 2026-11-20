@@ -37,6 +37,15 @@ VN diseñó la tarjeta de consola que quiere ver en el muro: una franja de color
 - **Salud.** Pasa de tarjetas desplegables a una lista compacta con filtros y una pantalla de detalle por máquina.
 - **Pantalla de carga.** Se agrega la pantalla de marca `BrandSplash`.
 
+## Segunda revisión (19/11/2026, evaluada en emulador)
+
+- **Resumen:** tarjetas 2 × 2 limpias, sin barras de proporción. Las tarjetas de consola tampoco llevan barra de avance.
+- **Franjas de aviso:** «Por terminar» y «Tiempo cumplido» pasan a ámbar suave.
+- **Cobro:** muestra el mismo estado que la tarjeta del muro.
+- **Tarjeta de consola:** el nombre va en su propia fila, a todo el ancho, para no cortarse en pantallas de 360 dp.
+- **Navegación:** barra inferior estilo Material 3 con pastilla, cabeceras con título grande y línea de contexto, y transiciones `ios_from_right` y `fade_from_bottom`.
+- **Textos:** sin mayúsculas forzadas.
+
 ## Consecuencias
 
 - Cambiar un color es cambiar una variable en `global.css` y su copia en `src/utils/theme.ts` (para lo que no acepta className).

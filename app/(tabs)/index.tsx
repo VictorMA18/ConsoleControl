@@ -96,10 +96,11 @@ export default function ConsoleWallScreen() {
             // Una columna de tarjetas anchas, legibles a distancia (ADR 0014). Al filtrar, las que
             // quedan se reacomodan con una transición y las nuevas aparecen con un fundido corto.
             <View className="gap-3 px-4">
-              {visible.map((item) => (
+              {visible.map((item, index) => (
                 <Animated.View
                   key={item.id}
-                  entering={FadeIn.duration(200)}
+                  // Entrada escalonada corta (40 ms por tarjeta, tope de 200 ms).
+                  entering={FadeIn.duration(220).delay(Math.min(index, 5) * 40)}
                   layout={LinearTransition.duration(220)}
                 >
                   <ConsoleCard

@@ -55,8 +55,11 @@ export function ExtendTime({ session, now, isPending, onExtend }: Props) {
                 <Text className="text-lg font-extrabold">+{minutes} min</Text>
               </View>
               {plan.ok ? (
+                // A todo el ancho y centrado: dentro de un contenedor centrado Android mide corto
+                // el texto con esta fuente y corta el monto.
                 <Text
-                  className="text-sm font-semibold text-muted-foreground"
+                  numberOfLines={1}
+                  className="w-full text-center text-sm font-semibold text-muted-foreground"
                   style={{ fontVariant: ['tabular-nums'] }}
                 >
                   Total {formatMoney(plan.totalCents)}

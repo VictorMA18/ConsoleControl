@@ -91,8 +91,6 @@ function BusyConsoleCard({
   const alertState = useSessionAlertState(session);
   const state = cardState(console.status, alertState);
   const payable = session.status === 'por_cobrar';
-  const progress =
-    session.durationMs && !payable ? Math.min(1, elapsedMs / session.durationMs) : null;
   // Los mandos prestados pasan a 'en_uso': el total de la consola son los prestados más los libres.
   const total = session.controllerCount + console.operationalControllers;
   return (
@@ -101,7 +99,6 @@ function BusyConsoleCard({
       state={state}
       onPress={onPress}
       time={formatDuration(elapsedMs)}
-      progress={progress}
       rows={
         <>
           <InfoRow icon={Gamepad2}>
@@ -132,11 +129,9 @@ type ShellProps = {
   time: string;
   rows: React.ReactNode;
   idle?: boolean;
-  // Avance del tiempo fijo, de 0 a 1.
-  progress?: number | null;
 };
 
-function CardShell({ console, state, onPress, time, rows, idle, progress }: ShellProps) {
+function CardShell({ console, state, onPress, time, rows, idle }: ShellProps) {
   const reducedMotion = useReducedMotion();
   const style = CARD_STATE_STYLES[state];
   const blinking = state === 'por_terminar' && !reducedMotion;
@@ -156,7 +151,7 @@ function CardShell({ console, state, onPress, time, rows, idle, progress }: Shel
       >
         <Animated.View
           testID={`estado-${console.id}`}
-          className={cn('flex-row items-center px-5 py-3', style.band)}
+          className={cn('flex-row items-center px-5 py-2.5', style.band)}
           style={BAND_TRANSITION}
         >
           <Animated.View
@@ -164,44 +159,42 @@ function CardShell({ console, state, onPress, time, rows, idle, progress }: Shel
             className="flex-row items-center gap-2"
             style={blinking ? BLINK : undefined}
           >
-            <Icon as={STATE_ICONS[state]} size={20} strokeWidth={2.5} className={style.onBand} />
-            <Text className={cn('text-xl font-extrabold', style.onBand)}>{style.label}</Text>
+            <Icon as={STATE_ICONS[state]} size={18} strokeWidth={2.5} className={style.onBand} />
+            <Text className={cn('text-lg font-extrabold', style.onBand)}>{style.label}</Text>
           </Animated.View>
         </Animated.View>
 
-        <View className="flex-row gap-4 px-5 py-4">
-          <View className="flex-1 justify-center gap-3">
-            <View className="flex-row flex-wrap items-center gap-x-3 gap-y-2">
-              <PlatformBadge consoleType={console.consoleType} />
-              <Text className="text-2xl font-extrabold tracking-tight" numberOfLines={1}>
-                {console.name}
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
+        <View className="gap-3 px-5 pb-4 pt-3.5">
+          {/* Fila 1, a todo el ancho: plataforma y nombre de la máquina. */}
+          <View className="flex-row items-center gap-2.5">
+            <PlatformBadge consoleType={console.consoleType} compact />
+            <Text className="shrink text-2xl font-extrabold tracking-tight" numberOfLines={1}>
+              {console.name}
+            </Text>
+          </View>
+          {/* Fila 2: cronómetro a la izquierda; mandos, tiempo y dinero a la derecha. */}
+          <View className="flex-row items-center gap-4">
+            <View className="flex-1 flex-row items-center gap-2">
               <Icon
                 as={Clock3}
-                size={26}
+                size={24}
                 strokeWidth={2.25}
                 className={idle ? 'text-muted-foreground' : 'text-foreground'}
               />
               <Text
                 testID={`cronometro-${console.id}`}
-                className={cn('text-[28px] font-extrabold', idle && 'text-muted-foreground')}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                className={cn('shrink text-[28px] font-extrabold', idle && 'text-muted-foreground')}
                 style={{ fontVariant: ['tabular-nums'] }}
               >
                 {time}
               </Text>
             </View>
+            <View className="w-px self-stretch bg-border" />
+            <View className="justify-center gap-2.5">{rows}</View>
           </View>
-          <View className="w-px bg-border" />
-          <View className="justify-center gap-3">{rows}</View>
         </View>
-
-        {progress !== undefined && progress !== null ? (
-          <View className="h-1 bg-secondary">
-            <View className={cn('h-1', style.band)} style={{ width: `${progress * 100}%` }} />
-          </View>
-        ) : null}
       </View>
     </PressableScale>
   );

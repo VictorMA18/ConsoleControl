@@ -8,17 +8,21 @@ import { Text } from './ui/text';
 // Cuánto se queda la marca a la vista antes de dar paso a la app.
 const HOLD_MS = 900;
 
-type Props = { onDone: () => void };
+// ready: la base y la fuente están listas. Antes solo se ve el ícono (la fuente aún no cargó).
+type Props = { ready: boolean; onDone: () => void };
 
 // Pantalla de marca al abrir la app (ADR 0014). Continúa la pantalla de carga nativa: el ícono
 // queda en el mismo lugar y del mismo tamaño (100 dp, centrado), así el paso no se nota; debajo
 // aparece el nombre con un fundido y, al final, todo se desvanece hacia el muro.
-export function BrandSplash({ onDone }: Props) {
+export function BrandSplash({ ready, onDone }: Props) {
   const reducedMotion = useReducedMotion();
   useEffect(() => {
+    if (!ready) {
+      return undefined;
+    }
     const timer = setTimeout(onDone, HOLD_MS);
     return () => clearTimeout(timer);
-  }, [onDone]);
+  }, [ready, onDone]);
   const wordmarkEntering = reducedMotion
     ? FadeIn.duration(200)
     : FadeInDown.duration(320).delay(120);
@@ -30,12 +34,14 @@ export function BrandSplash({ onDone }: Props) {
       accessibilityLabel="ConsoleControl"
     >
       <BrandMark size={100} />
-      <Animated.View entering={wordmarkEntering} style={styles.wordmark} className="items-center">
-        <Text className="text-2xl font-extrabold tracking-tight">
-          Console<Text className="text-2xl font-medium text-muted-foreground">Control</Text>
-        </Text>
-        <Text className="text-sm font-semibold text-muted-foreground">Panel del local</Text>
-      </Animated.View>
+      {ready ? (
+        <Animated.View entering={wordmarkEntering} style={styles.wordmark} className="items-center">
+          <Text className="text-2xl font-extrabold tracking-tight">
+            Console<Text className="text-2xl font-medium text-muted-foreground">Control</Text>
+          </Text>
+          <Text className="text-sm font-semibold text-muted-foreground">Panel del local</Text>
+        </Animated.View>
+      ) : null}
     </Animated.View>
   );
 }

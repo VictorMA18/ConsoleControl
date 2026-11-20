@@ -199,7 +199,8 @@ describe('alerta de vencimiento en el muro (T16)', () => {
       jest.advanceTimersByTime(MINUTE + 1_000);
     });
 
-    expect(screen.getByText('PS5 #1: faltan 5 minutos o menos')).toBeTruthy();
+    // El aviso muestra la máquina y el mensaje en dos líneas; el texto completo va en su etiqueta.
+    expect(screen.getByLabelText('PS5 #1: faltan 5 minutos o menos')).toBeTruthy();
     expect(screen.getByTestId('ambar-titilante')).toBeTruthy();
     expect(screen.getByTestId('resumen-por_terminar')).toHaveTextContent('1Por terminar');
     expect(vibrate).toHaveBeenCalledTimes(1);

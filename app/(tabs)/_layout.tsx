@@ -1,31 +1,22 @@
 import { HeartPulse, LayoutGrid, Settings2, Wallet } from 'lucide-react-native';
 import { Tabs } from 'expo-router';
 
-import { useInsets } from '../../src/hooks/useBottomInset';
-import { FONTS, useThemeColors } from '../../src/utils/theme';
+import { TabBar } from '../../src/components/TabBar';
+import { useThemeColors } from '../../src/utils/theme';
 
 // Barra de pestañas: Consolas (muro), Caja, Salud (HU-012) y Sistema.
-// La app se dibuja de borde a borde: la barra suma el margen inferior del sistema (barra de gestos
-// o botones de Android) para no quedar debajo de ella. Al cambiar de pestaña el contenido se desliza
-// un poco con un fundido hacia el lado de la pestaña elegida ('shift', ADR 0014).
+// La barra es propia (TabBar, estilo Material 3) y suma el margen inferior del sistema. Al cambiar
+// de pestaña el contenido se desliza un poco con un fundido hacia el lado de la pestaña elegida
+// ('shift', 220 ms, ADR 0014).
 export default function TabsLayout() {
   const colors = useThemeColors();
-  const { bottom } = useInsets();
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShown: false,
         animation: 'shift',
-        tabBarActiveTintColor: colors.foreground,
-        tabBarInactiveTintColor: colors.mutedForeground,
-        tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
-          height: 62 + bottom,
-          paddingTop: 8,
-          paddingBottom: bottom + 8,
-        },
-        tabBarLabelStyle: { fontFamily: FONTS.semibold, fontSize: 12 },
+        transitionSpec: { animation: 'timing', config: { duration: 220 } },
         sceneStyle: { backgroundColor: colors.background },
       }}
     >

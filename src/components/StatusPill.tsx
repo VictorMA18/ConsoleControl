@@ -33,9 +33,7 @@ export function StatusPill({ state, testID, className }: Props) {
         style={blinking ? BLINK : undefined}
       >
         <Icon as={STATE_ICONS[state]} size={13} className={style.tone} />
-        <Text className={cn('text-xs font-bold uppercase tracking-wider', style.tone)}>
-          {style.label}
-        </Text>
+        <Text className={cn('text-xs font-bold', style.tone)}>{style.label}</Text>
       </Animated.View>
     </View>
   );
