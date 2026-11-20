@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { ConfirmDialog } from '../../src/components/ConfirmDialog';
+import { ExtendTime } from '../../src/components/ExtendTime';
 import { FormScrollView } from '../../src/components/FormScrollView';
 import { PaymentForm } from '../../src/components/PaymentForm';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
@@ -14,6 +15,7 @@ import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { useEndSession } from '../../src/hooks/useEndSession';
+import { useExtendSession } from '../../src/hooks/useExtendSession';
 import { useNow } from '../../src/hooks/useNow';
 import { useRegisterPayment } from '../../src/hooks/useRegisterPayment';
 import { useSessionDetail } from '../../src/hooks/useSessionDetail';
@@ -23,7 +25,7 @@ import { calculateSettlement } from '../../src/services/settlement';
 // Resumen de cobro de una consola ocupada (HU-005, CU-002). Mientras la sesión sigue activa muestra
 // la liquidación al momento (se recalcula cada segundo, sin consultar la base) y permite
 // finalizarla; una vez finalizada queda "por cobrar" con el resumen fijo y el formulario de pago
-// (HU-006).
+// (HU-006). Mientras está activa y es de tiempo fijo se le puede añadir tiempo (HU-009).
 export default function SettlementScreen() {
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function SettlementScreen() {
   const now = useNow();
   const { data: session, isPending } = useSessionDetail(sessionId);
   const endSession = useEndSession();
+  const extendSession = useExtendSession();
   const registerPayment = useRegisterPayment();
   const [error, setError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
@@ -63,6 +66,14 @@ export default function SettlementScreen() {
     }
   }
 
+  async function extend(minutes: number) {
+    setError(null);
+    const result = await extendSession.mutateAsync({ id: sessionId, minutes });
+    if (!result.ok) {
+      setError(result.message);
+    }
+  }
+
   async function pay(payments: PaymentLineInput[]) {
     setError(null);
     const result = await registerPayment.mutateAsync({ sessionId, payments });
@@ -85,6 +96,14 @@ export default function SettlementScreen() {
           settlement={settlement}
           state={active ? 'en_juego' : payable ? 'por_cobrar' : 'disponible'}
         />
+        {active ? (
+          <ExtendTime
+            session={session}
+            now={now}
+            isPending={extendSession.isPending}
+            onExtend={extend}
+          />
+        ) : null}
         {payable ? (
           <PaymentForm
             totalCents={session.totalCents}

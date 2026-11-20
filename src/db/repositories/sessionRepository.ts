@@ -9,6 +9,7 @@ import {
   type NewSession,
   payments,
   type Session,
+  sessionExtensions,
   sessions,
   shifts,
 } from '../schema';
@@ -117,6 +118,52 @@ export async function endSession(
 }
 
 // Cierra una sesión sin cobrarla y libera su consola y sus mandos en una sola transacción.
+export type SessionExtensionChange = {
+  minutes: number;
+  // Duración que tenía la sesión al calcular la extensión: si cambió mientras tanto (otro toque),
+  // no se aplica para no sumar dos veces.
+  previousDurationMs: number;
+  previousTotalCents: number;
+  durationMs: number;
+  totalCents: number;
+};
+
+// Añade tiempo a una sesión activa (HU-009): actualiza su duración y su monto estimado y guarda
+// la extensión en el historial, todo en una transacción. Devuelve undefined si la sesión ya no
+// está activa o su duración cambió.
+export async function extendSessionDuration(
+  id: string,
+  change: SessionExtensionChange,
+): Promise<Session | undefined> {
+  return db.transaction((tx) => {
+    const session = tx
+      .update(sessions)
+      .set({ durationMs: change.durationMs, totalCents: change.totalCents })
+      .where(
+        and(
+          eq(sessions.id, id),
+          eq(sessions.status, 'activa'),
+          eq(sessions.durationMs, change.previousDurationMs),
+        ),
+      )
+      .returning()
+      .get();
+    if (!session) {
+      return undefined;
+    }
+    tx.insert(sessionExtensions)
+      .values({
+        id: randomUUID(),
+        sessionId: id,
+        minutes: change.minutes,
+        previousTotalCents: change.previousTotalCents,
+        newTotalCents: change.totalCents,
+      })
+      .run();
+    return session;
+  });
+}
+
 // Solo lo usan las herramientas de desarrollo; el cierre normal es endSession + el cobro (HU-006).
 export async function finishSession(
   id: string,

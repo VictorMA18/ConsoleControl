@@ -5,4 +5,5 @@ export * from './enums';
 export * from './payments';
 export * from './rates';
 export * from './shifts';
+export * from './sessionExtensions';
 export * from './sessions';
