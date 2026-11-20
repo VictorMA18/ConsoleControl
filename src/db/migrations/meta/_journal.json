@@ -57,6 +57,13 @@
       "when": 1795100869229,
       "tag": "0007_usage_minutes",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1795101105585,
+      "tag": "0008_maintenances",
+      "breakpoints": true
     }
   ]
 }

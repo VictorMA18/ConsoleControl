@@ -42,3 +42,7 @@ export type SyncStatus = (typeof SYNC_STATUSES)[number];
 
 export const MIN_CONTROLLERS = 1;
 export const MAX_CONTROLLERS = 6;
+
+// Intervenciones de mantenimiento preventivo de una consola (HU-014).
+export const MAINTENANCE_KINDS = ['limpieza', 'pasta_termica'] as const;
+export type MaintenanceKind = (typeof MAINTENANCE_KINDS)[number];
