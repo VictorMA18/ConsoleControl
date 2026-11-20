@@ -12,22 +12,23 @@ Punto de entrada para agentes y personas: [`../AGENTS.md`](../AGENTS.md).
 
 Decisiones técnicas registradas:
 
-| ADR                                                      | Decisión                                              |
-| -------------------------------------------------------- | ----------------------------------------------------- |
-| [0001](adr/0001-expo-react-native.md)                    | Expo con React Native y TypeScript                    |
-| [0002](adr/0002-sqlite-fuente-de-verdad.md)              | SQLite como fuente de verdad                          |
-| [0003](adr/0003-hora-de-inicio-persistida.md)            | Hora de inicio persistida                             |
-| [0004](adr/0004-drizzle-orm.md)                          | Drizzle ORM                                           |
-| [0005](adr/0005-estado-zustand-tanstack-query.md)        | Zustand y TanStack Query                              |
-| [0006](adr/0006-nativewind.md)                           | NativeWind                                            |
-| [0007](adr/0007-zod-react-hook-form.md)                  | Zod con React Hook Form                               |
-| [0008](adr/0008-supabase-respaldo-unidireccional.md)     | Respaldo unidireccional con Supabase                  |
-| [0009](adr/0009-sin-login-en-el-mvp.md)                  | Sin login en el MVP                                   |
-| [0010](adr/0010-expo-crypto-uuid.md)                     | expo-crypto para generar UUID                         |
-| [0011](adr/0011-alertas-con-la-app-abierta.md)           | Alertas de vencimiento con la app abierta             |
-| [0012](adr/0012-react-native-reusables-y-colores-hsl.md) | React Native Reusables y colores en HSL               |
-| [0013](adr/0013-estados-de-sesion-y-cobro.md)            | Estados de sesión y cobro                             |
-| [0014](adr/0014-sistema-de-diseno-tarjeta-de-estado.md)  | Sistema de diseño «tarjeta de estado», claro y oscuro |
-| [0015](adr/0015-expo-network-para-conectividad.md)       | expo-network para detectar la conexión                |
+| ADR                                                         | Decisión                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------- |
+| [0001](adr/0001-expo-react-native.md)                       | Expo con React Native y TypeScript                    |
+| [0002](adr/0002-sqlite-fuente-de-verdad.md)                 | SQLite como fuente de verdad                          |
+| [0003](adr/0003-hora-de-inicio-persistida.md)               | Hora de inicio persistida                             |
+| [0004](adr/0004-drizzle-orm.md)                             | Drizzle ORM                                           |
+| [0005](adr/0005-estado-zustand-tanstack-query.md)           | Zustand y TanStack Query                              |
+| [0006](adr/0006-nativewind.md)                              | NativeWind                                            |
+| [0007](adr/0007-zod-react-hook-form.md)                     | Zod con React Hook Form                               |
+| [0008](adr/0008-supabase-respaldo-unidireccional.md)        | Respaldo unidireccional con Supabase                  |
+| [0009](adr/0009-sin-login-en-el-mvp.md)                     | Sin login en el MVP                                   |
+| [0010](adr/0010-expo-crypto-uuid.md)                        | expo-crypto para generar UUID                         |
+| [0011](adr/0011-alertas-con-la-app-abierta.md)              | Alertas de vencimiento con la app abierta             |
+| [0012](adr/0012-react-native-reusables-y-colores-hsl.md)    | React Native Reusables y colores en HSL               |
+| [0013](adr/0013-estados-de-sesion-y-cobro.md)               | Estados de sesión y cobro                             |
+| [0014](adr/0014-sistema-de-diseno-tarjeta-de-estado.md)     | Sistema de diseño «tarjeta de estado», claro y oscuro |
+| [0015](adr/0015-expo-network-para-conectividad.md)          | expo-network para detectar la conexión                |
+| [0016](adr/0016-rls-con-usuario-anonimo-por-dispositivo.md) | RLS con un usuario anónimo por dispositivo            |
 
 Regla: una decisión por ADR, una fase por archivo de roadmap, una historia de usuario por archivo de `specs/`.
