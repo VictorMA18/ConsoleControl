@@ -9,6 +9,9 @@ export type { RateBlock };
 export const BLOCK_MINUTES = 15;
 // RN-03: minutos de gracia al pasar de un bloque.
 export const GRACE_MINUTES = 3;
+// Tiempo fijo: minutos de tolerancia después de cumplirse lo contratado antes de cobrar el exceso
+// (regla de VN, 19/11/2026).
+export const TOLERANCE_MINUTES = 5;
 // Descuento del 30 % en el mando adicional desde el 4.º mando, solo en estas consolas.
 export const DISCOUNT_FROM_CONTROLLER = 4;
 export const DISCOUNTED_CONSOLE_TYPES: readonly ConsoleType[] = ['switch', 'ps5'];
