@@ -2,46 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sistema de diseño "sala de control" (ADR 0014). Tema oscuro pensado para un local con poca luz:
-   grafito azulado con texto marfil, sin gradientes. El color se reserva para los estados de la
-   consola, que siempre llevan icono y texto además del color. Tokens en HSL ("matiz saturación
-   luminosidad"); los mismos valores están en src/utils/theme.ts.
-   Contrastes (WCAG): texto sobre fondo 16.8:1, texto atenuado sobre tarjeta 7.0:1, estados sobre
-   tarjeta de 5.5:1 (en juego) a 9.6:1 (por terminar). */
+/* Sistema de diseño "tarjeta de estado" (ADR 0014). Nace de la tarjeta de consola de VN: franja
+   de color con el estado, cuerpo claro y texto azul marino. Tema claro por defecto y oscuro
+   opcional (clase .dark que pone NativeWind). Todo en HSL ("matiz saturación luminosidad"), sin
+   blanco ni negro puros. Los mismos valores están en src/utils/theme.ts.
+
+   Cada estado tiene cuatro tokens:
+     DEFAULT     fondo de la franja      foreground  texto sobre la franja
+     tone        texto del estado sobre la tarjeta
+     soft        fondo suave para avisos (con tone encima)
+   Contrastes comprobados (WCAG AA, 4.5:1 como mínimo): texto sobre fondo 15:1 (claro) y 16:1
+   (oscuro); texto atenuado 6:1; texto de franja 4.9:1 a 7.2:1; tone sobre tarjeta 5.0:1 a 8.8:1. */
 @layer base {
   :root {
-    --background: 228 16% 7%;
-    --foreground: 40 18% 94%;
-    --card: 228 14% 11%;
-    --card-foreground: 40 18% 94%;
-    --raised: 228 12% 15%;
-    --primary: 40 18% 94%;
-    --primary-foreground: 228 16% 8%;
-    --secondary: 228 12% 17%;
-    --secondary-foreground: 40 18% 94%;
-    --muted: 228 12% 15%;
-    --muted-foreground: 228 9% 66%;
-    --accent: 228 12% 19%;
-    --accent-foreground: 40 18% 94%;
-    --destructive: 5 82% 64%;
-    --destructive-foreground: 228 16% 8%;
-    --border: 228 11% 20%;
-    --input: 228 11% 24%;
-    --ring: 40 18% 94%;
-    --radius: 0.875rem;
+    --background: 220 16% 95%;
+    --foreground: 226 44% 14%;
+    --card: 220 20% 99%;
+    --card-foreground: 226 44% 14%;
+    --raised: 220 18% 96%;
+    --primary: 226 44% 14%;
+    --primary-foreground: 220 20% 98%;
+    --secondary: 220 16% 92%;
+    --secondary-foreground: 226 44% 14%;
+    --muted: 220 16% 92%;
+    --muted-foreground: 222 12% 40%;
+    --accent: 220 16% 90%;
+    --accent-foreground: 226 44% 14%;
+    --destructive: 4 70% 45%;
+    --destructive-foreground: 140 20% 98%;
+    --border: 220 14% 86%;
+    --input: 220 14% 80%;
+    --ring: 226 44% 14%;
+    --radius: 1.25rem;
 
     /* Estados de la consola (HU-002 y HU-005). */
-    --available: 152 58% 52%;
-    --available-foreground: 228 16% 8%;
-    --available-soft: 152 42% 13%;
-    --playing: 5 82% 64%;
-    --playing-foreground: 228 16% 8%;
-    --playing-soft: 5 48% 15%;
-    --warning: 40 96% 56%;
-    --warning-foreground: 228 16% 8%;
-    --warning-soft: 40 60% 14%;
-    --pending: 199 88% 62%;
-    --pending-foreground: 228 16% 8%;
-    --pending-soft: 199 55% 14%;
+    --available: 146 70% 29%;
+    --available-foreground: 140 20% 98%;
+    --available-tone: 146 70% 27%;
+    --available-soft: 146 45% 92%;
+    --playing: 4 70% 45%;
+    --playing-foreground: 140 20% 98%;
+    --playing-tone: 4 70% 45%;
+    --playing-soft: 4 70% 95%;
+    --warning: 36 92% 48%;
+    --warning-foreground: 226 44% 12%;
+    --warning-tone: 32 90% 32%;
+    --warning-soft: 40 90% 91%;
+    --pending: 206 78% 38%;
+    --pending-foreground: 140 20% 98%;
+    --pending-tone: 206 78% 38%;
+    --pending-soft: 206 70% 94%;
+    --maintenance: 222 10% 44%;
+    --maintenance-foreground: 140 20% 98%;
+    --maintenance-tone: 222 10% 40%;
+    --maintenance-soft: 220 16% 92%;
+  }
+
+  .dark:root {
+    --background: 224 22% 8%;
+    --foreground: 220 20% 94%;
+    --card: 224 18% 12%;
+    --card-foreground: 220 20% 94%;
+    --raised: 224 16% 15%;
+    --primary: 220 20% 94%;
+    --primary-foreground: 226 44% 10%;
+    --secondary: 224 14% 18%;
+    --secondary-foreground: 220 20% 94%;
+    --muted: 224 14% 18%;
+    --muted-foreground: 220 10% 66%;
+    --accent: 224 14% 20%;
+    --accent-foreground: 220 20% 94%;
+    --destructive: 4 80% 70%;
+    --destructive-foreground: 226 44% 10%;
+    --border: 224 14% 20%;
+    --input: 224 12% 26%;
+    --ring: 220 20% 94%;
+
+    --available: 146 58% 30%;
+    --available-foreground: 140 20% 98%;
+    --available-tone: 146 55% 58%;
+    --available-soft: 146 35% 14%;
+    --playing: 4 62% 46%;
+    --playing-foreground: 140 20% 98%;
+    --playing-tone: 4 80% 70%;
+    --playing-soft: 4 40% 16%;
+    --warning: 38 88% 54%;
+    --warning-foreground: 226 44% 10%;
+    --warning-tone: 38 88% 58%;
+    --warning-soft: 38 50% 14%;
+    --pending: 206 72% 38%;
+    --pending-foreground: 140 20% 98%;
+    --pending-tone: 206 80% 68%;
+    --pending-soft: 206 45% 15%;
+    --maintenance: 222 8% 38%;
+    --maintenance-foreground: 140 20% 98%;
+    --maintenance-tone: 222 10% 64%;
+    --maintenance-soft: 224 14% 18%;
   }
 }

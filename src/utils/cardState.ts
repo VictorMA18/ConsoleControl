@@ -26,47 +26,53 @@ export function cardState(
   return 'en_juego';
 }
 
-// Cada estado tiene una etiqueta, un color (de la franja, el texto y el fondo suave) y un icono
-// (en src/components/stateIcons.ts): nunca se depende solo del color (TW-90).
-export const CARD_STATE_STYLES: Record<
-  CardState,
-  { label: string; band: string; tone: string; soft: string }
-> = {
+// Cada estado tiene una etiqueta, sus colores y un icono (en src/components/stateIcons.ts): nunca
+// se depende solo del color (TW-90). band es el fondo de la franja y onBand el texto sobre ella;
+// tone es el texto del estado sobre la tarjeta y soft el fondo suave de avisos (global.css).
+type StateStyle = { label: string; band: string; onBand: string; tone: string; soft: string };
+
+export const CARD_STATE_STYLES: Record<CardState, StateStyle> = {
   disponible: {
     label: 'Disponible',
     band: 'bg-available',
-    tone: 'text-available',
+    onBand: 'text-available-foreground',
+    tone: 'text-available-tone',
     soft: 'bg-available-soft',
   },
   en_juego: {
     label: 'En juego',
     band: 'bg-playing',
-    tone: 'text-playing',
+    onBand: 'text-playing-foreground',
+    tone: 'text-playing-tone',
     soft: 'bg-playing-soft',
   },
   por_terminar: {
     label: 'Por terminar',
     band: 'bg-warning',
-    tone: 'text-warning',
+    onBand: 'text-warning-foreground',
+    tone: 'text-warning-tone',
     soft: 'bg-warning-soft',
   },
   tiempo_cumplido: {
     label: 'Tiempo cumplido',
     band: 'bg-warning',
-    tone: 'text-warning',
+    onBand: 'text-warning-foreground',
+    tone: 'text-warning-tone',
     soft: 'bg-warning-soft',
   },
   por_cobrar: {
     label: 'Por cobrar',
     band: 'bg-pending',
-    tone: 'text-pending',
+    onBand: 'text-pending-foreground',
+    tone: 'text-pending-tone',
     soft: 'bg-pending-soft',
   },
   mantenimiento: {
     label: 'Mantenimiento',
-    band: 'bg-muted-foreground',
-    tone: 'text-muted-foreground',
-    soft: 'bg-secondary',
+    band: 'bg-maintenance',
+    onBand: 'text-maintenance-foreground',
+    tone: 'text-maintenance-tone',
+    soft: 'bg-maintenance-soft',
   },
 };
 

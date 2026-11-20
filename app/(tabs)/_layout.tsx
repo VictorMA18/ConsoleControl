@@ -1,25 +1,32 @@
-import { LayoutGrid, Wallet } from 'lucide-react-native';
+import { LayoutGrid, Settings2, Wallet } from 'lucide-react-native';
 import { Tabs } from 'expo-router';
 
-import { COLORS, FONTS } from '../../src/utils/theme';
+import { useInsets } from '../../src/hooks/useBottomInset';
+import { FONTS, useThemeColors } from '../../src/utils/theme';
 
-// Barra de pestañas: Consolas (muro) y Caja. Sprint 3 agrega Salud.
+// Barra de pestañas: Consolas (muro), Caja y Sistema. Sprint 3 agrega Salud.
+// La app se dibuja de borde a borde: la barra suma el margen inferior del sistema (barra de gestos
+// o botones de Android) para no quedar debajo de ella. Las pestañas cambian sin animación: se usan
+// decenas de veces por turno (ADR 0014).
 export default function TabsLayout() {
+  const colors = useThemeColors();
+  const { bottom } = useInsets();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.foreground,
-        tabBarInactiveTintColor: COLORS.mutedForeground,
+        animation: 'none',
+        tabBarActiveTintColor: colors.foreground,
+        tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
-          backgroundColor: COLORS.card,
-          borderTopColor: COLORS.border,
-          height: 68,
-          paddingTop: 6,
-          paddingBottom: 10,
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+          height: 62 + bottom,
+          paddingTop: 8,
+          paddingBottom: bottom + 8,
         },
         tabBarLabelStyle: { fontFamily: FONTS.semibold, fontSize: 12 },
-        sceneStyle: { backgroundColor: COLORS.background },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen
@@ -34,6 +41,13 @@ export default function TabsLayout() {
         options={{
           title: 'Caja',
           tabBarIcon: ({ color, size }) => <Wallet color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="sistema"
+        options={{
+          title: 'Sistema',
+          tabBarIcon: ({ color, size }) => <Settings2 color={color} size={size} />,
         }}
       />
     </Tabs>

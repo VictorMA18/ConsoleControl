@@ -3,10 +3,12 @@ import { CircleAlert, Hourglass, Play, Timer, type LucideIcon } from 'lucide-rea
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ChoiceButton } from '../../src/components/ChoiceButton';
 import { EstimatedTotal } from '../../src/components/EstimatedTotal';
+import { FormScrollView } from '../../src/components/FormScrollView';
+import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { Section } from '../../src/components/Section';
 import { Button } from '../../src/components/ui/button';
@@ -84,7 +86,7 @@ export default function SessionDialogScreen() {
         <ScreenHeader title="Consola ocupada" onClose={() => router.back()} />
         <View className="gap-6 p-4">
           <View className="gap-2 rounded-3xl border border-playing/40 bg-playing-soft p-5">
-            <Icon as={CircleAlert} size={26} className="text-playing" />
+            <Icon as={CircleAlert} size={26} className="text-playing-tone" />
             <Text className="text-xl font-extrabold">
               {console.name} {reason}
             </Text>
@@ -107,7 +109,11 @@ export default function SessionDialogScreen() {
         subtitle={`${console.name} · ${CONSOLE_TYPE_LABELS[console.consoleType]}`}
         onClose={() => router.back()}
       />
-      <ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
+      <FormScrollView>
+        <View className="flex-row items-center gap-3">
+          <PlatformBadge consoleType={console.consoleType} />
+          <Text className="text-2xl font-extrabold tracking-tight">{console.name}</Text>
+        </View>
         <Section title="Mandos" trailing={`${console.operationalControllers} libres`}>
           <Controller
             control={control}
@@ -165,7 +171,7 @@ export default function SessionDialogScreen() {
             className="gap-3 rounded-3xl border border-playing/40 bg-playing-soft p-5"
           >
             <View className="flex-row items-center gap-2">
-              <Icon as={CircleAlert} size={20} className="text-playing" />
+              <Icon as={CircleAlert} size={20} className="text-playing-tone" />
               <Text className="flex-1 text-lg font-bold">{visibleProblem.message}</Text>
             </View>
             {visibleProblem.alternatives.length > 0 ? (
@@ -194,11 +200,11 @@ export default function SessionDialogScreen() {
             ) : null}
           </View>
         ) : null}
-      </ScrollView>
+      </FormScrollView>
 
       <View
         className="border-t border-border bg-card px-4 pt-3"
-        style={{ paddingBottom: Math.max(bottomInset, 12) }}
+        style={{ paddingBottom: bottomInset + 12 }}
       >
         <Button
           testID="iniciar-sesion"

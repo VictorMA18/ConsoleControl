@@ -23,11 +23,11 @@ export function AlertBanner({ alert, onDismiss }: Props) {
       onPress={onDismiss}
       className="mx-4 mt-3 flex-row items-center gap-3 rounded-2xl border border-warning/60 bg-warning-soft px-4 py-3 active:opacity-80"
     >
-      <Icon as={BellRing} size={22} className="text-warning" />
+      <Icon as={BellRing} size={22} className="text-warning-tone" />
       <View className="flex-1">
-        <Text className="text-base font-bold text-warning">{message}</Text>
+        <Text className="text-base font-bold text-warning-tone">{message}</Text>
       </View>
-      <Icon as={X} size={18} className="text-warning" />
+      <Icon as={X} size={18} className="text-warning-tone" />
     </Pressable>
   );
 }

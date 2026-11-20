@@ -1,5 +1,6 @@
-import { Gamepad2, Users } from 'lucide-react-native';
-import { Pressable, View } from 'react-native';
+import { Clock3, Coins, Gamepad2, Hourglass } from 'lucide-react-native';
+import { View } from 'react-native';
+import Animated, { cubicBezier, useReducedMotion } from 'react-native-reanimated';
 
 import { useSessionAlertState } from '../hooks/useSessionAlerts';
 import { useSessionTimer } from '../hooks/useSessionTimer';
@@ -7,89 +8,116 @@ import type { ConsoleWithStock } from '../services/consoleService';
 import type { ActiveSession } from '../services/sessionService';
 import { CARD_STATE_STYLES, cardState, type CardState } from '../utils/cardState';
 import { cn } from '../utils/cn';
-import { CONSOLE_TYPE_LABELS } from '../utils/consoleLabels';
 import { formatDuration } from '../utils/formatDuration';
 import { formatMoney } from '../utils/formatMoney';
 import { SESSION_MODE_LABELS } from '../utils/sessionLabels';
-import { StatusPill } from './StatusPill';
+import { EASE_OUT_BEZIER } from '../utils/theme';
+import { InfoRow } from './InfoRow';
+import { PlatformBadge } from './PlatformBadge';
+import { PressableScale } from './PressableScale';
+import { STATE_ICONS } from './stateIcons';
 import { Icon } from './ui/icon';
 import { Text } from './ui/text';
 
 type Props = {
   console: ConsoleWithStock;
   session?: ActiveSession;
+  // Precio de una hora con un mando, para la tarjeta libre.
+  hourCents?: number;
   onPress: (console: ConsoleWithStock) => void;
 };
 
-// Tarjeta de una consola del muro (T07): nombre, estado y mandos disponibles. Con una sesión
-// activa muestra además su cronómetro y el avance del tiempo (T11). El estado se muestra con
-// color, icono y texto.
-export function ConsoleCard({ console, session, onPress }: Props) {
+// Cuando cambia el estado, el color de la franja pasa al nuevo en 200 ms en lugar de saltar.
+const BAND_TRANSITION = {
+  transitionProperty: 'backgroundColor',
+  transitionDuration: 200,
+  transitionTimingFunction: cubicBezier(...EASE_OUT_BEZIER),
+} as const;
+
+// Parpadeo de "Por terminar" (HU-004, T16): solo la opacidad de la etiqueta, en el hilo de UI.
+const BLINK = {
+  animationName: { from: { opacity: 1 }, to: { opacity: 0.4 } },
+  animationDuration: '700ms',
+  animationIterationCount: 'infinite',
+  animationDirection: 'alternate',
+  animationTimingFunction: 'ease-in-out',
+} as const;
+
+const IDLE_TIME = '00:00:00';
+
+// Tarjeta de una consola del muro (T07, T11), con el diseño de VN (ADR 0014): franja con el
+// estado, plataforma y nombre, cronómetro y, a la derecha, mandos, tiempo y dinero.
+export function ConsoleCard({ console, session, hourCents, onPress }: Props) {
   if (session) {
     return <BusyConsoleCard console={console} session={session} onPress={onPress} />;
   }
+  const state = cardState(console.status, null);
   return (
-    <CardShell console={console} state={cardState(console.status, null)} onPress={onPress}>
-      <View className="flex-row items-center gap-2">
-        <Icon as={Gamepad2} size={16} className="text-muted-foreground" />
-        <Text
-          accessibilityLabel={`${CONSOLE_TYPE_LABELS[console.consoleType]}, ${console.operationalControllers} mandos libres`}
-          className="text-base text-muted-foreground"
-        >
-          {console.operationalControllers} mandos libres
-        </Text>
-      </View>
-    </CardShell>
+    <CardShell
+      console={console}
+      state={state}
+      onPress={onPress}
+      time={IDLE_TIME}
+      idle
+      rows={
+        <>
+          <InfoRow icon={Gamepad2}>
+            {console.operationalControllers}{' '}
+            {console.operationalControllers === 1 ? 'mando' : 'mandos'}
+          </InfoRow>
+          <InfoRow icon={Hourglass} muted>
+            {state === 'mantenimiento' ? 'Sin uso' : 'Libre'}
+          </InfoRow>
+          <InfoRow icon={Coins} muted>
+            {hourCents === undefined ? '—' : `${formatMoney(hourCents)}/h`}
+          </InfoRow>
+        </>
+      }
+    />
   );
 }
 
 // El cronómetro se recalcula cada segundo desde started_at (ADR 0003): solo para mostrar.
-function BusyConsoleCard({ console, session, onPress }: Required<Props>) {
+function BusyConsoleCard({
+  console,
+  session,
+  onPress,
+}: Required<Pick<Props, 'console' | 'session' | 'onPress'>>) {
   const { elapsedMs, remainingMs } = useSessionTimer(session);
   const alertState = useSessionAlertState(session);
   const state = cardState(console.status, alertState);
   const payable = session.status === 'por_cobrar';
   const progress =
-    session.durationMs && !payable
-      ? Math.min(100, Math.round((elapsedMs / session.durationMs) * 100))
-      : null;
+    session.durationMs && !payable ? Math.min(1, elapsedMs / session.durationMs) : null;
+  // Los mandos prestados pasan a 'en_uso': el total de la consola son los prestados más los libres.
+  const total = session.controllerCount + console.operationalControllers;
   return (
-    <CardShell console={console} state={state} onPress={onPress}>
-      <Text
-        testID={`cronometro-${console.id}`}
-        accessibilityLabel={`Tiempo transcurrido ${formatDuration(elapsedMs)}`}
-        className="text-4xl font-extrabold tracking-tight"
-        style={{ fontVariant: ['tabular-nums'] }}
-      >
-        {formatDuration(elapsedMs)}
-      </Text>
-      {progress !== null ? (
-        <View className="h-1.5 overflow-hidden rounded-full bg-secondary">
-          <View
-            className={cn('h-1.5 rounded-full', CARD_STATE_STYLES[state].band)}
-            style={{ width: `${progress}%` }}
-          />
-        </View>
-      ) : null}
-      <View className="flex-row items-center justify-between">
-        <Text
-          className="text-sm font-medium text-muted-foreground"
-          style={{ fontVariant: ['tabular-nums'] }}
-        >
-          {payable
-            ? `Total ${formatMoney(session.totalCents)}`
-            : remainingMs === null
-              ? SESSION_MODE_LABELS[session.mode]
-              : `Quedan ${formatDuration(remainingMs)}`}
-        </Text>
-        <View className="flex-row items-center gap-1.5">
-          <Icon as={Users} size={14} className="text-muted-foreground" />
-          <Text className="text-sm font-medium text-muted-foreground">
-            {session.controllerCount} {session.controllerCount === 1 ? 'mando' : 'mandos'}
-          </Text>
-        </View>
-      </View>
-    </CardShell>
+    <CardShell
+      console={console}
+      state={state}
+      onPress={onPress}
+      time={formatDuration(elapsedMs)}
+      progress={progress}
+      rows={
+        <>
+          <InfoRow icon={Gamepad2}>
+            {session.controllerCount}/{total} {total === 1 ? 'mando' : 'mandos'}
+          </InfoRow>
+          <InfoRow icon={Hourglass} testID={`restante-${console.id}`}>
+            {payable
+              ? 'Terminó'
+              : remainingMs === null
+                ? SESSION_MODE_LABELS[session.mode]
+                : remainingMs > 0
+                  ? formatDuration(remainingMs)
+                  : 'Cumplido'}
+          </InfoRow>
+          <InfoRow icon={Coins}>
+            {session.mode === 'libre' && !payable ? 'Al final' : formatMoney(session.totalCents)}
+          </InfoRow>
+        </>
+      }
+    />
   );
 }
 
@@ -97,34 +125,80 @@ type ShellProps = {
   console: ConsoleWithStock;
   state: CardState;
   onPress: (console: ConsoleWithStock) => void;
-  children: React.ReactNode;
+  time: string;
+  rows: React.ReactNode;
+  idle?: boolean;
+  // Avance del tiempo fijo, de 0 a 1.
+  progress?: number | null;
 };
 
-function CardShell({ console, state, onPress, children }: ShellProps) {
+function CardShell({ console, state, onPress, time, rows, idle, progress }: ShellProps) {
+  const reducedMotion = useReducedMotion();
   const style = CARD_STATE_STYLES[state];
-  const alerting = state === 'por_terminar' || state === 'tiempo_cumplido';
+  const blinking = state === 'por_terminar' && !reducedMotion;
   return (
-    <Pressable
+    <PressableScale
       testID={`console-card-${console.id}`}
       accessibilityRole="button"
       accessibilityLabel={`${console.name}, ${style.label}`}
       onPress={() => onPress(console)}
-      className="w-full active:opacity-80"
+      className="w-full"
     >
       <View
         className={cn(
-          'overflow-hidden rounded-3xl border bg-card',
-          alerting ? 'border-warning/60' : 'border-border',
-          state === 'mantenimiento' && 'opacity-70',
+          'overflow-hidden rounded-3xl border border-border bg-card',
+          state === 'mantenimiento' && 'opacity-80',
         )}
       >
-        <View className={cn('h-1.5', style.band)} />
-        <View className="gap-3 p-4">
-          <StatusPill testID={`estado-${console.id}`} state={state} />
-          <Text className="text-2xl font-extrabold tracking-tight">{console.name}</Text>
-          {children}
+        <Animated.View
+          testID={`estado-${console.id}`}
+          className={cn('flex-row items-center px-5 py-3', style.band)}
+          style={BAND_TRANSITION}
+        >
+          <Animated.View
+            testID={blinking ? 'ambar-titilante' : undefined}
+            className="flex-row items-center gap-2"
+            style={blinking ? BLINK : undefined}
+          >
+            <Icon as={STATE_ICONS[state]} size={20} strokeWidth={2.5} className={style.onBand} />
+            <Text className={cn('text-xl font-extrabold', style.onBand)}>{style.label}</Text>
+          </Animated.View>
+        </Animated.View>
+
+        <View className="flex-row gap-4 px-5 py-4">
+          <View className="flex-1 justify-center gap-3">
+            <View className="flex-row flex-wrap items-center gap-x-3 gap-y-2">
+              <PlatformBadge consoleType={console.consoleType} />
+              <Text className="text-2xl font-extrabold tracking-tight" numberOfLines={1}>
+                {console.name}
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-2">
+              <Icon
+                as={Clock3}
+                size={26}
+                strokeWidth={2.25}
+                className={idle ? 'text-muted-foreground' : 'text-foreground'}
+              />
+              <Text
+                testID={`cronometro-${console.id}`}
+                className={cn('text-[28px] font-extrabold', idle && 'text-muted-foreground')}
+                style={{ fontVariant: ['tabular-nums'] }}
+              >
+                {time}
+              </Text>
+            </View>
+          </View>
+          <View className="w-px bg-border" />
+          <View className="justify-center gap-3">{rows}</View>
         </View>
+
+        {progress !== undefined && progress !== null ? (
+          <View className="h-1 bg-secondary">
+            <View className={cn('h-1', style.band)} style={{ width: `${progress * 100}%` }} />
+          </View>
+        ) : null}
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }

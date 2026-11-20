@@ -14,8 +14,8 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 - Cada estado se indica con color **y** etiqueta, nunca solo con color.
 - Áreas táctiles de al menos 48 dp; las opciones del diálogo, 56 dp; el botón principal, 64 dp.
-- Texto base de 16 sp; nombre de consola de 24 sp; cronómetro de 36 sp con números tabulares.
-- Fuente DM Sans y iconos de Lucide ([ADR 0014](../adr/0014-sistema-de-diseno-sala-de-control.md)).
+- Texto base de 16 sp; nombre de consola de 24 sp; cronómetro de 28 sp con números tabulares.
+- Fuente Montserrat Alternates e iconos de Lucide ([ADR 0014](../adr/0014-sistema-de-diseno-tarjeta-de-estado.md)).
 
 ## Pantallas del prototipo
 
@@ -31,69 +31,109 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 Flujo enlazado: 1 → 2 → 3 → 4 → 5 → 7; desde 1, tocar PS4 con 5 mandos lleva a 6, y una alternativa vuelve a 2.
 
-## Sistema de diseño «sala de control»
+## Sistema de diseño «tarjeta de estado»
 
-Tema oscuro único, sin gradientes ni sombras de adorno (ADR 0014). El color se reserva para los estados de la consola; la acción principal es el botón marfil.
+Todo sale de la tarjeta de consola que diseñó VN ([ADR 0014](../adr/0014-sistema-de-diseno-tarjeta-de-estado.md)): franja de color con el estado, cuerpo claro, plataforma y nombre grandes, cronómetro con reloj y una columna de datos con icono separada por una línea vertical. Tema claro por defecto y oscuro opcional.
+
+### Anatomía de la tarjeta de consola
+
+```
+┌──────────────────────────────────────────────┐
+│ ✓ Disponible                     (franja)    │
+├──────────────────────────────────────────────┤
+│ ( PS logo PS3 )  MAQ #1   │ 🎮 2/6 mandos     │
+│ ⏱ 00:12:05               │ ⏳ 47:55          │
+│                           │ 🪙 S/ 6.00        │
+├──────────────────────────────────────────────┤
+│ ███████████░░░░░ avance del tiempo fijo      │
+└──────────────────────────────────────────────┘
+```
+
+Las máquinas se llaman «MAQ #n»; el tipo se ve en la pastilla (logo de PlayStation, Xbox o Switch). El buscador del muro encuentra una máquina por su número.
+
+Columna derecha: mandos en uso sobre el total (libres si no hay sesión); tiempo restante, modalidad o «Libre»; total de la sesión o tarifa por hora si la consola está libre.
 
 ### Colores
 
-Variables HSL en `global.css`, con los nombres de React Native Reusables, y los mismos valores en `src/utils/theme.ts`. Los componentes usan solo el nombre (`bg-card`, `text-muted-foreground`), nunca un color suelto.
+Variables HSL en `global.css` (`:root` claro, `.dark:root` oscuro) con los nombres de React Native Reusables, y los mismos valores en `src/utils/theme.ts`. Los componentes usan solo el nombre (`bg-card`, `text-muted-foreground`), nunca un color suelto. Ningún token es blanco o negro puro.
 
-| Token              | HSL           | Uso                                                     |
-| ------------------ | ------------- | ------------------------------------------------------- |
-| `background`       | `228 16% 7%`  | Fondo de las pantallas                                  |
-| `card`             | `228 14% 11%` | Tarjetas y barras                                       |
-| `raised`           | `228 12% 15%` | Superficie elevada dentro de una tarjeta                |
-| `border`           | `228 11% 20%` | Bordes                                                  |
-| `foreground`       | `40 18% 94%`  | Texto principal (16.8:1 sobre el fondo)                 |
-| `muted-foreground` | `228 9% 66%`  | Texto atenuado (7.0:1 sobre la tarjeta)                 |
-| `primary`          | `40 18% 94%`  | Botón principal y opción elegida (texto oscuro, 16.5:1) |
-| `available`        | `152 58% 52%` | Disponible (8.4:1 sobre la tarjeta)                     |
-| `playing`          | `5 82% 64%`   | En juego (5.5:1)                                        |
-| `warning`          | `40 96% 56%`  | Por terminar y tiempo cumplido (9.6:1)                  |
-| `pending`          | `199 88% 62%` | Por cobrar (8.2:1)                                      |
+| Token              | Claro         | Oscuro        | Uso                                   |
+| ------------------ | ------------- | ------------- | ------------------------------------- |
+| `background`       | `220 16% 95%` | `224 22% 8%`  | Fondo de las pantallas                |
+| `card`             | `220 20% 99%` | `224 18% 12%` | Tarjetas y barras                     |
+| `raised`           | `220 18% 96%` | `224 16% 15%` | Superficie dentro de una tarjeta      |
+| `border`           | `220 14% 86%` | `224 14% 20%` | Bordes y divisores                    |
+| `foreground`       | `226 44% 14%` | `220 20% 94%` | Texto principal (15:1 y 16:1)         |
+| `muted-foreground` | `222 12% 40%` | `220 10% 66%` | Texto atenuado (6:1 y 7:1)            |
+| `primary`          | `226 44% 14%` | `220 20% 94%` | Botón principal y opción elegida      |
+| `available`        | `146 70% 29%` | `146 58% 30%` | Franja Disponible                     |
+| `playing`          | `4 70% 45%`   | `4 62% 46%`   | Franja En juego                       |
+| `warning`          | `36 92% 48%`  | `38 88% 54%`  | Franja Por terminar y Tiempo cumplido |
+| `pending`          | `206 78% 38%` | `206 72% 38%` | Franja Por cobrar                     |
+| `maintenance`      | `222 10% 44%` | `222 8% 38%`  | Franja Mantenimiento                  |
 
-Cada estado tiene también su fondo suave (`available-soft`, `playing-soft`, `warning-soft`, `pending-soft`).
+Cada estado tiene además `-foreground` (texto sobre la franja: marfil, o marino en ámbar), `-tone` (texto del estado sobre la tarjeta) y `-soft` (fondo de avisos). Todos los pares cumplen 4.5:1 como mínimo.
 
 ### Estados de la consola
 
-| Estado          | Color | Icono         | Detalle                      |
-| --------------- | ----- | ------------- | ---------------------------- |
-| Disponible      | verde | `CircleCheck` | Mandos libres                |
-| En juego        | coral | `Play`        | Cronómetro y avance          |
-| Por terminar    | ámbar | `BellRing`    | Titila los últimos 5 minutos |
-| Tiempo cumplido | ámbar | `TimerOff`    | Fijo hasta finalizar         |
-| Por cobrar      | cian  | `Receipt`     | Tiempo detenido y total      |
-| Mantenimiento   | gris  | `Wrench`      | Atenuada                     |
+| Estado          | Franja | Icono         | Detalle                      |
+| --------------- | ------ | ------------- | ---------------------------- |
+| Disponible      | verde  | `CircleCheck` | Mandos libres y tarifa       |
+| En juego        | rojo   | `Play`        | Cronómetro y avance          |
+| Por terminar    | ámbar  | `BellRing`    | Titila los últimos 5 minutos |
+| Tiempo cumplido | ámbar  | `TimerOff`    | Fijo hasta finalizar         |
+| Por cobrar      | azul   | `Receipt`     | Tiempo detenido y total      |
+| Mantenimiento   | gris   | `Wrench`      | Atenuada                     |
 
 ### Tipografía
 
-DM Sans: 400 (texto), 500 (apoyo), 600 (botones), 700 y 800 (títulos, cifras). Etiquetas pequeñas en mayúsculas con 8 a 12 % de espaciado. Cronómetros e importes con números tabulares.
+Montserrat Alternates: 500 (texto), 600 (pestañas), 700 (datos y botones) y 800 (estado, nombres y cifras). Títulos de sección en negrita, sin mayúsculas forzadas. Cronómetros e importes con números tabulares.
 
 ### Componentes y organización
 
 - Base en `src/components/ui/` (`Text`, `Button`, `Card`, `Badge`, `Input`, `Icon`, copiados de React Native Reusables).
-- `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado y `Logo` para la marca.
-- Navegación: pestañas Consolas y Caja (Salud en el Sprint 3). Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
-- Muro: logo y hora, resumen por estado, filtro por tipo y cuadrícula de dos columnas.
-- Diálogos con acción principal: el botón queda fijo abajo con el margen de la barra de gestos.
+- Patrón de tarjeta: `ConsoleCard`, `PlatformBadge`, `InfoRow` y `PressableScale`. La franja de estado se usa solo en las tarjetas grandes (consola y resumen de cobro).
+- Resumen del muro (`WallSummary`): cuadrícula de 2 × 2 con Disponible, En juego, Por terminar (suma tiempo cumplido) y Por cobrar; sin franja, el color va en el icono sobre su fondo suave.
+- Vuelto (`ChangeCalculator`): un campo «Recibido» con el teclado numérico del celular y, debajo, el vuelto o lo que falta. En pago mixto usa solo la parte en efectivo.
+- Formularios dentro de `FormScrollView`: al enfocar un campo, la pantalla se desplaza para dejarlo encima del teclado (`react-native-keyboard-controller`).
+- `ScreenHeader` en todas las pantallas (marca en la principal; volver o cerrar en el resto), `Section` para agrupar, `StateView` para cargando, error y vacío, `ConfirmDialog` para confirmar, `StatusPill` para el estado en línea, `Logo` y `BrandMark` para la marca, `ThemeToggle` para el tema y `ConsoleSearch` para buscar máquinas.
+- Navegación: pestañas Consolas, Caja y Sistema (Salud en el Sprint 3). Sistema reúne la apariencia y, en desarrollo, las herramientas de prueba como botones. Cobro y herramientas de desarrollo se abren encima; el diálogo de sesión es un modal.
+- Muro: logo y hora; resumen 2 × 2; buscador; filtro por tipo; una columna de tarjetas anchas.
+- Caja: total del turno en grande con el reparto por método (barra de proporción), arqueo con el efectivo esperado y el resultado, cobros a revisar e historial compacto de turnos.
+- Diálogos con acción principal: el botón queda fijo abajo y suma el margen de la barra del sistema.
+
+### Ícono y pantalla de carga
+
+En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. Fuentes en `assets/brand/*.svg`; los PNG de `assets/` se exportan de ahí (ícono, adaptativo de Android con su monocromo, pantalla de carga y favicon). La pantalla de carga usa fondo `#F0F2F4` (claro) o `#101219` (oscuro), que son `--background` en hexadecimal; en oscuro el recuadro del ícono es un grafito más claro (`splash-icon-dark.png`) para que se distinga del fondo.
 
 ## Medidas
 
-| Elemento                      | Medida                                              |
-| ----------------------------- | --------------------------------------------------- |
-| Pantalla de referencia        | 360 × 800 dp                                        |
-| Margen lateral                | 16 dp                                               |
-| Separación entre tarjetas     | 12 dp                                               |
-| Radio de tarjeta de consola   | 24 dp                                               |
-| Radio de opciones y secciones | 16 y 24 dp                                          |
-| Radio de botón                | 12 dp                                               |
-| Zona táctil                   | 44 dp mínimo; opciones 56 dp; botón principal 64 dp |
-| Barra de pestañas             | 68 dp                                               |
+| Elemento                     | Medida                                              |
+| ---------------------------- | --------------------------------------------------- |
+| Pantalla de referencia       | 360 × 800 dp                                        |
+| Margen lateral               | 16 dp                                               |
+| Separación entre tarjetas    | 12 dp                                               |
+| Radio de tarjeta y secciones | 24 dp                                               |
+| Radio de botón               | 16 dp                                               |
+| Pastilla de plataforma       | 40 dp de alto, radio completo                       |
+| Zona táctil                  | 44 dp mínimo; opciones 56 dp; botón principal 64 dp |
+| Barra de pestañas            | 62 dp más el margen inferior del sistema            |
 
 ## Movimiento
 
-Solo titila la franja "Por terminar" (opacidad de 1 a 0.35, 700 ms, alternada). Con movimiento reducido no titila. "Tiempo cumplido" queda en ámbar fijo.
+| Dónde                   | Movimiento                                                  |
+| ----------------------- | ----------------------------------------------------------- |
+| Cambio de pantalla      | Transición nativa de la plataforma                          |
+| Diálogo de sesión       | Modal que sube desde abajo (nativo)                         |
+| Pestañas                | Sin animación                                               |
+| Tarjeta presionada      | Escala 0.97 en 120 ms                                       |
+| Cambio de estado        | Color de la franja en 200 ms                                |
+| Muro al filtrar         | Reacomodo en 220 ms y fundido de entrada en 200 ms          |
+| Diálogo de confirmación | Entra de 0.96 a 1 con opacidad en 200 ms                    |
+| Por terminar            | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada) |
+| Pantalla de carga       | Sale con un fundido de 250 ms                               |
+
+Curva `cubicBezier(0.23, 1, 0.32, 1)`. Solo se animan `transform`, `opacity` y color. Con movimiento reducido no hay escala ni titileo: queda el cambio de opacidad o de color.
 
 ## Revisión
 

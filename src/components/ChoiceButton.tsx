@@ -49,7 +49,7 @@ export function ChoiceButton({
       ) : null}
       <Text
         className={cn(
-          'text-lg font-bold',
+          'text-center text-lg font-bold',
           selected ? 'text-primary-foreground' : 'text-foreground',
         )}
       >
@@ -58,7 +58,7 @@ export function ChoiceButton({
       {hint ? (
         <Text
           className={cn(
-            'text-xs font-medium',
+            'text-center text-xs font-medium',
             selected ? 'text-primary-foreground/70' : 'text-muted-foreground',
           )}
         >

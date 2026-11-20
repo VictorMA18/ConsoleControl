@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { useBottomInset } from '../../src/hooks/useBottomInset';
 import { Section } from '../../src/components/Section';
 import { Button } from '../../src/components/ui/button';
 import { Icon } from '../../src/components/ui/icon';
@@ -25,6 +26,7 @@ import {
 // Usa estado local en lugar de TanStack Query porque no forma parte del producto.
 export default function PersistenceScreen() {
   const router = useRouter();
+  const bottomInset = useBottomInset();
   const [snapshot, setSnapshot] = useState<PersistenceSnapshot>();
   const [loadedAt, setLoadedAt] = useState(0);
   const [message, setMessage] = useState('');
@@ -94,7 +96,10 @@ export default function PersistenceScreen() {
         subtitle="Solo desarrollo"
         onBack={() => router.back()}
       />
-      <ScrollView contentContainerClassName="gap-4 p-4 pb-10">
+      <ScrollView
+        contentContainerClassName="gap-4 p-4"
+        contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
+      >
         <Section
           title="Datos guardados"
           trailing={loadedAt ? new Date(loadedAt).toLocaleTimeString() : undefined}

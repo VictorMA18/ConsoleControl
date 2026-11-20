@@ -1,24 +1,25 @@
-import { ChevronRight, Terminal } from 'lucide-react-native';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Vibration, View } from 'react-native';
+import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import { AlertBanner } from '../../src/components/AlertBanner';
 import { ConsoleCard } from '../../src/components/ConsoleCard';
+import { ConsoleSearch } from '../../src/components/ConsoleSearch';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { StateView } from '../../src/components/StateView';
 import { TypeFilter } from '../../src/components/TypeFilter';
-import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import { WallSummary } from '../../src/components/WallSummary';
 import { useActiveSessions } from '../../src/hooks/useActiveSessions';
 import { useConsoles } from '../../src/hooks/useConsoles';
+import { useHourlyPrices } from '../../src/hooks/useHourlyPrices';
 import { useNow } from '../../src/hooks/useNow';
 import { usePendingSessions } from '../../src/hooks/usePendingSessions';
 import { useSessionAlerts } from '../../src/hooks/useSessionAlerts';
 import type { ConsoleWithStock } from '../../src/services/consoleService';
 import { getSessionAlertState, type SessionAlert } from '../../src/services/sessionAlerts';
-import { useWallFilterStore } from '../../src/stores/wallFilterStore';
+import { matchesQuery, useWallFilterStore } from '../../src/stores/wallFilterStore';
 import { cardState } from '../../src/utils/cardState';
 
 // Dos vibraciones de medio segundo: se distinguen de una notificación cualquiera.
@@ -33,6 +34,7 @@ export default function ConsoleWallScreen() {
   const { data: sessions } = useActiveSessions();
   // Las finalizadas esperan su pago y siguen ocupando la consola (HU-005).
   const { data: pending } = usePendingSessions();
+  const { data: hourlyPrices } = useHourlyPrices();
   const sessionByConsole = new Map(
     [...(sessions ?? []), ...(pending ?? [])].map((s) => [s.consoleId, s]),
   );
@@ -44,7 +46,10 @@ export default function ConsoleWallScreen() {
     setLastAlert(alert);
   });
   const consoleType = useWallFilterStore((s) => s.consoleType);
-  const visible = consoles?.filter((c) => consoleType === null || c.consoleType === consoleType);
+  const query = useWallFilterStore((s) => s.query);
+  const visible = consoles?.filter(
+    (c) => (consoleType === null || c.consoleType === consoleType) && matchesQuery(c.name, query),
+  );
   const states = (consoles ?? []).map((c) => {
     const session = sessionByConsole.get(c.id);
     return cardState(c.status, session ? getSessionAlertState(session, now) : null);
@@ -76,59 +81,47 @@ export default function ConsoleWallScreen() {
       ) : error ? (
         <StateView kind="error" message="No se pudo leer el inventario." />
       ) : (
-        <ScrollView contentContainerClassName="gap-4 pb-8 pt-4">
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          contentContainerClassName="gap-4 pb-8 pt-4"
+        >
           <View className="px-4">
             <WallSummary states={states} />
           </View>
-          <View className="px-4">
+          <View className="gap-3 px-4">
+            <ConsoleSearch />
             <TypeFilter />
           </View>
           {visible && visible.length > 0 ? (
-            <View className="flex-row flex-wrap px-2.5">
+            // Una columna de tarjetas anchas, legibles a distancia (ADR 0014). Al filtrar, las que
+            // quedan se reacomodan con una transición y las nuevas aparecen con un fundido corto.
+            <View className="gap-3 px-4">
               {visible.map((item) => (
-                <View key={item.id} className="w-1/2 p-1.5">
+                <Animated.View
+                  key={item.id}
+                  entering={FadeIn.duration(200)}
+                  layout={LinearTransition.duration(220)}
+                >
                   <ConsoleCard
                     console={item}
                     session={sessionByConsole.get(item.id)}
+                    hourCents={hourlyPrices?.[item.consoleType]}
                     onPress={openConsole}
                   />
-                </View>
+                </Animated.View>
               ))}
             </View>
           ) : (
-            <StateView kind="empty" message="No hay consolas de este tipo." />
+            <StateView
+              kind="empty"
+              message={
+                query ? `No hay ninguna máquina «${query}».` : 'No hay consolas de este tipo.'
+              }
+            />
           )}
-          {__DEV__ ? (
-            <View className="mx-4 mt-2 gap-1 rounded-3xl border border-dashed border-border p-4">
-              <View className="flex-row items-center gap-2 pb-1">
-                <Icon as={Terminal} size={16} className="text-muted-foreground" />
-                <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  Herramientas de desarrollo
-                </Text>
-              </View>
-              <DevLink href="/dev/persistencia" label="Prueba de persistencia" />
-              <DevLink href="/dev/spike-cronometro" label="Spike del cronómetro" />
-            </View>
-          ) : null}
         </ScrollView>
       )}
-    </View>
-  );
-}
-
-function DevLink({
-  href,
-  label,
-}: {
-  href: '/dev/persistencia' | '/dev/spike-cronometro';
-  label: string;
-}) {
-  return (
-    <View className="flex-row items-center justify-between py-2">
-      <Link href={href} className="font-sans text-base font-semibold text-foreground">
-        {label}
-      </Link>
-      <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
     </View>
   );
 }

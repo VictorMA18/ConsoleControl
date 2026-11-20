@@ -24,21 +24,21 @@ Fechas: Sprint 1 del 12 al 23/10/2026. MVP el 11/12/2026.
 
 ## 4. Tecnologías
 
-| Área                | Decisión                                                      | Para qué se usa en este proyecto                                                       |
-| ------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Framework           | React Native con Expo y TypeScript estricto; Expo Router      | App móvil y navegación entre pantallas                                                 |
-| Gestor de paquetes  | pnpm (`node-linker=hoisted` en `.npmrc`)                      | Instalar dependencias; el ajuste lo exige Expo                                         |
-| Base de datos local | SQLite con `expo-sqlite`                                      | Guardar sesiones, consolas, mandos y tarifas                                           |
-| Acceso a datos      | Drizzle ORM y `drizzle-kit`                                   | Consultas tipadas, esquema y migraciones                                               |
-| Validación          | Zod                                                           | Validar formularios y datos antes de guardar                                           |
-| Formularios         | React Hook Form con `@hookform/resolvers/zod`                 | Formularios con el mismo esquema Zod                                                   |
-| Estado de interfaz  | Zustand                                                       | Filtros, selección y estado de pantalla                                                |
-| Estado de datos     | TanStack Query                                                | Leer y escribir SQLite y sincronizar                                                   |
-| Estilos             | NativeWind, componentes de React Native Reusables (ADR 0012) y sistema de diseño «sala de control» (ADR 0014) | Clases de Tailwind; tokens HSL en `global.css`; DM Sans; iconos de Lucide; componentes en `src/components/ui/` |
-| Respaldo en la nube | Supabase, solo dispositivo → nube (HU-008)                    | Copia de los registros pendientes                                                      |
-| Pruebas             | Jest y React Native Testing Library                           | Cobertura de tiempo, tarifas y validaciones                                            |
-| Calidad             | ESLint, Prettier, `tsc --noEmit` y pruebas en GitHub Actions  | Verificar cada pull request                                                            |
-| Usuarios            | Sin login en el MVP                                           | Un operador por dispositivo (O1)                                                       |
+| Área                | Decisión                                                                                                        | Para qué se usa en este proyecto                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework           | React Native con Expo y TypeScript estricto; Expo Router                                                        | App móvil y navegación entre pantallas                                                                                                    |
+| Gestor de paquetes  | pnpm (`node-linker=hoisted` en `.npmrc`)                                                                        | Instalar dependencias; el ajuste lo exige Expo                                                                                            |
+| Base de datos local | SQLite con `expo-sqlite`                                                                                        | Guardar sesiones, consolas, mandos y tarifas                                                                                              |
+| Acceso a datos      | Drizzle ORM y `drizzle-kit`                                                                                     | Consultas tipadas, esquema y migraciones                                                                                                  |
+| Validación          | Zod                                                                                                             | Validar formularios y datos antes de guardar                                                                                              |
+| Formularios         | React Hook Form con `@hookform/resolvers/zod`                                                                   | Formularios con el mismo esquema Zod                                                                                                      |
+| Estado de interfaz  | Zustand                                                                                                         | Filtros, selección y estado de pantalla                                                                                                   |
+| Estado de datos     | TanStack Query                                                                                                  | Leer y escribir SQLite y sincronizar                                                                                                      |
+| Estilos             | NativeWind, componentes de React Native Reusables (ADR 0012) y sistema de diseño «tarjeta de estado» (ADR 0014) | Clases de Tailwind; tokens HSL claro/oscuro en `global.css`; Montserrat Alternates; iconos de Lucide; componentes en `src/components/ui/` |
+| Respaldo en la nube | Supabase, solo dispositivo → nube (HU-008)                                                                      | Copia de los registros pendientes                                                                                                         |
+| Pruebas             | Jest y React Native Testing Library                                                                             | Cobertura de tiempo, tarifas y validaciones                                                                                               |
+| Calidad             | ESLint, Prettier, `tsc --noEmit` y pruebas en GitHub Actions                                                    | Verificar cada pull request                                                                                                               |
+| Usuarios            | Sin login en el MVP                                                                                             | Un operador por dispositivo (O1)                                                                                                          |
 
 ## 5. Arquitectura en pocas líneas
 

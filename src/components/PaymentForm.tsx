@@ -117,7 +117,10 @@ export function PaymentForm({ totalCents, isPending, error, onSubmit }: Props) {
             </View>
           ))}
           {problem ? (
-            <Text accessibilityLiveRegion="polite" className="text-base font-bold text-playing">
+            <Text
+              accessibilityLiveRegion="polite"
+              className="text-base font-bold text-playing-tone"
+            >
               {problem}
             </Text>
           ) : null}
@@ -144,7 +147,7 @@ export function PaymentForm({ totalCents, isPending, error, onSubmit }: Props) {
           accessibilityRole="alert"
           className="rounded-2xl border border-playing/40 bg-playing-soft p-4"
         >
-          <Text className="font-bold text-playing">{error}</Text>
+          <Text className="font-bold text-playing-tone">{error}</Text>
         </View>
       ) : null}
 
