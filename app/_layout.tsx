@@ -20,6 +20,7 @@ import { StateView } from '../src/components/StateView';
 import { useDatabaseSetup } from '../src/db/migrate';
 import { queryClient } from '../src/hooks/queryClient';
 import { applySavedTheme } from '../src/stores/themeStore';
+import { startSyncLoop } from '../src/sync/connectivity';
 import { useThemeColors } from '../src/utils/theme';
 
 // La pantalla de carga nativa (ícono de la app, app.json) se queda hasta que la base de datos y la
@@ -43,6 +44,9 @@ export default function RootLayout() {
     MontserratAlternates_800ExtraBold,
   });
   const fontsDone = fontsLoaded || Boolean(fontError);
+
+  // Respaldo en la nube (HU-008): arranca cuando la base está lista y corre aparte de la interfaz.
+  useEffect(() => (ready ? startSyncLoop() : undefined), [ready]);
 
   useEffect(() => {
     if ((ready && fontsDone) || error) {
