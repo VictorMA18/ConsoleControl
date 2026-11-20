@@ -1,0 +1,81 @@
+{
+  "name": "consolecontrol-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "packageManager": "pnpm@12.15.0",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "format": "prettier --write .",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@expo-google-fonts/montserrat-alternates": "^0.4.1",
+    "@hookform/resolvers": "^7.0.7",
+    "@supabase/supabase-js": "^2.119.1",
+    "@tanstack/react-query": "^5.105.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.4",
+    "expo": "~58.0.17",
+    "expo-constants": "~58.0.13",
+    "expo-crypto": "~58.0.7",
+    "expo-font": "~58.0.12",
+    "expo-linking": "~58.0.14",
+    "expo-network": "~58.0.5",
+    "expo-router": "~58.0.25",
+    "expo-splash-screen": "~58.0.14",
+    "expo-sqlite": "~58.0.13",
+    "expo-status-bar": "~58.0.4",
+    "expo-system-ui": "~58.0.7",
+    "lucide-react-native": "^1.74.0",
+    "nativewind": "^4.2.7",
+    "react": "19.3.0",
+    "react-hook-form": "^7.92.0",
+    "react-native": "0.88.0",
+    "react-native-css-interop": "^0.2.7",
+    "react-native-keyboard-controller": "1.22.7",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-svg": "15.16.0",
+    "react-native-worklets": "0.13.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.7",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.29.7",
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.3.0",
+    "babel-plugin-inline-import": "^3.0.0",
+    "babel-preset-expo": "~58.0.19",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^8.57.1",
+    "eslint-config-expo": "^58.0.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "jest": "^30.5.2",
+    "jest-expo": "^58.0.12",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^3.4.19",
+    "test-renderer": "^1.3.0",
+    "typescript": "~6.0.3"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
+    "moduleNameMapper": {
+      "^lucide-react-native$": "<rootDir>/node_modules/lucide-react-native/dist/cjs/lucide-react-native.js"
+    }
+  }
+}
