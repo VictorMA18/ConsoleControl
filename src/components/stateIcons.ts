@@ -1,6 +1,7 @@
 import {
   BellRing,
   CircleCheck,
+  CircleX,
   Play,
   Receipt,
   TimerOff,
@@ -18,4 +19,5 @@ export const STATE_ICONS: Record<CardState, LucideIcon> = {
   tiempo_cumplido: TimerOff,
   por_cobrar: Receipt,
   mantenimiento: Wrench,
+  averiado: CircleX,
 };

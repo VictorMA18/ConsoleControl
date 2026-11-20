@@ -33,6 +33,7 @@ function consoleOf(consoleType: Console['consoleType']): Console {
     name: 'Consola de prueba',
     consoleType,
     status: 'disponible',
+    usageMinutes: 0,
     createdAt: NOW,
     updatedAt: NOW,
     syncStatus: 'pendiente',

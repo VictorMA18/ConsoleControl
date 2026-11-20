@@ -42,6 +42,7 @@ const STATUS_LABELS: Record<ConsoleStatus, string> = {
   disponible: 'disponible',
   en_juego: 'en juego',
   mantenimiento: 'en mantenimiento',
+  averiado: 'averiada',
 };
 
 // Alternativas con mandos operativos suficientes; primero las del mismo tipo (HU-001, escenario 2).

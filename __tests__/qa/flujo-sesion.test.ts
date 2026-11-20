@@ -41,6 +41,7 @@ const ps5: Console = {
   name: 'PS5 #1',
   consoleType: 'ps5',
   status: 'disponible',
+  usageMinutes: 0,
   createdAt: STARTED,
   updatedAt: STARTED,
   syncStatus: 'pendiente',

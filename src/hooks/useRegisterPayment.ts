@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { registerPayment } from '../services/paymentService';
 import { activeSessionsQueryKey } from './useActiveSessions';
 import { consolesQueryKey } from './useConsoles';
+import { equipmentQueryKey } from './useEquipment';
 import { pendingSessionsQueryKey } from './usePendingSessions';
 import { shiftQueryKey } from './useShift';
 
@@ -19,6 +20,8 @@ export function useRegisterPayment() {
           queryClient.invalidateQueries({ queryKey: pendingSessionsQueryKey }),
           queryClient.invalidateQueries({ queryKey: ['sessions', 'detail'] }),
           queryClient.invalidateQueries({ queryKey: shiftQueryKey }),
+          // HU-012: el cobro suma las horas de uso de la consola y sus mandos.
+          queryClient.invalidateQueries({ queryKey: equipmentQueryKey }),
         ]);
       }
     },

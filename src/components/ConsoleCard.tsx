@@ -66,7 +66,11 @@ export function ConsoleCard({ console, session, hourCents, onPress }: Props) {
             {console.operationalControllers === 1 ? 'mando' : 'mandos'}
           </InfoRow>
           <InfoRow icon={Hourglass} muted>
-            {state === 'mantenimiento' ? 'Sin uso' : 'Libre'}
+            {state === 'mantenimiento'
+              ? 'Sin uso'
+              : state === 'averiado'
+                ? 'Fuera de servicio'
+                : 'Libre'}
           </InfoRow>
           <InfoRow icon={Coins} muted>
             {hourCents === undefined ? '—' : `${formatMoney(hourCents)}/h`}
@@ -147,7 +151,7 @@ function CardShell({ console, state, onPress, time, rows, idle, progress }: Shel
       <View
         className={cn(
           'overflow-hidden rounded-3xl border border-border bg-card',
-          state === 'mantenimiento' && 'opacity-80',
+          (state === 'mantenimiento' || state === 'averiado') && 'opacity-80',
         )}
       >
         <Animated.View
