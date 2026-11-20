@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { ExtendTime } from '../../src/components/ExtendTime';
 import { FormScrollView } from '../../src/components/FormScrollView';
 import { PaymentForm } from '../../src/components/PaymentForm';
+import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SettlementSummary } from '../../src/components/SettlementSummary';
 import { StateView } from '../../src/components/StateView';
@@ -95,6 +96,7 @@ export default function SettlementScreen() {
   return (
     <View className="flex-1 bg-background">
       <ScreenHeader
+        accessory={<PlatformBadge consoleType={session.consoleType} compact />}
         title={session.consoleName}
         subtitle={
           active

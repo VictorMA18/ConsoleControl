@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { useInsets } from '../hooks/useBottomInset';
+import { BrandMark } from './BrandMark';
 import { Logo } from './Logo';
 import { Icon } from './ui/icon';
 import { Text } from './ui/text';
@@ -18,18 +19,22 @@ type Props = {
   // Equis para cerrar un modal.
   onClose?: () => void;
   right?: ReactNode;
+  // Elemento a la izquierda del título (por ejemplo, la pastilla de plataforma en Cobro). En las
+  // pestañas, si no se pasa, va el ícono de la marca.
+  accessory?: ReactNode;
 };
 
 // Cabecera común de todas las pantallas (ADR 0014): título grande y una línea de contexto, como
 // los títulos amplios de iOS y Material 3. Respeta la barra de estado. Las pantallas de detalle
 // llevan la flecha de volver en un botón circular de 44 dp; los modales, la equis a la derecha.
-export function ScreenHeader({ title, subtitle, logo, onBack, onClose, right }: Props) {
+export function ScreenHeader({ title, subtitle, logo, onBack, onClose, right, accessory }: Props) {
   const { top } = useInsets();
   const detail = Boolean(onBack || onClose);
   return (
     <View className="bg-background px-4 pb-3" style={{ paddingTop: top + 10 }}>
       <View className="min-h-11 flex-row items-center gap-3">
         {onBack ? <RoundButton icon={ArrowLeft} label="Volver" onPress={onBack} /> : null}
+        {logo ? null : (accessory ?? (detail ? null : <BrandMark size={40} />))}
         <View className="flex-1">
           {logo ? (
             <Logo />
