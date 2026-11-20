@@ -45,6 +45,8 @@ VN diseñó la tarjeta de consola que quiere ver en el muro: una franja de color
 - **Tarjeta de consola:** el nombre va en su propia fila, a todo el ancho, para no cortarse en pantallas de 360 dp.
 - **Navegación:** barra inferior estilo Material 3 con pastilla, cabeceras con título grande y línea de contexto, y transiciones `ios_from_right` y `fade_from_bottom`.
 - **Textos:** sin mayúsculas forzadas.
+- **Transiciones:** todas las pantallas, incluido el diálogo de sesión, usan `ios_from_right`. `fade_from_bottom` con `presentation: 'modal'` pasaba por un cuadro en blanco al cerrar en Android. La ventana nativa toma el color de fondo del tema (`SystemUI.setBackgroundColorAsync`), porque al volver Android retira la pantalla que sale antes de animarla. Esto se midió grabando el emulador.
+- **Pantalla de carga en Expo Go:** muestra solo el nombre de la app mientras empaqueta y no lee `splash` ni el plugin. El logo de carga se verifica en el APK.
 
 ## Consecuencias
 
