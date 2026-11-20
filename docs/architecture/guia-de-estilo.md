@@ -19,15 +19,15 @@ La app es un espejo del cuaderno del ciber: una pantalla principal con todas las
 
 ## Pantallas del prototipo
 
-| #   | Pantalla                 | Qué muestra                                                            |
-| --- | ------------------------ | ---------------------------------------------------------------------- |
-| 1   | Muro de consolas         | Cuadrícula de 2 columnas con una tarjeta por consola y filtro por tipo |
-| 2   | Diálogo de sesión        | Sube un poco con un fundido y baja al cerrarlo (`fade_from_bottom`)    |
-| 3   | Muro con sesión en juego | Tarjeta roja con cronómetro y tiempo restante                          |
-| 4   | Alerta: por terminar     | Tarjeta en ámbar titilante y aviso "faltan 5 minutos"                  |
-| 5   | Tiempo cumplido          | Tarjeta en ámbar fijo hasta la liquidación                             |
-| 6   | Mandos insuficientes     | Motivo y consolas alternativas con stock                               |
-| 7   | Consola ocupada          | Motivo del bloqueo y "Volver al muro"                                  |
+| #   | Pantalla                 | Qué muestra                                                                                                 |
+| --- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| 1   | Muro de consolas         | Cuadrícula de 2 columnas con una tarjeta por consola y filtro por tipo                                      |
+| 2   | Diálogo de sesión        | Igual que cualquier pantalla (`ios_from_right`), para que abrir una consola libre u ocupada se sienta igual |
+| 3   | Muro con sesión en juego | Tarjeta roja con cronómetro y tiempo restante                                                               |
+| 4   | Alerta: por terminar     | Tarjeta en ámbar titilante y aviso "faltan 5 minutos"                                                       |
+| 5   | Tiempo cumplido          | Tarjeta en ámbar fijo hasta la liquidación                                                                  |
+| 6   | Mandos insuficientes     | Motivo y consolas alternativas con stock                                                                    |
+| 7   | Consola ocupada          | Motivo del bloqueo y "Volver al muro"                                                                       |
 
 Flujo enlazado: 1 → 2 → 3 → 4 → 5 → 7; desde 1, tocar PS4 con 5 mandos lleva a 6, y una alternativa vuelve a 2.
 
@@ -128,17 +128,17 @@ En blanco y negro: mando blanco roto `220 20% 97%` sobre grafito `225 14% 10%`. 
 
 ## Movimiento
 
-| Dónde                             | Movimiento                                                                                       |
-| --------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Cambio de pantalla                | Entra deslizando desde la derecha con un leve parallax; al volver sale igual (`ios_from_right`)  |
-| Diálogo de sesión                 | Sube un poco con un fundido y baja al cerrarlo (`fade_from_bottom`)                              |
-| Pestañas                          | Desplazamiento corto con fundido (`shift`, 220 ms); la pastilla de la barra se resalta en 200 ms |
-| Tarjeta presionada                | Escala 0.97 en 120 ms                                                                            |
-| Cambio de estado                  | Color de la franja en 200 ms                                                                     |
-| Muro al filtrar y Salud al plegar | Reacomodo en 220 ms y fundido de entrada en 200 ms                                               |
-| Diálogo de confirmación           | Entra de 0.96 a 1 con opacidad en 200 ms; sale encogiéndose a 0.97 en 150 ms                     |
-| Por terminar                      | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada)                                      |
-| Pantalla de carga                 | Sale con un fundido de 250 ms                                                                    |
+| Dónde                             | Movimiento                                                                                                                                                                                                                                                  |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cambio de pantalla                | Entra deslizando desde la derecha con un leve parallax (`ios_from_right`). Al volver, Android retira la pantalla que sale antes de animarla: el fondo de la ventana nativa lleva el color del tema (`expo-system-ui`) para que no se vea un destello blanco |
+| Diálogo de sesión                 | Igual que cualquier pantalla (`ios_from_right`), para que abrir una consola libre u ocupada se sienta igual                                                                                                                                                 |
+| Pestañas                          | Desplazamiento corto con fundido (`shift`, 220 ms); la pastilla de la barra se resalta en 200 ms                                                                                                                                                            |
+| Tarjeta presionada                | Escala 0.97 en 120 ms                                                                                                                                                                                                                                       |
+| Cambio de estado                  | Color de la franja en 200 ms                                                                                                                                                                                                                                |
+| Muro al filtrar y Salud al plegar | Reacomodo en 220 ms y fundido de entrada en 200 ms                                                                                                                                                                                                          |
+| Diálogo de confirmación           | Entra de 0.96 a 1 con opacidad en 200 ms; sale encogiéndose a 0.97 en 150 ms                                                                                                                                                                                |
+| Por terminar                      | Titila la etiqueta (opacidad de 1 a 0.4, 700 ms, alternada)                                                                                                                                                                                                 |
+| Pantalla de carga                 | Sale con un fundido de 250 ms                                                                                                                                                                                                                               |
 
 Curva `cubicBezier(0.23, 1, 0.32, 1)`. Solo se animan `transform`, `opacity` y color. Con movimiento reducido no hay escala ni titileo: queda el cambio de opacidad o de color.
 
