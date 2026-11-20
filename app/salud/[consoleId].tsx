@@ -97,6 +97,7 @@ export default function HealthDetailScreen() {
             <HealthLightBadge
               testID={`semaforo-${console.id}`}
               light={consoleLight(console.status)}
+              playing={console.status === 'en_juego'}
               label={CONSOLE_HEALTH_LABELS[console.status]}
             />
           </View>

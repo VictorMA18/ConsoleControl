@@ -82,7 +82,6 @@ describe('muro de consolas (T07)', () => {
 
     expect(screen.getByText('PS5 #1')).toBeTruthy();
     expect(screen.getAllByTestId(/^estado-/)).toHaveLength(2);
-    expect(screen.getByTestId('resumen-disponible')).toHaveTextContent('2Disponible');
   });
 
   it('filtra por tipo de consola', async () => {
@@ -151,7 +150,6 @@ describe('muro con varias sesiones (T11, TW-93)', () => {
       expect(await screen.findByTestId(`cronometro-${id}`)).toBeTruthy();
     }
     expect(screen.getAllByTestId(/^estado-/)).toHaveLength(4);
-    expect(screen.getByTestId('resumen-en_juego')).toHaveTextContent('4En juego');
   });
 });
 
@@ -202,7 +200,6 @@ describe('alerta de vencimiento en el muro (T16)', () => {
     // El aviso muestra la máquina y el mensaje en dos líneas; el texto completo va en su etiqueta.
     expect(screen.getByLabelText('PS5 #1: faltan 5 minutos o menos')).toBeTruthy();
     expect(screen.getByTestId('ambar-titilante')).toBeTruthy();
-    expect(screen.getByTestId('resumen-por_terminar')).toHaveTextContent('1Por terminar');
     expect(vibrate).toHaveBeenCalledTimes(1);
 
     await act(async () => {

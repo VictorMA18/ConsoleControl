@@ -12,10 +12,14 @@ export const HEALTH_LOOK: Record<HealthLight, { dot: string; soft: string; tone:
   rojo: { dot: 'bg-destructive', soft: 'bg-playing-soft', tone: 'text-destructive' },
 };
 
-type Props = { light: HealthLight; label: string; testID?: string };
+// playing: la consola está en juego. Sigue siendo operativa en el semáforo, pero se distingue con
+// el color de juego del muro para no confundirla con una libre.
+type Props = { light: HealthLight; label: string; testID?: string; playing?: boolean };
 
-export function HealthLightBadge({ light, label, testID }: Props) {
-  const look = HEALTH_LOOK[light];
+const PLAYING_LOOK = { dot: 'bg-playing', soft: 'bg-playing-soft', tone: 'text-playing-tone' };
+
+export function HealthLightBadge({ light, label, testID, playing }: Props) {
+  const look = playing ? PLAYING_LOOK : HEALTH_LOOK[light];
   return (
     <View
       testID={testID}

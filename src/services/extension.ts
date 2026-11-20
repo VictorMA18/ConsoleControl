@@ -5,7 +5,8 @@ import { calculateRate } from './tariff';
 // Extensión de tiempo de una sesión en curso (HU-009). Funciones puras: reciben la hora por
 // parámetro y no tocan la base.
 
-export const EXTENSION_MINUTES = [15, 30] as const;
+// Las mismas duraciones que al iniciar una sesión (regla de VN, 19/11/2026).
+export const EXTENSION_MINUTES = [30, 60, 120] as const;
 export type ExtensionMinutes = (typeof EXTENSION_MINUTES)[number];
 
 export type ExtendableSession = {
@@ -23,7 +24,7 @@ export type ExtensionPlan =
   | { ok: true; minutes: ExtensionMinutes; durationMs: number; endsAt: number; totalCents: number }
   | {
       ok: false;
-      reason: 'bloque_invalido' | 'tiempo_libre' | 'sesion_no_activa' | 'tiempo_cumplido';
+      reason: 'bloque_invalido' | 'tiempo_libre' | 'sesion_no_activa';
       message: string;
     };
 
@@ -34,14 +35,18 @@ export function isExtensionMinutes(minutes: number): minutes is ExtensionMinutes
 // Calcula la sesión extendida: la duración contratada crece en el bloque, el vencimiento es
 // started_at + duración (el cronómetro no se reinicia, ADR 0003) y el monto se recalcula con el
 // motor de HU-003 sobre las tarifas guardadas en la sesión (RN-08).
-// Por confirmar con VN: con el tiempo ya cumplido no se extiende; se finaliza y se cobra el exceso.
+// También se extiende con el tiempo ya cumplido: sumar tiempo cubre el exceso (decisión de VN).
 export function planExtension(
   session: ExtendableSession,
   minutes: number,
   now: number,
 ): ExtensionPlan {
   if (!isExtensionMinutes(minutes)) {
-    return { ok: false, reason: 'bloque_invalido', message: 'Solo se añaden 15 o 30 minutos' };
+    return {
+      ok: false,
+      reason: 'bloque_invalido',
+      message: 'Solo se añaden 30 minutos, 1 hora o 2 horas',
+    };
   }
   if (session.status !== 'activa') {
     return { ok: false, reason: 'sesion_no_activa', message: 'La sesión ya fue finalizada' };
@@ -51,13 +56,6 @@ export function planExtension(
       ok: false,
       reason: 'tiempo_libre',
       message: 'En tiempo libre no hace falta añadir tiempo',
-    };
-  }
-  if (now >= session.startedAt + session.durationMs) {
-    return {
-      ok: false,
-      reason: 'tiempo_cumplido',
-      message: 'El tiempo ya se cumplió: finaliza la sesión para cobrar el exceso',
     };
   }
 

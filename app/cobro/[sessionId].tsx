@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../../src/components/ConfirmDialog';
 import { ExtendTime } from '../../src/components/ExtendTime';
 import { FormScrollView } from '../../src/components/FormScrollView';
 import { PaymentForm } from '../../src/components/PaymentForm';
+import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SettlementSummary } from '../../src/components/SettlementSummary';
 import { StateView } from '../../src/components/StateView';
@@ -22,7 +23,7 @@ import { useSessionDetail } from '../../src/hooks/useSessionDetail';
 import type { PaymentLineInput } from '../../src/schemas/payment';
 import { getSessionAlertState } from '../../src/services/sessionAlerts';
 import { calculateSettlement } from '../../src/services/settlement';
-import { CARD_STATE_STYLES, cardState, type CardState } from '../../src/utils/cardState';
+import { cardState, type CardState } from '../../src/utils/cardState';
 
 // Resumen de cobro de una consola ocupada (HU-005, CU-002). Mientras la sesión sigue activa muestra
 // la liquidación al momento (se recalcula cada segundo, sin consultar la base) y permite
@@ -95,14 +96,9 @@ export default function SettlementScreen() {
   return (
     <View className="flex-1 bg-background">
       <ScreenHeader
+        accessory={<PlatformBadge consoleType={session.consoleType} compact />}
         title={session.consoleName}
-        subtitle={
-          active
-            ? `${CARD_STATE_STYLES[state].label} · resumen hasta ahora`
-            : payable
-              ? 'Por cobrar'
-              : 'Sesión cobrada'
-        }
+        subtitle={active ? 'Resumen hasta ahora' : payable ? 'Por cobrar' : 'Sesión cobrada'}
         onBack={() => router.back()}
       />
       <FormScrollView insetBottom={!active}>

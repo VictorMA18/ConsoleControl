@@ -1,7 +1,8 @@
-import { TimerOff, TimerReset } from 'lucide-react-native';
+import { TimerReset } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { EXTENSION_MINUTES, planExtension, type ExtendableSession } from '../services/extension';
+import { TOLERANCE_MINUTES } from '../services/tariff';
 import { formatDuration } from '../utils/formatDuration';
 import { formatMoney } from '../utils/formatMoney';
 import { Section } from './Section';
@@ -16,28 +17,32 @@ type Props = {
   onExtend: (minutes: number) => void;
 };
 
-// "Añadir tiempo" (HU-009): un botón por bloque con el nuevo total, calculado sin tocar la base.
-// No aparece en tiempo libre. Con el tiempo cumplido explica que hay que finalizar.
+const LABELS: Record<(typeof EXTENSION_MINUTES)[number], string> = {
+  30: '+30 min',
+  60: '+1 h',
+  120: '+2 h',
+};
+
+// "Añadir tiempo" (HU-009): 30 min, 1 h o 2 h, cada uno con el total estimado nuevo, calculado sin
+// tocar la base. Sirve también en «Por terminar» y con el tiempo ya cumplido: sumar tiempo cubre el
+// exceso. No aparece en tiempo libre.
 export function ExtendTime({ session, now, isPending, onExtend }: Props) {
   if (session.mode === 'libre' || session.durationMs === null) {
     return null;
   }
   const endsAt = session.startedAt + session.durationMs;
-  if (now >= endsAt) {
-    return (
-      <Section title="Añadir tiempo">
-        <View className="flex-row items-center gap-3">
-          <Icon as={TimerOff} size={20} className="text-warning-tone" />
-          <Text className="flex-1 text-sm text-muted-foreground">
-            El tiempo ya se cumplió: finaliza la sesión para cobrar el exceso.
-          </Text>
-        </View>
-      </Section>
-    );
-  }
+  const overdue = now >= endsAt;
+  const overdueMinutes = Math.floor((now - endsAt) / 60_000);
   return (
-    <Section title="Añadir tiempo" trailing={`Quedan ${formatDuration(endsAt - now)}`}>
-      <View className="flex-row gap-3">
+    <Section
+      title="Añadir tiempo"
+      trailing={
+        overdue
+          ? `Exceso ${formatDuration(now - endsAt)}`
+          : `Quedan ${formatDuration(endsAt - now)}`
+      }
+    >
+      <View className="flex-row gap-2">
         {EXTENSION_MINUTES.map((minutes) => {
           const plan = planExtension(session, minutes, now);
           return (
@@ -47,22 +52,22 @@ export function ExtendTime({ session, now, isPending, onExtend }: Props) {
               variant="outline"
               disabled={!plan.ok || isPending}
               onPress={() => onExtend(minutes)}
-              accessibilityLabel={`Añadir ${minutes} minutos${plan.ok ? `, total ${formatMoney(plan.totalCents)}` : ''}`}
-              className="h-auto flex-1 flex-col gap-1 py-3"
+              accessibilityLabel={`Añadir ${LABELS[minutes]}${plan.ok ? `, total ${formatMoney(plan.totalCents)}` : ''}`}
+              className="h-auto flex-1 flex-col gap-1 px-2 py-3"
             >
-              <View className="flex-row items-center gap-2">
-                <Icon as={TimerReset} size={20} />
-                <Text className="text-lg font-extrabold">+{minutes} min</Text>
+              <View className="flex-row items-center gap-1.5">
+                <Icon as={TimerReset} size={18} />
+                <Text className="text-base font-extrabold">{LABELS[minutes]}</Text>
               </View>
               {plan.ok ? (
                 // A todo el ancho y centrado: dentro de un contenedor centrado Android mide corto
                 // el texto con esta fuente y corta el monto.
                 <Text
                   numberOfLines={1}
-                  className="w-full text-center text-sm font-semibold text-muted-foreground"
+                  className="w-full text-center text-xs font-semibold text-muted-foreground"
                   style={{ fontVariant: ['tabular-nums'] }}
                 >
-                  Total {formatMoney(plan.totalCents)}
+                  {formatMoney(plan.totalCents)}
                 </Text>
               ) : null}
             </Button>
@@ -70,7 +75,11 @@ export function ExtendTime({ session, now, isPending, onExtend }: Props) {
         })}
       </View>
       <Text className="text-sm text-muted-foreground">
-        El cronómetro sigue corriendo; solo cambian el vencimiento y el monto.
+        {overdue
+          ? overdueMinutes < TOLERANCE_MINUTES
+            ? `Tolerancia de ${TOLERANCE_MINUTES} min: aún no se cobra exceso. Sumar tiempo lo evita.`
+            : 'Pasó la tolerancia: se cobra el exceso. Sumar tiempo lo cubre.'
+          : 'El cronómetro sigue corriendo; solo cambian el vencimiento y el monto estimado.'}
       </Text>
     </Section>
   );

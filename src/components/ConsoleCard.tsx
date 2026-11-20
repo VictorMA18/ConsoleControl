@@ -160,7 +160,9 @@ function CardShell({ console, state, onPress, time, rows, idle }: ShellProps) {
             style={blinking ? BLINK : undefined}
           >
             <Icon as={STATE_ICONS[state]} size={18} strokeWidth={2.5} className={style.onBand} />
-            <Text className={cn('text-lg font-extrabold', style.onBand)}>{style.label}</Text>
+            {/* A todo el ancho: si no, Android mide corto el texto con esta fuente y «Tiempo cumplido»
+                se mostraba en dos filas. */}
+            <Text className={cn('text-lg font-extrabold w-full', style.onBand)}>{style.label}</Text>
           </Animated.View>
         </Animated.View>
 

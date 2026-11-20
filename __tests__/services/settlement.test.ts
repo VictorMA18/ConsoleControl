@@ -55,12 +55,23 @@ describe('calculateSettlement (HU-005) · tiempo fijo cobrado por tiempo jugado'
     expect(settle({ playedMs: 30 * MINUTE + 1000 }).playedMinutes).toBe(31);
   });
 
-  it('si se pasa de lo contratado, cobra el tiempo extra a la misma tarifa', () => {
-    const result = settle({ playedMs: 64 * MINUTE });
-    expect(result.extraMinutes).toBe(4);
+  it.each([63, 65])(
+    'con %i min (dentro de la tolerancia de 5) cobra solo lo contratado',
+    (minutes) => {
+      const result = settle({ playedMs: minutes * MINUTE });
+      expect(result.extraMinutes).toBe(0);
+      expect(result.penaltyCents).toBe(0);
+      expect(result.totalCents).toBe(600);
+    },
+  );
+
+  it('pasada la tolerancia cobra todos los minutos jugados a la misma tarifa', () => {
+    // 1 h contratada y 1 h 8 min jugados: se cobran los 68 min (6.00 × 68 ÷ 60 = S/ 6.80).
+    const result = settle({ playedMs: 68 * MINUTE });
+    expect(result.extraMinutes).toBe(8);
     expect(result.baseCents).toBe(600);
-    expect(result.penaltyCents).toBe(40);
-    expect(result.totalCents).toBe(640);
+    expect(result.penaltyCents).toBe(80);
+    expect(result.totalCents).toBe(680);
   });
 });
 

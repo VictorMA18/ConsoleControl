@@ -12,7 +12,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
 import { CONSOLE_HEALTH_LABELS } from '../../src/components/HealthControls';
-import { HEALTH_LOOK, HealthLightBadge } from '../../src/components/HealthLightBadge';
+import { HealthLightBadge } from '../../src/components/HealthLightBadge';
 import { PlatformBadge } from '../../src/components/PlatformBadge';
 import { PressableScale } from '../../src/components/PressableScale';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
@@ -22,12 +22,8 @@ import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
 import { useEquipment } from '../../src/hooks/useEquipment';
 import { useMaintenanceStatus } from '../../src/hooks/useMaintenance';
-import {
-  consoleLight,
-  controllerLight,
-  formatUsage,
-  type HealthLight,
-} from '../../src/services/health';
+import { usePressOnce } from '../../src/hooks/usePressOnce';
+import { consoleLight, formatUsage, type HealthLight } from '../../src/services/health';
 import type { EquipmentConsole } from '../../src/services/healthService';
 import { MAINTENANCE_LABELS, type MaintenanceStatus } from '../../src/services/maintenanceAlerts';
 import { matchesQuery } from '../../src/stores/wallFilterStore';
@@ -47,6 +43,7 @@ const FILTERS: { value: Filter; label: string }[] = [
 // detalle (app/salud/[consoleId].tsx), donde se cambia el estado y se registra el mantenimiento.
 export default function HealthScreen() {
   const router = useRouter();
+  const once = usePressOnce();
   const { data: equipment, isPending, error } = useEquipment();
   const maintenance = useMaintenanceStatus();
   const [query, setQuery] = useState('');
@@ -71,10 +68,6 @@ export default function HealthScreen() {
         (filter === 'alertas' && (row.due || row.out > 0 || row.light !== 'verde')) ||
         row.light === filter),
   );
-  const lights = (equipment ?? []).flatMap((c) => [
-    consoleLight(c.status),
-    ...c.controllers.map((m) => controllerLight(m.status)),
-  ]);
   const dueCount = maintenance.filter((m) => m.due).length;
 
   return (
@@ -97,8 +90,6 @@ export default function HealthScreen() {
           keyboardDismissMode="on-drag"
           contentContainerClassName="gap-4 p-4 pb-8"
         >
-          <HealthOverview lights={lights} />
-
           {dueCount > 0 ? (
             <Pressable
               testID="alertas-mantenimiento"
@@ -168,12 +159,12 @@ export default function HealthScreen() {
                 <Animated.View key={row.console.id} layout={LinearTransition.duration(200)}>
                   <HealthRow
                     {...row}
-                    onPress={() =>
+                    onPress={once(() =>
                       router.push({
                         pathname: '/salud/[consoleId]',
                         params: { consoleId: row.console.id },
-                      })
-                    }
+                      }),
+                    )}
                   />
                 </Animated.View>
               ))}
@@ -222,7 +213,11 @@ function HealthRow({
           {console.name}
         </Text>
         <View className="flex-1" />
-        <HealthLightBadge light={light} label={CONSOLE_HEALTH_LABELS[console.status]} />
+        <HealthLightBadge
+          light={light}
+          playing={console.status === 'en_juego'}
+          label={CONSOLE_HEALTH_LABELS[console.status]}
+        />
         <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
       </View>
       <View className="flex-row items-center gap-4">
@@ -258,46 +253,6 @@ function Fact({
       >
         {text}
       </Text>
-    </View>
-  );
-}
-
-// Conteo de equipos (consolas y mandos) por color del semáforo, con el mismo lenguaje que el
-// resumen del muro: tarjetas con la etiqueta y su punto de color arriba y el número abajo.
-function HealthOverview({ lights }: { lights: HealthLight[] }) {
-  const columns: { light: HealthLight; label: string; a11y?: string }[] = [
-    { light: 'verde', label: 'Operativos' },
-    { light: 'ambar', label: 'Revisión', a11y: 'en mantenimiento' },
-    { light: 'rojo', label: 'Averiados' },
-  ];
-  return (
-    <View accessibilityRole="summary" className="flex-row gap-3">
-      {columns.map((c) => {
-        const total = lights.filter((l) => l === c.light).length;
-        return (
-          <View
-            key={c.light}
-            accessibilityLabel={`${total} ${c.a11y ?? c.label}`}
-            className={cn(
-              'flex-1 gap-3 rounded-2xl border bg-card px-4 py-3.5',
-              total > 0 && c.light !== 'verde' ? 'border-warning' : 'border-border',
-            )}
-          >
-            <View className="flex-row items-center gap-1.5">
-              <View className={cn('h-2 w-2 rounded-full', HEALTH_LOOK[c.light].dot)} />
-              <Text numberOfLines={1} className="shrink text-xs font-bold text-muted-foreground">
-                {c.label}
-              </Text>
-            </View>
-            <Text
-              className={cn('text-3xl font-extrabold', total === 0 && 'text-muted-foreground')}
-              style={{ fontVariant: ['tabular-nums'] }}
-            >
-              {total}
-            </Text>
-          </View>
-        );
-      })}
     </View>
   );
 }

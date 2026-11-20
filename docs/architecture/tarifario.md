@@ -30,7 +30,7 @@ Montos en soles. `Precio` es el bloque con 1 mando. `Extra` es el recargo del bl
 2. **Descuento en grupos.** En PS5 y Switch, desde el 4.º mando el extra lleva 30 % de descuento, redondeado hacia abajo a S/ 0.10.
 3. **RN-03, bloques con gracia.** El tiempo se cobra en bloques de 15 min con 3 min de gracia: de 1 a 18 min se cobran 15; de 19 a 33, 30; y así. El mínimo es un bloque.
 4. **Tiempos largos.** Pasada la hora se suman bloques: primero los de 2 h, luego uno de 1 h y el resto (15, 30 o 45). Por ejemplo, 135 min = 120 + 15.
-5. **Tiempo fijo, cobrado por tiempo jugado** (cambio de VN, 19/11/2026). El tiempo contratado (30 min, 1 h o 2 h) solo fija el aviso y el monto estimado. Al finalizar se cobra lo que se jugó, aunque se corte antes o se pase: precio de 1 hora con sus mandos (incluido el descuento de grupo) × minutos jugados ÷ 60, redondeado **hacia arriba a S/ 0.10** para que no queden céntimos sueltos. Un segundo más ya cuenta como minuto (`proRatedCents`, `src/services/tariff.ts`).
+5. **Tiempo fijo, cobrado por tiempo jugado** (cambio de VN, 19/11/2026). El tiempo contratado (30 min, 1 h o 2 h) solo fija el aviso y el monto estimado. Al finalizar se cobra lo que se jugó, aunque se corte antes o se pase: precio de 1 hora con sus mandos (incluido el descuento de grupo) × minutos jugados ÷ 60, redondeado **hacia arriba a S/ 0.10** para que no queden céntimos sueltos. Un segundo más ya cuenta como minuto (`proRatedCents`, `src/services/tariff.ts`). **Tolerancia de 5 minutos** al cumplirse lo contratado: hasta 5 minutos de exceso se cobra solo lo contratado; si se pasa de la tolerancia, se cobran todos los minutos jugados (`TOLERANCE_MINUTES`).
 6. **Tiempo libre.** No hay monto al iniciar: se calcula al cerrar con el tiempo jugado.
 
 ## Inventario
@@ -55,3 +55,5 @@ Verificados en `__tests__/qa/hu-003-tarifas.test.ts`.
 | 5   | Switch  | Libre     | 1      | 135 min (120 + 15)    | 15.00 + 2.00                | S/ 17.00 |
 | 6   | PS4     | 1 h       | 1      | 37 min (se cortó)     | 7.00 × 37 ÷ 60 = 4.316      | S/ 4.40  |
 | 7   | PS4     | 1 h       | 1      | 75 min (se pasó)      | 7.00 × 75 ÷ 60 = 8.75       | S/ 8.80  |
+| 8   | PS4     | 1 h       | 1      | 64 min (tolerancia)   | se cobra la hora            | S/ 7.00  |
+| 9   | PS4     | 1 h       | 1      | 68 min (pasó 5 min)   | 7.00 × 68 ÷ 60 = 7.933      | S/ 8.00  |

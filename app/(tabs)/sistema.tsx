@@ -8,6 +8,7 @@ import { Section } from '../../src/components/Section';
 import { ThemeToggle } from '../../src/components/ThemeToggle';
 import { Icon } from '../../src/components/ui/icon';
 import { Text } from '../../src/components/ui/text';
+import { usePressOnce } from '../../src/hooks/usePressOnce';
 
 // Configuración de la app (ADR 0014): apariencia y, mientras se desarrolla, las herramientas de
 // prueba. Separada de Caja para que la caja solo trate de dinero.
@@ -61,15 +62,16 @@ function ToolButton({
   hint: string;
 }) {
   const router = useRouter();
+  const once = usePressOnce();
   return (
     <PressableScale
       accessibilityRole="button"
       accessibilityLabel={title}
-      onPress={() => router.push(href)}
+      onPress={once(() => router.push(href))}
       className="flex-row items-center gap-3 rounded-2xl border border-border bg-raised p-4"
     >
-      <View className="h-11 w-11 items-center justify-center rounded-xl bg-secondary">
-        <Icon as={icon} size={22} />
+      <View className="h-10 w-10 items-center justify-center rounded-xl bg-secondary">
+        <Icon as={icon} size={20} />
       </View>
       <View className="flex-1">
         <Text className="text-base font-bold">{title}</Text>
